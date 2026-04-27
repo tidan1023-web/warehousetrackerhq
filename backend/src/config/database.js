@@ -4,10 +4,6 @@ const logger = require('../utils/logger');
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error('MONGODB_URI environment variable is required');
-}
-
 mongoose.connection.on('connected', () => {
   logger.info('MongoDB connected successfully');
 });
@@ -21,11 +17,19 @@ mongoose.connection.on('disconnected', () => {
 });
 
 async function connectDatabase() {
-  await mongoose.connect(MONGODB_URI, {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-  });
+  if (!MONGODB_URI) {
+    logger.warn('MONGODB_URI not set — running without database');
+    return;
+  }
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+  } catch (err) {
+    logger.warn('MongoDB connection failed — running without database', { error: err.message });
+  }
 }
 
 async function disconnectDatabase() {

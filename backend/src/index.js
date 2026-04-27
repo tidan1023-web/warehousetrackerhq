@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const Sentry = require('@sentry/node');
+const mongoose = require('mongoose');
 const { connectDatabase } = require('./config/database');
 const { apiLimiter } = require('./middleware/rateLimiter');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
@@ -104,6 +105,8 @@ async function bootstrap() {
 }
 
 async function seedAdminIfNeeded() {
+  if (mongoose.connection.readyState !== 1) return;
+
   const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
   const adminPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD;
   const adminEmpId = process.env.BOOTSTRAP_ADMIN_EMPLOYEE_ID;
