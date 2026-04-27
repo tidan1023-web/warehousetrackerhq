@@ -1,23 +1,10 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import bcrypt from 'bcryptjs';
+'use strict';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-export type UserRole = 'admin' | 'staff';
+const { Schema } = mongoose;
 
-export interface IUser extends Document {
-  _id: mongoose.Types.ObjectId;
-  employeeId: string;
-  name: string;
-  email: string;
-  password: string;
-  role: UserRole;
-  isActive: boolean;
-  lastLogin?: Date;
-  createdAt: Date;
-  updatedAt: Date;
-  comparePassword(candidate: string): Promise<boolean>;
-}
-
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema(
   {
     employeeId: {
       type: String,
@@ -83,8 +70,10 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.comparePassword = async function (candidate: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidate) {
   return bcrypt.compare(candidate, this.password);
 };
 
-export const User = mongoose.model<IUser>('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = { User };

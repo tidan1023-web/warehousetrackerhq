@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
-import { generateTokens, AuthRequest } from '../middleware/auth';
-import { createAuditLog } from '../utils/auditLogger';
-import { createError } from '../middleware/errorHandler';
-import logger from '../utils/logger';
+'use strict';
+const jwt = require('jsonwebtoken');
+const { User } = require('../models/User');
+const { generateTokens } = require('../middleware/auth');
+const { createAuditLog } = require('../utils/auditLogger');
+const { createError } = require('../middleware/errorHandler');
+const logger = require('../utils/logger');
 
-export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function login(req, res, next) {
   try {
     const { email, password } = req.body;
 
@@ -52,16 +52,16 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
-export async function refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+async function refreshToken(req, res, next) {
   try {
     const { refreshToken: token } = req.body;
     if (!token) {
       throw createError('Refresh token required', 400);
     }
 
-    let decoded: { id: string };
+    let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET as string) as { id: string };
+      decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     } catch {
       throw createError('Invalid or expired refresh token', 401);
     }
@@ -78,8 +78,8 @@ export async function refreshToken(req: Request, res: Response, next: NextFuncti
   }
 }
 
-export async function getMe(req: AuthRequest, res: Response): Promise<void> {
-  const u = req.user!;
+async function getMe(req, res) {
+  const u = req.user;
   res.json({
     id: u._id,
     employeeId: u.employeeId,
@@ -90,7 +90,7 @@ export async function getMe(req: AuthRequest, res: Response): Promise<void> {
   });
 }
 
-export async function createUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function createUser(req, res, next) {
   try {
     const { employeeId, name, email, password, role } = req.body;
     const user = await User.create({ employeeId, name, email, password, role });
@@ -99,7 +99,7 @@ export async function createUser(req: AuthRequest, res: Response, next: NextFunc
       action: 'USER_CREATED',
       entityType: 'user',
       entityId: user._id,
-      user: req.user!,
+      user: req.user,
       details: { createdEmployeeId: employeeId, createdEmail: email, role },
       req,
     });
@@ -110,7 +110,7 @@ export async function createUser(req: AuthRequest, res: Response, next: NextFunc
   }
 }
 
-export async function listUsers(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function listUsers(req, res, next) {
   try {
     const users = await User.find({}).sort({ createdAt: -1 }).lean();
     res.json({ users });
@@ -119,7 +119,7 @@ export async function listUsers(req: AuthRequest, res: Response, next: NextFunct
   }
 }
 
-export async function deactivateUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function deactivateUser(req, res, next) {
   try {
     const { id } = req.params;
     const target = await User.findByIdAndUpdate(id, { isActive: false }, { new: true });
@@ -129,7 +129,7 @@ export async function deactivateUser(req: AuthRequest, res: Response, next: Next
       action: 'USER_DEACTIVATED',
       entityType: 'user',
       entityId: target._id,
-      user: req.user!,
+      user: req.user,
       details: { deactivatedEmail: target.email },
       req,
     });
@@ -139,3 +139,5 @@ export async function deactivateUser(req: AuthRequest, res: Response, next: Next
     next(err);
   }
 }
+
+module.exports = { login, refreshToken, getMe, createUser, listUsers, deactivateUser };

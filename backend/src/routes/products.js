@@ -1,11 +1,12 @@
-import { Router } from 'express';
-import { body, param } from 'express-validator';
-import { validate } from '../middleware/validate';
-import { authenticate } from '../middleware/auth';
-import { requireAdmin, requireStaff } from '../middleware/rbac';
-import { uploadLimiter } from '../middleware/rateLimiter';
-import { multerMemoryConfig } from '../utils/s3Upload';
-import {
+'use strict';
+const { Router } = require('express');
+const { body, param } = require('express-validator');
+const { validate } = require('../middleware/validate');
+const { authenticate } = require('../middleware/auth');
+const { requireAdmin, requireStaff } = require('../middleware/rbac');
+const { uploadLimiter } = require('../middleware/rateLimiter');
+const { multerMemoryConfig } = require('../utils/s3Upload');
+const {
   listProducts,
   getProduct,
   createProduct,
@@ -15,7 +16,7 @@ import {
   dispatchProduct,
   deleteProduct,
   getCategories,
-} from '../controllers/productController';
+} = require('../controllers/productController');
 
 const router = Router();
 const upload = multerMemoryConfig();
@@ -40,10 +41,7 @@ router.post(
     body('name').trim().isLength({ min: 2, max: 200 }).withMessage('Name must be 2-200 characters'),
     body('category').trim().isLength({ min: 1, max: 100 }).withMessage('Category required'),
     body('description').optional().isLength({ max: 2000 }),
-    body('requiredViews')
-      .optional()
-      .isArray()
-      .withMessage('requiredViews must be an array'),
+    body('requiredViews').optional().isArray().withMessage('requiredViews must be an array'),
   ]),
   createProduct
 );
@@ -68,12 +66,7 @@ router.post(
   uploadProductImage
 );
 
-router.post(
-  '/:id/verify',
-  requireAdmin,
-  validate(productIdParam),
-  verifyProduct
-);
+router.post('/:id/verify', requireAdmin, validate(productIdParam), verifyProduct);
 
 router.post(
   '/:id/dispatch',
@@ -87,4 +80,4 @@ router.post(
 
 router.delete('/:id', requireAdmin, validate(productIdParam), deleteProduct);
 
-export default router;
+module.exports = router;

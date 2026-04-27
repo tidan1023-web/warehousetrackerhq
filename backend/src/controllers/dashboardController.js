@@ -1,11 +1,10 @@
-import { Response, NextFunction } from 'express';
-import { AuthRequest } from '../middleware/auth';
-import { Product } from '../models/Product';
-import { DefectLog } from '../models/DefectLog';
-import { AuditLog } from '../models/AuditLog';
-import { User } from '../models/User';
+'use strict';
+const { Product } = require('../models/Product');
+const { DefectLog } = require('../models/DefectLog');
+const { AuditLog } = require('../models/AuditLog');
+const { User } = require('../models/User');
 
-export async function getDashboardStats(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function getDashboardStats(req, res, next) {
   try {
     const [
       totalProducts,
@@ -28,13 +27,9 @@ export async function getDashboardStats(req: AuthRequest, res: Response, next: N
       DefectLog.countDocuments({ status: { $in: ['open', 'acknowledged'] } }),
       DefectLog.countDocuments({ severity: 'critical', status: 'open' }),
       User.countDocuments({ isActive: true }),
-      AuditLog.find({})
-        .sort({ timestamp: -1 })
-        .limit(10)
-        .lean(),
+      AuditLog.find({}).sort({ timestamp: -1 }).limit(10).lean(),
     ]);
 
-    // Items needing attention: pending + missing images + open defects
     const itemsNeedingAttention = await Product.find({
       status: { $in: ['pending', 'defective'] },
     })
@@ -43,21 +38,18 @@ export async function getDashboardStats(req: AuthRequest, res: Response, next: N
       .limit(10)
       .lean();
 
-    // Dispatch readiness: verified but not dispatched
     const readyToShip = await Product.find({ status: 'verified' })
       .select('sku name verifiedAt assignedTo')
       .populate('assignedTo', 'name employeeId')
       .limit(10)
       .lean();
 
-    // Category breakdown
     const categoryBreakdown = await Product.aggregate([
       { $group: { _id: '$category', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 10 },
     ]);
 
-    // Dispatch activity last 7 days
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const dispatchActivity = await Product.aggregate([
       { $match: { status: 'dispatched', dispatchedAt: { $gte: sevenDaysAgo } } },
@@ -97,3 +89,5 @@ export async function getDashboardStats(req: AuthRequest, res: Response, next: N
     next(err);
   }
 }
+
+module.exports = { getDashboardStats };

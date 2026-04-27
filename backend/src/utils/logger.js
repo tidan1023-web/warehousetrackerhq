@@ -1,4 +1,5 @@
-import winston from 'winston';
+'use strict';
+const winston = require('winston');
 
 const { combine, timestamp, json, colorize, simple } = winston.format;
 
@@ -16,4 +17,4 @@ const logger = winston.createLogger({
   ],
 });
 
-export default logger;
+module.exports = logger;

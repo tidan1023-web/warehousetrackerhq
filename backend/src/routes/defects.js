@@ -1,17 +1,18 @@
-import { Router } from 'express';
-import { body, param } from 'express-validator';
-import { validate } from '../middleware/validate';
-import { authenticate } from '../middleware/auth';
-import { requireAdmin, requireStaff } from '../middleware/rbac';
-import { uploadLimiter } from '../middleware/rateLimiter';
-import { multerMemoryConfig } from '../utils/s3Upload';
-import {
+'use strict';
+const { Router } = require('express');
+const { body, param } = require('express-validator');
+const { validate } = require('../middleware/validate');
+const { authenticate } = require('../middleware/auth');
+const { requireAdmin, requireStaff } = require('../middleware/rbac');
+const { uploadLimiter } = require('../middleware/rateLimiter');
+const { multerMemoryConfig } = require('../utils/s3Upload');
+const {
   listDefects,
   createDefect,
   uploadDefectImage,
   acknowledgeDefect,
   resolveDefect,
-} from '../controllers/defectController';
+} = require('../controllers/defectController');
 
 const router = Router();
 const upload = multerMemoryConfig();
@@ -62,4 +63,4 @@ router.patch(
   resolveDefect
 );
 
-export default router;
+module.exports = router;

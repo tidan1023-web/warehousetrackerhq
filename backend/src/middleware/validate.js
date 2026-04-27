@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import { validationResult, ValidationChain } from 'express-validator';
+'use strict';
+const { validationResult } = require('express-validator');
 
-export function validate(chains: ValidationChain[]) {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+function validate(chains) {
+  return async (req, res, next) => {
     await Promise.all(chains.map((chain) => chain.run(req)));
     const errors = validationResult(req);
     if (errors.isEmpty()) {
@@ -15,3 +15,5 @@ export function validate(chains: ValidationChain[]) {
     });
   };
 }
+
+module.exports = { validate };

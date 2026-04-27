@@ -1,23 +1,18 @@
-import { Response, NextFunction } from 'express';
-import { AuthRequest } from '../middleware/auth';
-import { Product, ImageViewType } from '../models/Product';
-import { createAuditLog } from '../utils/auditLogger';
-import {
+'use strict';
+const { Product } = require('../models/Product');
+const { createAuditLog } = require('../utils/auditLogger');
+const {
   uploadImageToS3,
   deleteImageFromS3,
   validateImageBuffer,
   buildS3Key,
-} from '../utils/s3Upload';
-import { createError } from '../middleware/errorHandler';
+} = require('../utils/s3Upload');
+const { createError } = require('../middleware/errorHandler');
 
-interface MulterRequest extends AuthRequest {
-  file?: Express.Multer.File;
-}
-
-export async function listProducts(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function listProducts(req, res, next) {
   try {
     const { status, category, assignedTo, search, page = '1', limit = '20' } = req.query;
-    const query: Record<string, unknown> = {};
+    const query = {};
 
     if (status) query.status = status;
     if (category) query.category = category;
@@ -29,8 +24,8 @@ export async function listProducts(req: AuthRequest, res: Response, next: NextFu
       ];
     }
 
-    const pageNum = Math.max(1, parseInt(page as string, 10));
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
+    const pageNum = Math.max(1, parseInt(page, 10));
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)));
     const skip = (pageNum - 1) * limitNum;
 
     const [products, total] = await Promise.all([
@@ -53,7 +48,7 @@ export async function listProducts(req: AuthRequest, res: Response, next: NextFu
   }
 }
 
-export async function getProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function getProduct(req, res, next) {
   try {
     const product = await Product.findById(req.params.id)
       .populate('assignedTo', 'name employeeId email')
@@ -69,7 +64,7 @@ export async function getProduct(req: AuthRequest, res: Response, next: NextFunc
   }
 }
 
-export async function createProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function createProduct(req, res, next) {
   try {
     const { sku, name, category, description, specifications, assignedTo, requiredViews } = req.body;
 
@@ -81,14 +76,14 @@ export async function createProduct(req: AuthRequest, res: Response, next: NextF
       specifications: specifications ? new Map(Object.entries(specifications)) : new Map(),
       assignedTo: assignedTo || undefined,
       requiredViews: requiredViews || ['front', 'back', 'left', 'right', 'serial_number'],
-      createdBy: req.user!._id,
+      createdBy: req.user._id,
     });
 
     await createAuditLog({
       action: 'PRODUCT_CREATED',
       entityType: 'product',
       entityId: product._id,
-      user: req.user!,
+      user: req.user,
       details: { sku, name, category },
       req,
     });
@@ -99,7 +94,7 @@ export async function createProduct(req: AuthRequest, res: Response, next: NextF
   }
 }
 
-export async function updateProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function updateProduct(req, res, next) {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) throw createError('Product not found', 404);
@@ -126,7 +121,7 @@ export async function updateProduct(req: AuthRequest, res: Response, next: NextF
       action: 'PRODUCT_UPDATED',
       entityType: 'product',
       entityId: product._id,
-      user: req.user!,
+      user: req.user,
       details: { before, after: { name, category } },
       req,
     });
@@ -137,11 +132,11 @@ export async function updateProduct(req: AuthRequest, res: Response, next: NextF
   }
 }
 
-export async function uploadProductImage(req: MulterRequest, res: Response, next: NextFunction): Promise<void> {
+async function uploadProductImage(req, res, next) {
   try {
     if (!req.file) throw createError('Image file required', 400);
 
-    const { viewType, notes } = req.body as { viewType: ImageViewType; notes?: string };
+    const { viewType, notes } = req.body;
     if (!viewType) throw createError('viewType is required', 400);
 
     const product = await Product.findById(req.params.id);
@@ -155,25 +150,23 @@ export async function uploadProductImage(req: MulterRequest, res: Response, next
     const s3Key = buildS3Key(product.sku, viewType, req.file.originalname);
     const { s3Url } = await uploadImageToS3(req.file.buffer, req.file.mimetype, s3Key);
 
-    // Replace existing image for the same viewType, or add new
     const existingIdx = product.images.findIndex((img) => img.viewType === viewType);
     const imageEntry = {
       viewType,
       label: viewType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
       s3Key,
       s3Url,
-      uploadedBy: req.user!._id,
+      uploadedBy: req.user._id,
       uploadedAt: new Date(),
       notes: notes || '',
     };
 
     if (existingIdx >= 0) {
-      // Delete old image from S3
       const oldKey = product.images[existingIdx].s3Key;
-      if (oldKey) await deleteImageFromS3(oldKey).catch(() => {}); // non-fatal
-      product.images[existingIdx] = imageEntry as typeof product.images[0];
+      if (oldKey) await deleteImageFromS3(oldKey).catch(() => {});
+      product.images[existingIdx] = imageEntry;
     } else {
-      product.images.push(imageEntry as typeof product.images[0]);
+      product.images.push(imageEntry);
     }
 
     await product.save();
@@ -182,7 +175,7 @@ export async function uploadProductImage(req: MulterRequest, res: Response, next
       action: 'IMAGE_UPLOADED',
       entityType: 'product',
       entityId: product._id,
-      user: req.user!,
+      user: req.user,
       details: { sku: product.sku, viewType, s3Key },
       req,
     });
@@ -198,7 +191,7 @@ export async function uploadProductImage(req: MulterRequest, res: Response, next
   }
 }
 
-export async function verifyProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function verifyProduct(req, res, next) {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) throw createError('Product not found', 404);
@@ -217,7 +210,7 @@ export async function verifyProduct(req: AuthRequest, res: Response, next: NextF
     }
 
     product.status = 'verified';
-    product.verifiedBy = req.user!._id;
+    product.verifiedBy = req.user._id;
     product.verifiedAt = new Date();
     await product.save();
 
@@ -225,7 +218,7 @@ export async function verifyProduct(req: AuthRequest, res: Response, next: NextF
       action: 'PRODUCT_VERIFIED',
       entityType: 'product',
       entityId: product._id,
-      user: req.user!,
+      user: req.user,
       details: { sku: product.sku },
       req,
     });
@@ -236,18 +229,17 @@ export async function verifyProduct(req: AuthRequest, res: Response, next: NextF
   }
 }
 
-export async function dispatchProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function dispatchProduct(req, res, next) {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) throw createError('Product not found', 404);
 
-    // Hard block — enforce readiness before dispatch
     if (product.status !== 'verified') {
       await createAuditLog({
         action: 'DISPATCH_BLOCKED',
         entityType: 'product',
         entityId: product._id,
-        user: req.user!,
+        user: req.user,
         details: { sku: product.sku, reason: `Status is "${product.status}", not "verified"` },
         req,
       });
@@ -259,7 +251,7 @@ export async function dispatchProduct(req: AuthRequest, res: Response, next: Nex
 
     const { trackingNumber } = req.body;
     product.status = 'dispatched';
-    product.dispatchedBy = req.user!._id;
+    product.dispatchedBy = req.user._id;
     product.dispatchedAt = new Date();
     if (trackingNumber) product.trackingNumber = trackingNumber;
     await product.save();
@@ -268,7 +260,7 @@ export async function dispatchProduct(req: AuthRequest, res: Response, next: Nex
       action: 'PRODUCT_DISPATCHED',
       entityType: 'product',
       entityId: product._id,
-      user: req.user!,
+      user: req.user,
       details: { sku: product.sku, trackingNumber },
       req,
     });
@@ -279,7 +271,7 @@ export async function dispatchProduct(req: AuthRequest, res: Response, next: Nex
   }
 }
 
-export async function deleteProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function deleteProduct(req, res, next) {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) throw createError('Product not found', 404);
@@ -287,7 +279,6 @@ export async function deleteProduct(req: AuthRequest, res: Response, next: NextF
       throw createError('Cannot delete a dispatched product', 400);
     }
 
-    // Clean up S3 images
     await Promise.allSettled(product.images.map((img) => deleteImageFromS3(img.s3Key)));
     await product.deleteOne();
 
@@ -295,7 +286,7 @@ export async function deleteProduct(req: AuthRequest, res: Response, next: NextF
       action: 'PRODUCT_DELETED',
       entityType: 'product',
       entityId: product._id,
-      user: req.user!,
+      user: req.user,
       details: { sku: product.sku },
       req,
     });
@@ -306,7 +297,7 @@ export async function deleteProduct(req: AuthRequest, res: Response, next: NextF
   }
 }
 
-export async function getCategories(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function getCategories(_req, res, next) {
   try {
     const categories = await Product.distinct('category');
     res.json({ categories });
@@ -314,3 +305,15 @@ export async function getCategories(_req: AuthRequest, res: Response, next: Next
     next(err);
   }
 }
+
+module.exports = {
+  listProducts,
+  getProduct,
+  createProduct,
+  updateProduct,
+  uploadProductImage,
+  verifyProduct,
+  dispatchProduct,
+  deleteProduct,
+  getCategories,
+};

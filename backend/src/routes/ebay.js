@@ -1,14 +1,15 @@
-import { Router } from 'express';
-import { body, param } from 'express-validator';
-import { validate } from '../middleware/validate';
-import { authenticate } from '../middleware/auth';
-import { requireAdmin } from '../middleware/rbac';
-import {
+'use strict';
+const { Router } = require('express');
+const { body, param } = require('express-validator');
+const { validate } = require('../middleware/validate');
+const { authenticate } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/rbac');
+const {
   getEbayAuthUrl,
   handleEbayCallback,
   syncProductToEbay,
   getEbayStatus,
-} from '../controllers/ebayController';
+} = require('../controllers/ebayController');
 
 const router = Router();
 
@@ -32,4 +33,4 @@ router.post(
   syncProductToEbay
 );
 
-export default router;
+module.exports = router;

@@ -1,10 +1,9 @@
-import axios, { AxiosInstance } from 'axios';
-import logger from './logger';
+'use strict';
+const axios = require('axios');
+const logger = require('./logger');
 
 const EBAY_SANDBOX = process.env.EBAY_SANDBOX === 'true';
-const EBAY_BASE_URL = EBAY_SANDBOX
-  ? 'https://api.sandbox.ebay.com'
-  : 'https://api.ebay.com';
+const EBAY_BASE_URL = EBAY_SANDBOX ? 'https://api.sandbox.ebay.com' : 'https://api.ebay.com';
 const EBAY_AUTH_URL = EBAY_SANDBOX
   ? 'https://auth.sandbox.ebay.com/oauth2/authorize'
   : 'https://auth.ebay.com/oauth2/authorize';
@@ -12,36 +11,10 @@ const EBAY_TOKEN_URL = EBAY_SANDBOX
   ? 'https://api.sandbox.ebay.com/identity/v1/oauth2/token'
   : 'https://api.ebay.com/identity/v1/oauth2/token';
 
-export interface EbayTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresAt: Date;
-}
-
-export interface EbayListingPayload {
-  sku: string;
-  title: string;
-  description: string;
-  price: number;
-  currency: string;
-  quantity: number;
-  condition: string;
-  imageUrls: string[];
-  categoryId?: string;
-  aspects?: Record<string, string[]>;
-}
-
-export interface EbayListingResult {
-  listingId: string;
-  itemId?: string;
-  status: string;
-  url?: string;
-}
-
-export function getAuthorizationUrl(state: string): string {
+function getAuthorizationUrl(state) {
   const params = new URLSearchParams({
-    client_id: process.env.EBAY_APP_ID as string,
-    redirect_uri: process.env.EBAY_REDIRECT_URI as string,
+    client_id: process.env.EBAY_APP_ID,
+    redirect_uri: process.env.EBAY_REDIRECT_URI,
     response_type: 'code',
     scope: [
       'https://api.ebay.com/oauth/api_scope',
@@ -53,7 +26,7 @@ export function getAuthorizationUrl(state: string): string {
   return `${EBAY_AUTH_URL}?${params.toString()}`;
 }
 
-export async function exchangeCodeForTokens(code: string): Promise<EbayTokens> {
+async function exchangeCodeForTokens(code) {
   const credentials = Buffer.from(
     `${process.env.EBAY_APP_ID}:${process.env.EBAY_CERT_ID}`
   ).toString('base64');
@@ -63,7 +36,7 @@ export async function exchangeCodeForTokens(code: string): Promise<EbayTokens> {
     new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: process.env.EBAY_REDIRECT_URI as string,
+      redirect_uri: process.env.EBAY_REDIRECT_URI,
     }).toString(),
     {
       headers: {
@@ -80,7 +53,7 @@ export async function exchangeCodeForTokens(code: string): Promise<EbayTokens> {
   };
 }
 
-export async function refreshAccessToken(refreshToken: string): Promise<EbayTokens> {
+async function refreshAccessToken(refreshToken) {
   const credentials = Buffer.from(
     `${process.env.EBAY_APP_ID}:${process.env.EBAY_CERT_ID}`
   ).toString('base64');
@@ -107,7 +80,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<EbayToke
   };
 }
 
-function createEbayClient(accessToken: string): AxiosInstance {
+function createEbayClient(accessToken) {
   return axios.create({
     baseURL: EBAY_BASE_URL,
     headers: {
@@ -118,10 +91,7 @@ function createEbayClient(accessToken: string): AxiosInstance {
   });
 }
 
-export async function createOrUpdateInventoryItem(
-  accessToken: string,
-  payload: EbayListingPayload
-): Promise<void> {
+async function createOrUpdateInventoryItem(accessToken, payload) {
   const client = createEbayClient(accessToken);
   const body = {
     availability: {
@@ -141,10 +111,7 @@ export async function createOrUpdateInventoryItem(
   logger.info('eBay inventory item upserted', { sku: payload.sku });
 }
 
-export async function createOffer(
-  accessToken: string,
-  payload: EbayListingPayload
-): Promise<string> {
+async function createOffer(accessToken, payload) {
   const client = createEbayClient(accessToken);
   const body = {
     sku: payload.sku,
@@ -160,13 +127,10 @@ export async function createOffer(
   };
 
   const response = await client.post('/sell/inventory/v1/offer', body);
-  return response.data.offerId as string;
+  return response.data.offerId;
 }
 
-export async function publishOffer(
-  accessToken: string,
-  offerId: string
-): Promise<EbayListingResult> {
+async function publishOffer(accessToken, offerId) {
   const client = createEbayClient(accessToken);
   const response = await client.post(`/sell/inventory/v1/offer/${offerId}/publish`);
   return {
@@ -176,3 +140,12 @@ export async function publishOffer(
     url: `https://www.ebay.com/itm/${response.data.listingId}`,
   };
 }
+
+module.exports = {
+  getAuthorizationUrl,
+  exchangeCodeForTokens,
+  refreshAccessToken,
+  createOrUpdateInventoryItem,
+  createOffer,
+  publishOffer,
+};

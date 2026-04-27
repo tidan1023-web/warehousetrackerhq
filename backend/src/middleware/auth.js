@@ -1,33 +1,21 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { User, IUser } from '../models/User';
+'use strict';
+const jwt = require('jsonwebtoken');
+const { User } = require('../models/User');
 
-export interface AuthRequest extends Request {
-  user?: IUser;
-}
-
-interface JwtPayload {
-  id: string;
-  role: string;
-  employeeId: string;
-  iat: number;
-  exp: number;
-}
-
-export async function authenticate(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function authenticate(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       res.status(401).json({ error: 'Authorization token required' });
       return;
     }
 
     const token = authHeader.split(' ')[1];
-    const secret = process.env.JWT_SECRET as string;
+    const secret = process.env.JWT_SECRET;
 
-    let decoded: JwtPayload;
+    let decoded;
     try {
-      decoded = jwt.verify(token, secret) as JwtPayload;
+      decoded = jwt.verify(token, secret);
     } catch (err) {
       res.status(401).json({ error: 'Invalid or expired token' });
       return;
@@ -46,22 +34,24 @@ export async function authenticate(req: AuthRequest, res: Response, next: NextFu
   }
 }
 
-export function generateTokens(user: IUser): { accessToken: string; refreshToken: string } {
+function generateTokens(user) {
   const payload = {
     id: user._id.toString(),
     role: user.role,
     employeeId: user.employeeId,
   };
 
-  const accessToken = jwt.sign(payload, process.env.JWT_SECRET as string, {
+  const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '24h',
   });
 
   const refreshToken = jwt.sign(
     { id: user._id.toString() },
-    process.env.JWT_REFRESH_SECRET as string,
+    process.env.JWT_REFRESH_SECRET,
     { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
   );
 
   return { accessToken, refreshToken };
 }
+
+module.exports = { authenticate, generateTokens };

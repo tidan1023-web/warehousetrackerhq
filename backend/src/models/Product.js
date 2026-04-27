@@ -1,54 +1,9 @@
-import mongoose, { Document, Schema } from 'mongoose';
+'use strict';
+const mongoose = require('mongoose');
 
-export type ProductStatus = 'pending' | 'images_uploaded' | 'verified' | 'dispatched' | 'defective';
+const { Schema } = mongoose;
 
-export type ImageViewType =
-  | 'front'
-  | 'back'
-  | 'left'
-  | 'right'
-  | 'top'
-  | 'serial_number'
-  | 'packaging'
-  | 'custom';
-
-export interface IProductImage {
-  viewType: ImageViewType;
-  label: string;
-  s3Key: string;
-  s3Url: string;
-  uploadedBy: mongoose.Types.ObjectId;
-  uploadedAt: Date;
-  notes?: string;
-}
-
-export interface IProduct extends Document {
-  _id: mongoose.Types.ObjectId;
-  sku: string;
-  name: string;
-  category: string;
-  description?: string;
-  specifications: Map<string, string>;
-  status: ProductStatus;
-  assignedTo?: mongoose.Types.ObjectId;
-  images: IProductImage[];
-  requiredViews: ImageViewType[];
-  imageVerificationComplete: boolean;
-  verifiedBy?: mongoose.Types.ObjectId;
-  verifiedAt?: Date;
-  dispatchedBy?: mongoose.Types.ObjectId;
-  dispatchedAt?: Date;
-  trackingNumber?: string;
-  ebayListingId?: string;
-  ebayItemId?: string;
-  ebaySynced: boolean;
-  ebaySyncedAt?: Date;
-  createdBy: mongoose.Types.ObjectId;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const productImageSchema = new Schema<IProductImage>(
+const productImageSchema = new Schema(
   {
     viewType: {
       type: String,
@@ -65,7 +20,7 @@ const productImageSchema = new Schema<IProductImage>(
   { _id: true }
 );
 
-const productSchema = new Schema<IProduct>(
+const productSchema = new Schema(
   {
     sku: {
       type: String,
@@ -126,4 +81,6 @@ productSchema.pre('save', function (next) {
   next();
 });
 
-export const Product = mongoose.model<IProduct>('Product', productSchema);
+const Product = mongoose.model('Product', productSchema);
+
+module.exports = { Product };

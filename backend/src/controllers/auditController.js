@@ -1,8 +1,7 @@
-import { Response, NextFunction } from 'express';
-import { AuthRequest } from '../middleware/auth';
-import { AuditLog } from '../models/AuditLog';
+'use strict';
+const { AuditLog } = require('../models/AuditLog');
 
-export async function listAuditLogs(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function listAuditLogs(req, res, next) {
   try {
     const {
       action,
@@ -15,19 +14,19 @@ export async function listAuditLogs(req: AuthRequest, res: Response, next: NextF
       limit = '50',
     } = req.query;
 
-    const query: Record<string, unknown> = {};
+    const query = {};
     if (action) query.action = action;
     if (entityType) query.entityType = entityType;
     if (entityId) query.entityId = entityId;
     if (userId) query.userId = userId;
     if (startDate || endDate) {
       query.timestamp = {};
-      if (startDate) (query.timestamp as Record<string, unknown>).$gte = new Date(startDate as string);
-      if (endDate) (query.timestamp as Record<string, unknown>).$lte = new Date(endDate as string);
+      if (startDate) query.timestamp.$gte = new Date(startDate);
+      if (endDate) query.timestamp.$lte = new Date(endDate);
     }
 
-    const pageNum = Math.max(1, parseInt(page as string, 10));
-    const limitNum = Math.min(200, Math.max(1, parseInt(limit as string, 10)));
+    const pageNum = Math.max(1, parseInt(page, 10));
+    const limitNum = Math.min(200, Math.max(1, parseInt(limit, 10)));
     const skip = (pageNum - 1) * limitNum;
 
     const [logs, total] = await Promise.all([
@@ -48,7 +47,7 @@ export async function listAuditLogs(req: AuthRequest, res: Response, next: NextF
   }
 }
 
-export async function getEntityAuditTrail(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+async function getEntityAuditTrail(req, res, next) {
   try {
     const { entityType, entityId } = req.params;
     const logs = await AuditLog.find({ entityType, entityId })
@@ -59,3 +58,5 @@ export async function getEntityAuditTrail(req: AuthRequest, res: Response, next:
     next(err);
   }
 }
+
+module.exports = { listAuditLogs, getEntityAuditTrail };

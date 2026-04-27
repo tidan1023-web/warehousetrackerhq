@@ -1,23 +1,23 @@
-import 'dotenv/config';
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import morgan from 'morgan';
-import * as Sentry from '@sentry/node';
-import { connectDatabase } from './config/database';
-import { apiLimiter } from './middleware/rateLimiter';
-import { errorHandler, notFound } from './middleware/errorHandler';
-import { User } from './models/User';
-import logger from './utils/logger';
+'use strict';
+require('dotenv/config');
+const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
+const morgan = require('morgan');
+const Sentry = require('@sentry/node');
+const { connectDatabase } = require('./config/database');
+const { apiLimiter } = require('./middleware/rateLimiter');
+const { errorHandler, notFound } = require('./middleware/errorHandler');
+const { User } = require('./models/User');
+const logger = require('./utils/logger');
 
-import authRoutes from './routes/auth';
-import productRoutes from './routes/products';
-import defectRoutes from './routes/defects';
-import auditRoutes from './routes/audit';
-import dashboardRoutes from './routes/dashboard';
-import ebayRoutes from './routes/ebay';
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+const defectRoutes = require('./routes/defects');
+const auditRoutes = require('./routes/audit');
+const dashboardRoutes = require('./routes/dashboard');
+const ebayRoutes = require('./routes/ebay');
 
-// Initialize Sentry before everything else
 if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
@@ -28,10 +28,8 @@ if (process.env.SENTRY_DSN) {
 
 const app = express();
 
-// Trust reverse proxy (Render, nginx)
 app.set('trust proxy', 1);
 
-// Security headers
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -45,7 +43,6 @@ app.use(
   })
 );
 
-// CORS — allow configured frontend origin only
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3001',
@@ -63,7 +60,6 @@ app.use(
   })
 );
 
-// Request logging
 app.use(
   morgan('combined', {
     stream: { write: (msg) => logger.info(msg.trim()) },
@@ -71,14 +67,11 @@ app.use(
   })
 );
 
-// Body parsing
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-// Global rate limiter
 app.use('/api/', apiLimiter);
 
-// Health check — no auth, no rate limit, for Render
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
@@ -87,7 +80,6 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/defects', defectRoutes);
@@ -95,13 +87,10 @@ app.use('/api/audit', auditRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/ebay', ebayRoutes);
 
-// 404 handler
 app.use(notFound);
-
-// Global error handler (must be last)
 app.use(errorHandler);
 
-async function bootstrap(): Promise<void> {
+async function bootstrap() {
   await connectDatabase();
   await seedAdminIfNeeded();
 
@@ -114,7 +103,7 @@ async function bootstrap(): Promise<void> {
   });
 }
 
-async function seedAdminIfNeeded(): Promise<void> {
+async function seedAdminIfNeeded() {
   const adminEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
   const adminPassword = process.env.BOOTSTRAP_ADMIN_PASSWORD;
   const adminEmpId = process.env.BOOTSTRAP_ADMIN_EMPLOYEE_ID;
@@ -136,8 +125,8 @@ async function seedAdminIfNeeded(): Promise<void> {
 }
 
 bootstrap().catch((err) => {
-  logger.error('Failed to start server', { error: (err as Error).message });
+  logger.error('Failed to start server', { error: err.message });
   process.exit(1);
 });
 
-export default app;
+module.exports = app;

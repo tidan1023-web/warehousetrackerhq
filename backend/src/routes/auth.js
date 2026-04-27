@@ -1,17 +1,18 @@
-import { Router } from 'express';
-import { body } from 'express-validator';
-import { validate } from '../middleware/validate';
-import { authenticate } from '../middleware/auth';
-import { requireAdmin } from '../middleware/rbac';
-import { authLimiter } from '../middleware/rateLimiter';
-import {
+'use strict';
+const { Router } = require('express');
+const { body } = require('express-validator');
+const { validate } = require('../middleware/validate');
+const { authenticate } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/rbac');
+const { authLimiter } = require('../middleware/rateLimiter');
+const {
   login,
   refreshToken,
   getMe,
   createUser,
   listUsers,
   deactivateUser,
-} from '../controllers/authController';
+} = require('../controllers/authController');
 
 const router = Router();
 
@@ -33,7 +34,6 @@ router.post(
 
 router.get('/me', authenticate, getMe);
 
-// Admin-only user management
 router.post(
   '/users',
   authenticate,
@@ -57,4 +57,4 @@ router.post(
 router.get('/users', authenticate, requireAdmin, listUsers);
 router.patch('/users/:id/deactivate', authenticate, requireAdmin, deactivateUser);
 
-export default router;
+module.exports = router;
