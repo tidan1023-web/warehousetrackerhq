@@ -1,24 +1,12 @@
-'use strict';
-
-function requireRole(...roles) {
+const authorize = (...roles) => {
   return (req, res, next) => {
-    if (!req.user) {
-      res.status(401).json({ error: 'Authentication required' });
-      return;
-    }
     if (!roles.includes(req.user.role)) {
-      res.status(403).json({
-        error: 'Insufficient permissions',
-        required: roles,
-        current: req.user.role,
+      return res.status(403).json({
+        message: `Access denied. Requires role: ${roles.join(' or ')}`,
       });
-      return;
     }
     next();
   };
-}
+};
 
-const requireAdmin = requireRole('admin');
-const requireStaff = requireRole('admin', 'staff');
-
-module.exports = { requireRole, requireAdmin, requireStaff };
+module.exports = { authorize };

@@ -1,198 +1,370 @@
-# Warehouse Inventory HQ
+# Pico Bello Projekte — BOQ System
 
-Production-ready full-stack system for managing medical hardware inventory and delivery accountability.
+**Phase 1** — Full-stack foundation: authentication, company settings, project management, and dashboard.
 
 ---
 
-## Architecture
+## Overview
 
-```
-warehousetrackerhq/
-├── backend/          # Node.js + Express API (deploy to Render)
-└── frontend/         # Next.js 14 App Router (deploy to Vercel)
-```
+The **Pico Bello Projekte BOQ System** is a web-based Bill of Quantities (BOQ) management platform for construction and project management firms. Phase 1 establishes the core infrastructure: multi-role authentication, company identity management, project tracking, and an analytics dashboard.
 
-**Stack:**
-- **Frontend:** Next.js 14, React 18, TypeScript, Tailwind CSS, TanStack Query
-- **Backend:** Node.js, Express, TypeScript
-- **Database:** MongoDB (Mongoose)
-- **Storage:** AWS S3 (AES-256 encrypted image uploads)
-- **Auth:** JWT (access + refresh tokens)
-- **Monitoring:** Sentry
-- **Deployment:** Render (backend) + Vercel (frontend)
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 18 (JavaScript), Vite, Tailwind CSS |
+| Backend | Node.js, Express.js |
+| Database | MongoDB (Mongoose ODM) |
+| Auth | JWT + bcrypt |
+| File Storage | Cloudinary |
+| Deployment | Render (backend + frontend static) |
 
 ---
 
 ## Features
 
-### Authentication & RBAC
-- JWT-based login with access (24h) + refresh (7d) tokens
-- Two roles: **Admin** and **Staff**
-- Admin: full access — create products, verify, dispatch, manage users, view audit trail
-- Staff: upload images, log defects, view inventory
+### 1. Authentication
+- User registration and login with JWT tokens (7-day expiry)
+- bcrypt password hashing (12 rounds)
+- Four roles: **Admin**, **QS** (Quantity Surveyor), **Project Manager**, **Client**
+- Protected routes enforced server-side (middleware) and client-side (React)
+- Token stored in `localStorage`; auto-redirect to `/login` on 401
 
-### Mandatory Image Verification
-- 5 required image slots per product: **Front, Back, Left, Right, Serial Number**
-- Upload via camera (mobile) or drag-and-drop
-- Progress bar shows completion status
-- Dispatch is **hard-blocked** until all required images are uploaded AND an admin verifies
+### 2. Company Settings (Admin only)
+- Full company profile: name, address, contact details, website
+- Legal identifiers: CAC number, TIN, VAT
+- Multiple bank accounts (add / remove)
+- Payment instructions (appears on invoices in Phase 2)
+- Logo, signature, and stamp upload via **Cloudinary**
 
-### Product Lifecycle
-```
-PENDING → IMAGES_UPLOADED → VERIFIED → DISPATCHED
-              ↕
-           DEFECTIVE
-```
+### 3. Projects
+- Create, read, update, delete projects
+- Fields: name, client, location, budget (with currency), start/end date, status, description
+- Statuses: `planning`, `active`, `on_hold`, `completed`, `cancelled`
+- Role-based editing (Admin, PM, QS can edit; Client is read-only)
+- Search and status filter
 
-### Defect Logging
-- Staff or admin can log defects with severity (low/medium/high/**critical**)
-- Attach up to 6 images per defect
-- Admin acknowledges and resolves defects
-- High/critical defects auto-mark product as `DEFECTIVE`
-
-### Inventory Management
-- SKU-based tracking (unique, validated format)
-- Dynamic specifications editor (custom key-value pairs)
-- Category filtering, search, pagination
-- Employee assignment per product
-
-### eBay Integration
-- OAuth 2.0 authorization flow
-- Push verified/dispatched products directly to eBay via Inventory + Offer API
-- Product images, title, description, and specs sync automatically
-- Listing status tracked per product
-
-### Audit Trail (Immutable)
-- Every action is logged: who, what, when, from where
-- Records are **append-only** — schema-level hooks block updates/deletes
-- Filterable by action, entity type, date range
-- CSV export for compliance
-
-### Dashboard
-- Real-time stats: pending/verified/dispatched/defective counts
-- "Ready to Ship" and "Needs Attention" lists
-- Recent activity feed
-- Critical alerts banner
+### 4. Dashboard
+- Project statistics: total, active, planning, completed, on-hold, cancelled
+- Invoice summary placeholder (Phase 2)
+- Pending approvals placeholder (Phase 2)
+- Recent projects list
 
 ---
 
-## Quick Start
+## User Roles & Permissions
+
+| Action | Admin | QS | Project Manager | Client |
+|---|:---:|:---:|:---:|:---:|
+| View dashboard | ✓ | ✓ | ✓ | ✓ |
+| View projects | ✓ | ✓ | ✓ | ✓ |
+| Create / edit projects | ✓ | ✓ | ✓ | — |
+| Delete projects | ✓ | — | — | — |
+| View company settings | ✓ | ✓ | ✓ | ✓ |
+| Edit company settings | ✓ | — | — | — |
+| Upload brand assets | ✓ | — | — | — |
+
+---
+
+## API Routes
+
+### Auth — `/api/auth`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/register` | Public | Register new user |
+| POST | `/login` | Public | Login, returns JWT |
+| GET | `/me` | Any | Get current user |
+
+### Company — `/api/company`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Any | Get company settings |
+| PUT | `/` | Admin | Save / update company settings |
+| POST | `/upload/:type` | Admin | Upload logo/signature/stamp (`type` = `logo`, `signature`, `stamp`) |
+
+### Projects — `/api/projects`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Any | List all projects (optional `?status=` filter) |
+| GET | `/:id` | Any | Get single project |
+| POST | `/` | Admin/PM/QS | Create project |
+| PUT | `/:id` | Admin/PM/QS | Update project |
+| DELETE | `/:id` | Admin | Delete project |
+
+### Dashboard — `/api/dashboard`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/summary` | Any | Stats + 5 recent projects |
+
+---
+
+## MongoDB Schema
+
+### `users`
+```
+_id          ObjectId
+name         String (required)
+email        String (required, unique, lowercase)
+password     String (hashed, bcrypt 12 rounds)
+role         Enum: admin | qs | project_manager | client
+isActive     Boolean (default: true)
+createdAt    Date
+```
+
+### `companysettings`
+```
+_id                 ObjectId
+companyName         String (required)
+logo                String (Cloudinary URL)
+address             String
+phone               String
+whatsapp            String
+email               String
+website             String
+cacNumber           String
+tin                 String
+vat                 String
+bankDetails         Array of { bankName, accountName, accountNumber, sortCode }
+paymentInstructions String
+signature           String (Cloudinary URL)
+stamp               String (Cloudinary URL)
+updatedBy           ObjectId → users
+updatedAt           Date
+```
+
+### `projects`
+```
+_id         ObjectId
+name        String (required)
+client      String (required)
+location    String
+budget      Number
+currency    String (default: NGN)
+startDate   Date
+endDate     Date
+status      Enum: planning | active | on_hold | completed | cancelled
+description String
+createdBy   ObjectId → users
+createdAt   Date
+updatedAt   Date
+```
+
+---
+
+## Folder Structure
+
+```
+warehousetrackerhq/
+├── backend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── database.js        MongoDB connection
+│   │   │   └── cloudinary.js      Cloudinary + multer setup
+│   │   ├── controllers/
+│   │   │   ├── authController.js
+│   │   │   ├── companyController.js
+│   │   │   ├── projectController.js
+│   │   │   └── dashboardController.js
+│   │   ├── middleware/
+│   │   │   ├── auth.js            JWT verify middleware
+│   │   │   └── rbac.js            Role-based access middleware
+│   │   ├── models/
+│   │   │   ├── User.js
+│   │   │   ├── Company.js
+│   │   │   └── Project.js
+│   │   ├── routes/
+│   │   │   ├── auth.js
+│   │   │   ├── company.js
+│   │   │   ├── projects.js
+│   │   │   └── dashboard.js
+│   │   └── index.js               Express server entry
+│   ├── .env.example
+│   ├── package.json
+│   └── render.yaml
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── layout/
+│   │   │   │   ├── AppLayout.jsx
+│   │   │   │   ├── Sidebar.jsx
+│   │   │   │   └── Header.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx    Auth state + login/logout/register
+│   │   ├── pages/
+│   │   │   ├── auth/
+│   │   │   │   ├── Login.jsx
+│   │   │   │   └── Register.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Projects.jsx
+│   │   │   └── CompanySettings.jsx
+│   │   ├── services/
+│   │   │   └── api.js             Axios instance with interceptors
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── index.html
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── package.json
+│   ├── .env.example
+│   └── render.yaml
+│
+├── .gitignore
+└── README.md
+```
+
+---
+
+## Auth Flow
+
+```
+Register / Login
+      │
+      ▼
+POST /api/auth/register or /login
+      │
+      ▼  JWT token returned
+Store token in localStorage
+      │
+      ▼
+All API requests include: Authorization: Bearer <token>
+      │
+      ▼  authenticate middleware runs
+Find user by decoded ID, attach to req.user
+      │
+      ▼  authorize(...roles) middleware (where applicable)
+Check req.user.role is in allowed list
+      │
+      ▼
+Controller handles request
+```
+
+On 401 → Axios interceptor clears localStorage and redirects to `/login`.
+
+---
+
+## Setup Instructions
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB Atlas cluster (or local MongoDB)
-- AWS S3 bucket with IAM credentials
-- (Optional) eBay Developer account
+- Node.js ≥ 18
+- MongoDB Atlas cluster (free tier is fine)
+- Cloudinary account (free tier)
 
-### Backend
+### 1. Backend
 
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Fill in MONGODB_URI, JWT_SECRET, AWS_*, and optionally EBAY_* and SENTRY_DSN
-npm run dev
 ```
 
-### Frontend
+Edit `.env`:
+```
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/pico-bello-boq
+JWT_SECRET=<random 64-char string>
+CLOUDINARY_CLOUD_NAME=<from cloudinary.com/console>
+CLOUDINARY_API_KEY=<from cloudinary.com/console>
+CLOUDINARY_API_SECRET=<from cloudinary.com/console>
+CLIENT_URL=http://localhost:5173
+```
+
+```bash
+npm run dev   # starts on http://localhost:5000
+```
+
+### 2. Frontend
 
 ```bash
 cd frontend
 npm install
-cp .env.local.example .env.local
-# Set NEXT_PUBLIC_API_URL=http://localhost:5000
-npm run dev
+# In development, Vite proxies /api → localhost:5000 automatically
+npm run dev   # starts on http://localhost:5173
 ```
 
-Visit `http://localhost:3000`. The backend bootstrap admin is created from `.env` on first run.
+For production, copy `.env.example` to `.env` and set:
+```
+VITE_API_URL=https://your-api.onrender.com/api
+```
 
 ---
 
-## Deployment
+## Deployment (Render)
 
-### Backend → Render
+### Backend (Web Service)
+1. Create a **Web Service** on [render.com](https://render.com), root directory `backend`
+2. Build command: `npm install`
+3. Start command: `npm start`
+4. Add all environment variables from `backend/.env.example`
 
-1. Push this repo to GitHub
-2. Create a new **Web Service** on Render, pointing to `/backend`
-3. Configure all environment variables from `backend/.env.example`
-4. Build command: `npm install && npm run build`
-5. Start command: `npm start`
+### Frontend (Static Site)
+1. Create a **Static Site** on Render, root directory `frontend`
+2. Build command: `npm install && npm run build`
+3. Publish directory: `dist`
+4. Add env var: `VITE_API_URL=https://your-backend.onrender.com/api`
+5. Add a redirect rule: `/* → /index.html` (for SPA routing)
 
-The `render.yaml` in `/backend` automates service configuration.
-
-### Frontend → Vercel
-
-1. Import the repo on Vercel, set **Root Directory** to `frontend`
-2. Set environment variable: `NEXT_PUBLIC_API_URL=https://your-api.onrender.com`
-3. Deploy
+The `render.yaml` files in each subdirectory automate this configuration.
 
 ---
 
-## Security Measures
+## Data Flow
 
-| Measure | Implementation |
+```
+Browser (React)
+   │  axios request with JWT header
+   ▼
+Express API (Node.js)
+   │  authenticate middleware → verify JWT
+   │  authorize middleware  → check role
+   ▼
+Controller → Mongoose query
+   ▼
+MongoDB Atlas
+   │  (file uploads bypass Express via multer-storage-cloudinary)
+   ▼
+Cloudinary CDN  ←──  logo / signature / stamp
+```
+
+---
+
+## Limitations (Phase 1)
+
+| Area | Status |
 |---|---|
-| HTTPS | Enforced via Render/Vercel + HSTS header |
-| Secure headers | `helmet` (CSP, HSTS, X-Frame-Options, etc.) |
-| Input validation | `express-validator` on all endpoints |
-| File upload validation | MIME type check + magic-byte verification + 10MB limit |
-| Image storage | AWS S3 with AES-256 server-side encryption |
-| JWT | Short-lived access tokens (24h) + refresh tokens |
-| RBAC | Middleware-enforced role checks on every protected route |
-| Rate limiting | Auth: 10 req/15min · API: 120 req/min · Upload: 30 req/min |
-| Audit logs | Immutable — schema hooks block any update/delete |
-| CORS | Allowlist of known frontend origins only |
-| Error monitoring | Sentry integration |
-| Secrets | Environment variables only — never committed |
+| BOQ line items | Phase 2 |
+| Invoice generation (PDF) | Phase 2 |
+| Approval workflow | Phase 2 |
+| Email notifications | Phase 2 |
+| Client portal (separate view) | Phase 2 |
+| Audit/activity log | Phase 2 |
+| Password reset | Phase 2 |
+| Multi-company / tenant | Not planned |
+| Refresh tokens | Single token (7d expiry) |
+| Rate limiting | Not implemented in Phase 1 |
 
 ---
 
-## API Reference
+## Environment Variables Reference
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| POST | `/api/auth/login` | Public | Login |
-| GET | `/api/auth/me` | Any | Current user |
-| POST | `/api/auth/users` | Admin | Create user |
-| GET | `/api/products` | Any | List products |
-| POST | `/api/products` | Admin | Create product |
-| GET | `/api/products/:id` | Any | Get product detail |
-| PATCH | `/api/products/:id` | Admin | Update product |
-| POST | `/api/products/:id/images` | Any | Upload image |
-| POST | `/api/products/:id/verify` | Admin | Verify product |
-| POST | `/api/products/:id/dispatch` | Admin | Dispatch product |
-| GET | `/api/defects` | Any | List defects |
-| POST | `/api/defects` | Any | Log defect |
-| GET | `/api/audit` | Admin | Audit trail |
-| GET | `/api/dashboard/stats` | Any | Dashboard data |
-| GET | `/api/ebay/auth-url` | Admin | Get eBay OAuth URL |
-| POST | `/api/ebay/products/:id/sync` | Admin | Sync to eBay |
+### Backend
+| Variable | Required | Description |
+|---|---|---|
+| `PORT` | No | Server port (default: 5000) |
+| `NODE_ENV` | No | `development` or `production` |
+| `MONGODB_URI` | **Yes** | MongoDB Atlas connection string |
+| `JWT_SECRET` | **Yes** | Secret for signing JWTs |
+| `JWT_EXPIRES_IN` | No | Token expiry (default: `7d`) |
+| `CLOUDINARY_CLOUD_NAME` | **Yes** | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | **Yes** | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | **Yes** | Cloudinary API secret |
+| `CLIENT_URL` | No | Frontend origin for CORS (default: `http://localhost:5173`) |
 
----
-
-## HIPAA-Conscious Design
-
-- No sensitive patient data is stored anywhere in the system
-- Products track hardware/equipment only — no PHI
-- All data encrypted in transit (TLS) and at rest (S3 AES-256, MongoDB encryption)
-- Audit trail maintained for compliance reviews
-- Access controls enforced via RBAC
-- Environment variable management for all secrets
-
----
-
-## Database Backup Strategy
-
-For MongoDB Atlas (recommended):
-1. Enable **Continuous Cloud Backup** in Atlas cluster settings
-2. Configure hourly snapshots with 7-day retention
-3. Test restore procedures quarterly
-4. Point-in-time recovery available to any second within retention window
-
-For self-hosted MongoDB:
-```bash
-# Daily backup script
-mongodump --uri="$MONGODB_URI" --out="/backups/$(date +%Y-%m-%d)"
-# Store in S3 with versioning enabled
-aws s3 sync /backups/ s3://your-backup-bucket/mongodb/
-```
+### Frontend
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_API_URL` | No | API base URL (uses Vite proxy `/api` in dev) |
