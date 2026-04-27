@@ -94,6 +94,7 @@ export default function UsersPage() {
           </div>
         ) : (
           <Card padding="none">
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
@@ -144,6 +145,7 @@ export default function UsersPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </Card>
         )}
       </div>
