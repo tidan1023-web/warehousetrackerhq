@@ -156,7 +156,7 @@ updatedAt   Date
 ## Folder Structure
 
 ```
-warehousetrackerhq/
+boq-tracker/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
