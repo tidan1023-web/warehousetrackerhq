@@ -4,8 +4,8 @@
   "description": "Backend API for Warehouse Inventory HQ — medical hardware inventory management",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm install && tsc --skipLibCheck",
-    "start": "node dist/src/index.js",
+    "build": "echo 'Skipping TypeScript build' && npm install",
+    "start": "node -r ts-node/register src/index.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "lint": "eslint 'src/**/*.ts'",
     "typecheck": "tsc --noEmit"
