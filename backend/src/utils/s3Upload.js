@@ -2,7 +2,7 @@
 const { PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { v4: uuidv4 } = require('uuid');
-const { s3Client, S3_BUCKET, ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES, S3_PRESIGNED_EXPIRES } = require('../config/s3');
+const { s3Client, S3_BUCKET, ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES, S3_PRESIGNED_EXPIRES, S3_CONFIGURED } = require('../config/s3');
 const { createError } = require('../middleware/errorHandler');
 const logger = require('./logger');
 
@@ -35,6 +35,7 @@ function validateImageBuffer(buffer, mimetype, size) {
 }
 
 async function uploadImageToS3(buffer, mimetype, s3Key) {
+  if (!S3_CONFIGURED) throw createError('Image upload is not configured (AWS S3 credentials missing)', 503);
   const command = new PutObjectCommand({
     Bucket: S3_BUCKET,
     Key: s3Key,
@@ -55,6 +56,7 @@ async function uploadImageToS3(buffer, mimetype, s3Key) {
 }
 
 async function deleteImageFromS3(s3Key) {
+  if (!S3_CONFIGURED) return;
   const command = new DeleteObjectCommand({ Bucket: S3_BUCKET, Key: s3Key });
   await s3Client.send(command);
   logger.info('Image deleted from S3', { s3Key });
