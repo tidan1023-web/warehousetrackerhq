@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -48,4 +51,28 @@ const getMe = async (req, res) => {
   res.json({ user: req.user });
 };
 
-module.exports = { register, login, getMe };
+const googleAuth = async (req, res) => {
+  const { credential } = req.body;
+  if (!credential) return res.status(400).json({ message: 'Google credential required' });
+
+  const ticket = await googleClient.verifyIdToken({
+    idToken: credential,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const { name, email, picture } = ticket.getPayload();
+
+  let user = await User.findOne({ email });
+  if (!user) {
+    // Auto-register new Google users as 'client' role
+    const randomPw = Math.random().toString(36) + Math.random().toString(36);
+    user = await User.create({ name, email, password: randomPw, role: 'client', avatar: picture });
+  }
+
+  if (!user.isActive) return res.status(403).json({ message: 'Account deactivated' });
+
+  const token = generateToken(user._id);
+  res.json({ message: 'Google login successful', token, user });
+};
+
+module.exports = { register, login, getMe, googleAuth };

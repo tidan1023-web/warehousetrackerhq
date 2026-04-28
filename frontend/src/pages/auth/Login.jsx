@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../context/AuthContext';
 import { Building2 } from 'lucide-react';
 
@@ -7,7 +8,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -16,7 +17,7 @@ export default function Login() {
     setLoading(true);
     try {
       await login(form.email, form.password);
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       setError(err.response?.data?.message ?? 'Login failed. Please try again.');
     } finally {
@@ -39,6 +40,30 @@ export default function Login() {
         {/* Card */}
         <div className="bg-white rounded-2xl p-8 shadow-2xl">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Sign in to your account</h2>
+
+          {/* Google Sign-In */}
+          <div className="flex justify-center mb-4">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                try {
+                  await googleLogin(credentialResponse.credential);
+                  navigate('/app/dashboard');
+                } catch {
+                  setError('Google sign-in failed. Please try again.');
+                }
+              }}
+              onError={() => setError('Google sign-in failed. Please try again.')}
+              width="100%"
+              text="signin_with"
+              shape="rectangular"
+            />
+          </div>
+
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400 font-medium">or continue with email</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">

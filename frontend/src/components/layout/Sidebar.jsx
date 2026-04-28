@@ -1,12 +1,42 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, FolderOpen, Settings, LogOut, Building2 } from 'lucide-react';
+import {
+  LayoutDashboard, FolderOpen, Settings, LogOut, Building2,
+  BookOpen, HardHat, Package, BarChart2, FileSpreadsheet,
+} from 'lucide-react';
 
-const NAV = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/projects', icon: FolderOpen, label: 'Projects' },
-  { to: '/settings', icon: Settings, label: 'Company Settings', adminOnly: true },
+const NAV_SECTIONS = [
+  {
+    title: 'General',
+    items: [
+      { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/app/projects', icon: FolderOpen, label: 'Projects' },
+    ],
+  },
+  {
+    title: 'Pricing Libraries',
+    roles: ['admin', 'qs', 'project_manager'],
+    items: [
+      { to: '/app/qs-pricing', icon: BookOpen, label: 'QS Prices', roles: ['admin', 'qs'] },
+      { to: '/app/artisan-pricing', icon: HardHat, label: 'Artisan Rates', roles: ['admin', 'qs'] },
+      { to: '/app/material-pricing', icon: Package, label: 'Materials', roles: ['admin', 'qs'] },
+      { to: '/app/pricing-intelligence', icon: BarChart2, label: 'Price Intelligence' },
+    ],
+  },
+  {
+    title: 'BOQ',
+    roles: ['admin', 'qs', 'project_manager'],
+    items: [
+      { to: '/app/boq', icon: FileSpreadsheet, label: 'BOQ Builder' },
+    ],
+  },
+  {
+    title: 'Admin',
+    items: [
+      { to: '/app/settings', icon: Settings, label: 'Company Settings', roles: ['admin'] },
+    ],
+  },
 ];
 
 const ROLE_LABEL = {
@@ -25,6 +55,8 @@ export default function Sidebar() {
     navigate('/login');
   };
 
+  const canSee = (roles) => !roles || roles.includes(user?.role);
+
   return (
     <aside className="w-64 min-h-screen bg-primary-900 text-white flex flex-col shrink-0">
       {/* Brand */}
@@ -41,24 +73,36 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {NAV.map(({ to, icon: Icon, label, adminOnly }) => {
-          if (adminOnly && user?.role !== 'admin') return null;
+      <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto scrollbar-hide">
+        {NAV_SECTIONS.map((section) => {
+          if (!canSee(section.roles)) return null;
+          const visibleItems = section.items.filter((item) => canSee(item.roles));
+          if (visibleItems.length === 0) return null;
+
           return (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-blue-200 hover:bg-primary-800 hover:text-white'
-                }`
-              }
-            >
-              <Icon size={18} className="shrink-0" />
-              {label}
-            </NavLink>
+            <div key={section.title}>
+              <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider px-3 mb-1">
+                {section.title}
+              </p>
+              <div className="space-y-0.5">
+                {visibleItems.map(({ to, icon: Icon, label }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-blue-200 hover:bg-primary-800 hover:text-white'
+                      }`
+                    }
+                  >
+                    <Icon size={17} className="shrink-0" />
+                    {label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           );
         })}
       </nav>

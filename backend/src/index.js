@@ -3,11 +3,27 @@ require('express-async-errors');
 
 const express = require('express');
 const cors = require('cors');
+const webpush = require('web-push');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/auth');
 const companyRoutes = require('./routes/company');
 const projectRoutes = require('./routes/projects');
 const dashboardRoutes = require('./routes/dashboard');
+const qsPricesRoutes = require('./routes/qsPrices');
+const artisanPricesRoutes = require('./routes/artisanPrices');
+const materialPricesRoutes = require('./routes/materialPrices');
+const pricingRoutes = require('./routes/pricing');
+const boqRoutes = require('./routes/boq');
+const notificationRoutes = require('./routes/notifications');
+
+// Configure web-push VAPID keys
+if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    `mailto:${process.env.VAPID_EMAIL || 'admin@picobello.com'}`,
+    process.env.VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  );
+}
 
 const app = express();
 
@@ -26,10 +42,21 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'pico-bello-boq-api', timestamp: new Date().toISOString() });
 });
 
+// Expose VAPID public key for frontend subscription
+app.get('/api/push/vapid-public-key', (_req, res) => {
+  res.json({ publicKey: process.env.VAPID_PUBLIC_KEY || '' });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/qs-prices', qsPricesRoutes);
+app.use('/api/artisan-prices', artisanPricesRoutes);
+app.use('/api/material-prices', materialPricesRoutes);
+app.use('/api/pricing', pricingRoutes);
+app.use('/api/boq', boqRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

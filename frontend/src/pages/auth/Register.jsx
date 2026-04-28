@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../context/AuthContext';
 import { Building2 } from 'lucide-react';
 
@@ -14,7 +15,7 @@ export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'client' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -25,7 +26,7 @@ export default function Register() {
     setLoading(true);
     try {
       await register(form.name, form.email, form.password, form.role);
-      navigate('/dashboard');
+      navigate('/app/dashboard');
     } catch (err) {
       setError(err.response?.data?.message ?? 'Registration failed. Please try again.');
     } finally {
@@ -46,6 +47,30 @@ export default function Register() {
 
         <div className="bg-white rounded-2xl p-8 shadow-2xl">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Create an account</h2>
+
+          {/* Google Sign-Up */}
+          <div className="flex justify-center mb-4">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                try {
+                  await googleLogin(credentialResponse.credential);
+                  navigate('/app/dashboard');
+                } catch {
+                  setError('Google sign-in failed. Please try again.');
+                }
+              }}
+              onError={() => setError('Google sign-up failed. Please try again.')}
+              width="100%"
+              text="signup_with"
+              shape="rectangular"
+            />
+          </div>
+
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-400 font-medium">or register with email</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">

@@ -4,9 +4,14 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 const TITLES = {
-  '/dashboard': 'Dashboard',
-  '/projects': 'Projects',
-  '/settings': 'Company Settings',
+  '/app/dashboard': 'Dashboard',
+  '/app/projects': 'Projects',
+  '/app/qs-pricing': 'QS Pricing Library',
+  '/app/artisan-pricing': 'Artisan Rates',
+  '/app/material-pricing': 'Material Prices',
+  '/app/pricing-intelligence': 'Pricing Intelligence',
+  '/app/boq': 'BOQ Builder',
+  '/app/settings': 'Company Settings',
 };
 
 export default function AppLayout() {
@@ -18,7 +23,7 @@ export default function AppLayout() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header title={title} />
-        <main className="flex-1 overflow-auto p-6">
+        <main className="flex-1 overflow-auto p-6 bg-gray-50">
           <Outlet />
         </main>
       </div>
