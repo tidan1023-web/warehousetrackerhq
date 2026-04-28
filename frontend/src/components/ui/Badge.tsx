@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { ProductStatus, DefectSeverity, DefectStatus } from '@/types';
 
-type BadgeVariant = 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange';
+type BadgeVariant = 'gray' | 'blue' | 'green' | 'yellow' | 'red' | 'purple' | 'orange' | 'amber';
 
 interface BadgeProps {
   variant?: BadgeVariant;
@@ -11,20 +11,21 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  gray: 'bg-slate-100 text-slate-700',
-  blue: 'bg-blue-100 text-blue-700',
-  green: 'bg-green-100 text-green-700',
-  yellow: 'bg-amber-100 text-amber-700',
-  red: 'bg-red-100 text-red-700',
-  purple: 'bg-purple-100 text-purple-700',
-  orange: 'bg-orange-100 text-orange-700',
+  gray: 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300',
+  blue: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+  green: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300',
+  yellow: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+  amber: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+  red: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300',
+  purple: 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300',
+  orange: 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300',
 };
 
 export function Badge({ variant = 'gray', size = 'md', children, className }: BadgeProps) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full font-medium',
+        'inline-flex items-center rounded-full font-medium whitespace-nowrap',
         size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-xs',
         variantStyles[variant],
         className
@@ -45,7 +46,7 @@ const statusVariantMap: Record<ProductStatus, BadgeVariant> = {
 
 const statusLabelMap: Record<ProductStatus, string> = {
   pending: 'Pending',
-  images_uploaded: 'Images Uploaded',
+  images_uploaded: 'Imgs Uploaded',
   verified: 'Verified',
   dispatched: 'Dispatched',
   defective: 'Defective',
@@ -86,13 +87,13 @@ export function DefectStatusBadge({ status }: { status: DefectStatus }) {
 
 export function ShipReadinessBadge({ ready }: { ready: boolean }) {
   return ready ? (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1.5 text-sm font-bold text-green-800">
-      <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-      READY TO SHIP
+    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/40 px-2 py-1 text-xs font-bold text-green-800 dark:text-green-300">
+      <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+      READY
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1.5 text-sm font-bold text-red-800">
-      <span className="h-2 w-2 rounded-full bg-red-500" />
+    <span className="inline-flex items-center gap-1 rounded-full bg-red-100 dark:bg-red-900/40 px-2 py-1 text-xs font-bold text-red-800 dark:text-red-300">
+      <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
       NOT READY
     </span>
   );

@@ -82,7 +82,7 @@ export default function NewProductPage() {
         }
       />
 
-      <div className="p-6 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-6">
           <Card>
             <CardHeader title="Product Information" />
@@ -135,10 +135,10 @@ export default function NewProductPage() {
                     key={opt.value}
                     type="button"
                     onClick={() => toggleRequiredView(opt.value)}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                    className={`px-3 py-2.5 rounded-lg text-sm font-medium border transition-colors ${
                       selected
                         ? 'bg-brand-700 text-white border-brand-700'
-                        : 'bg-white text-slate-600 border-slate-300 hover:border-brand-400'
+                        : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:border-brand-400'
                     }`}
                   >
                     {opt.label}
@@ -146,7 +146,7 @@ export default function NewProductPage() {
                 );
               })}
             </div>
-            <p className="text-xs text-slate-500 mt-3">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
               {requiredViews.length} views required. Dispatch is blocked until all are uploaded.
             </p>
           </Card>

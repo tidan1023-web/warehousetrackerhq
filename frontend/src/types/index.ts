@@ -7,6 +7,33 @@ export interface User {
   email: string;
   role: UserRole;
   lastLogin?: string;
+  department?: string;
+  about?: string;
+  profilePicture?: { s3Key: string; s3Url: string } | null;
+  performanceRating?: number;
+  loginCount?: number;
+  isActive?: boolean;
+  createdAt?: string;
+}
+
+export interface EmployeeStats {
+  dispatches: number;
+  verifications: number;
+  defects: number;
+  images: number;
+  products: number;
+  logins: number;
+}
+
+export interface EmployeeComment {
+  id: string;
+  targetUserId: string;
+  authorId: string;
+  authorName: string;
+  authorEmployeeId: string;
+  comment: string;
+  mentionedEmployeeIds: string[];
+  createdAt: string;
 }
 
 export type ProductStatus = 'pending' | 'images_uploaded' | 'verified' | 'dispatched' | 'defective';

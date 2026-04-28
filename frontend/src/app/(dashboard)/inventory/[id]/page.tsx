@@ -212,9 +212,9 @@ export default function ProductDetailPage() {
         }
       />
 
-      <div className="p-6 space-y-6 max-w-4xl mx-auto">
+      <div className="p-4 sm:p-6 space-y-5 max-w-4xl mx-auto">
         {/* Status Banner */}
-        <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex-wrap gap-3">
+        <div className="flex items-center justify-between p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <ProductStatusBadge status={product.status} />
             <ShipReadinessBadge ready={product.status === 'verified'} />
@@ -294,8 +294,8 @@ export default function ProductDetailPage() {
                     ...(product.trackingNumber ? [{ label: 'Tracking #', value: product.trackingNumber }] : []),
                   ].map(({ label, value }) => (
                     <div key={label}>
-                      <dt className="text-xs font-medium text-slate-500">{label}</dt>
-                      <dd className="text-sm text-slate-900 mt-0.5 break-words">{value}</dd>
+                      <dt className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</dt>
+                      <dd className="text-sm text-slate-900 dark:text-white mt-0.5 break-words">{value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -317,13 +317,13 @@ export default function ProductDetailPage() {
                 <CardHeader title="Defect Logs" subtitle={`${defects.length} defect${defects.length > 1 ? 's' : ''} logged`} />
                 <div className="space-y-3">
                   {defects.map((defect) => (
-                    <div key={defect._id} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <div key={defect._id} className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
                       <div className="flex items-center gap-2 mb-1">
                         <SeverityBadge severity={defect.severity} />
                         <DefectStatusBadge status={defect.status} />
                       </div>
-                      <p className="text-sm text-slate-700 mt-1">{defect.description}</p>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-sm text-slate-700 dark:text-slate-300 mt-1">{defect.description}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                         By {defect.loggedBy.name} · {format(new Date(defect.createdAt), 'MMM d, yyyy')}
                       </p>
                     </div>
@@ -368,8 +368,8 @@ export default function ProductDetailPage() {
         }
       >
         <div className="space-y-4">
-          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-sm text-green-800 font-medium">
+          <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+            <p className="text-sm text-green-800 dark:text-green-300 font-medium">
               This product has been verified and is ready to ship.
             </p>
           </div>
@@ -379,7 +379,7 @@ export default function ProductDetailPage() {
             onChange={(e) => setTrackingNumber(e.target.value)}
             placeholder="e.g. 1Z999AA1012345678"
           />
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Once dispatched, this product cannot be edited. This action is logged permanently.
           </p>
         </div>

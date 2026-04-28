@@ -14,6 +14,8 @@ import {
   Menu,
   X,
   Warehouse,
+  Settings,
+  UserCircle,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -33,7 +35,7 @@ const navItems: NavItem[] = [
   { href: '/defects', label: 'Defects', icon: AlertTriangle },
   { href: '/audit', label: 'Audit Trail', icon: ClipboardList, adminOnly: true },
   { href: '/ebay', label: 'eBay Listings', icon: ShoppingBag, adminOnly: true },
-  { href: '/users', label: 'Users', icon: Users, adminOnly: true },
+  { href: '/employees', label: 'Employees', icon: Users, adminOnly: true },
 ];
 
 export function Sidebar() {
@@ -46,16 +48,16 @@ export function Sidebar() {
   const NavContent = () => (
     <>
       <div className="flex items-center gap-2.5 px-4 py-5 border-b border-slate-700">
-        <div className="p-1.5 bg-brand-600 rounded-lg">
+        <div className="p-1.5 bg-brand-600 rounded-lg shrink-0">
           <Warehouse className="h-5 w-5 text-white" />
         </div>
-        <div>
-          <p className="text-sm font-bold text-white leading-tight">Warehouse HQ</p>
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-white leading-tight truncate">Warehouse HQ</p>
           <p className="text-xs text-slate-400">Inventory System</p>
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {visibleItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname.startsWith(item.href);
@@ -78,16 +80,56 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-slate-700">
-        <div className="px-3 py-2 mb-2">
-          <p className="text-xs font-medium text-white truncate">{user?.name}</p>
-          <p className="text-xs text-slate-400 truncate">{user?.employeeId} · {user?.role}</p>
-        </div>
+      <div className="px-3 py-3 border-t border-slate-700 space-y-0.5">
+        <Link
+          href="/settings"
+          onClick={() => setMobileOpen(false)}
+          className={clsx(
+            'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+            pathname.startsWith('/settings')
+              ? 'bg-brand-700 text-white'
+              : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+          )}
+        >
+          <Settings className="h-4 w-4 shrink-0" />
+          Settings
+        </Link>
+        <Link
+          href="/settings"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-700 transition-colors"
+        >
+          <div className="h-7 w-7 rounded-full bg-brand-600 flex items-center justify-center shrink-0">
+            {(user as { profilePicture?: { s3Url?: string } })?.profilePicture?.s3Url ? (
+              <img
+                src={(user as { profilePicture?: { s3Url?: string } }).profilePicture!.s3Url}
+                alt={user?.name}
+                className="h-7 w-7 rounded-full object-cover"
+              />
+            ) : (
+              <span className="text-xs font-bold text-white">
+                {user?.name
+                  ?.split(' ')
+                  .map((n) => n[0])
+                  .join('')
+                  .toUpperCase()
+                  .slice(0, 2)}
+              </span>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-white truncate">{user?.name}</p>
+            <p className="text-xs text-slate-400 truncate">
+              {user?.employeeId} · {user?.role}
+            </p>
+          </div>
+          <UserCircle className="h-4 w-4 text-slate-400 shrink-0" />
+        </Link>
         <button
           onClick={logout}
           className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4 shrink-0" />
           Sign Out
         </button>
       </div>
@@ -96,16 +138,14 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile hamburger */}
       <button
-        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-slate-800 text-white lg:hidden"
+        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-slate-800 text-white lg:hidden shadow-lg"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label="Toggle menu"
       >
         {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -113,7 +153,6 @@ export function Sidebar() {
         />
       )}
 
-      {/* Mobile sidebar */}
       <aside
         className={clsx(
           'fixed inset-y-0 left-0 z-40 w-64 bg-slate-800 flex flex-col transition-transform duration-300 lg:hidden',
@@ -123,7 +162,6 @@ export function Sidebar() {
         <NavContent />
       </aside>
 
-      {/* Desktop sidebar */}
       <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-slate-800">
         <NavContent />
       </aside>

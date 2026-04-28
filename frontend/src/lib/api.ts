@@ -8,14 +8,12 @@ export const apiClient = axios.create({
   timeout: 30000,
 });
 
-// Attach JWT to every request
 apiClient.interceptors.request.use((config) => {
   const token = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Handle 401 globally — redirect to login
 apiClient.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
@@ -45,9 +43,24 @@ export const authApi = {
   refresh: (refreshToken: string) =>
     apiClient.post('/auth/refresh', { refreshToken }).then((r) => r.data),
   getMe: () => apiClient.get('/auth/me').then((r) => r.data),
+  updateProfile: (data: { name?: string; department?: string; about?: string }) =>
+    apiClient.patch('/auth/profile', data).then((r) => r.data),
+  changePassword: (currentPassword: string, newPassword: string) =>
+    apiClient.patch('/auth/profile/password', { currentPassword, newPassword }).then((r) => r.data),
   createUser: (data: unknown) => apiClient.post('/auth/users', data).then((r) => r.data),
   listUsers: () => apiClient.get('/auth/users').then((r) => r.data),
-  deactivateUser: (id: string) => apiClient.patch(`/auth/users/${id}/deactivate`).then((r) => r.data),
+  getUserById: (id: string) => apiClient.get(`/auth/users/${id}`).then((r) => r.data),
+  getUserStats: (id: string) => apiClient.get(`/auth/users/${id}/stats`).then((r) => r.data),
+  updatePerformanceRating: (id: string, rating: number) =>
+    apiClient.patch(`/auth/users/${id}/rating`, { rating }).then((r) => r.data),
+  addComment: (id: string, comment: string, mentionedEmployeeIds?: string[]) =>
+    apiClient
+      .post(`/auth/users/${id}/comments`, { comment, mentionedEmployeeIds })
+      .then((r) => r.data),
+  getComments: (id: string) =>
+    apiClient.get(`/auth/users/${id}/comments`).then((r) => r.data),
+  deactivateUser: (id: string) =>
+    apiClient.patch(`/auth/users/${id}/deactivate`).then((r) => r.data),
 };
 
 // ---- Products ----
@@ -56,12 +69,15 @@ export const productsApi = {
     apiClient.get('/products', { params }).then((r) => r.data),
   get: (id: string) => apiClient.get(`/products/${id}`).then((r) => r.data),
   create: (data: unknown) => apiClient.post('/products', data).then((r) => r.data),
-  update: (id: string, data: unknown) => apiClient.patch(`/products/${id}`, data).then((r) => r.data),
+  update: (id: string, data: unknown) =>
+    apiClient.patch(`/products/${id}`, data).then((r) => r.data),
   delete: (id: string) => apiClient.delete(`/products/${id}`).then((r) => r.data),
   uploadImage: (id: string, formData: FormData) =>
-    apiClient.post(`/products/${id}/images`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((r) => r.data),
+    apiClient
+      .post(`/products/${id}/images`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((r) => r.data),
   verify: (id: string) => apiClient.post(`/products/${id}/verify`).then((r) => r.data),
   dispatch: (id: string, trackingNumber?: string) =>
     apiClient.post(`/products/${id}/dispatch`, { trackingNumber }).then((r) => r.data),
@@ -74,10 +90,13 @@ export const defectsApi = {
     apiClient.get('/defects', { params }).then((r) => r.data),
   create: (data: unknown) => apiClient.post('/defects', data).then((r) => r.data),
   uploadImage: (id: string, formData: FormData) =>
-    apiClient.post(`/defects/${id}/images`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }).then((r) => r.data),
-  acknowledge: (id: string) => apiClient.patch(`/defects/${id}/acknowledge`).then((r) => r.data),
+    apiClient
+      .post(`/defects/${id}/images`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((r) => r.data),
+  acknowledge: (id: string) =>
+    apiClient.patch(`/defects/${id}/acknowledge`).then((r) => r.data),
   resolve: (id: string, resolution: string) =>
     apiClient.patch(`/defects/${id}/resolve`, { resolution }).then((r) => r.data),
 };

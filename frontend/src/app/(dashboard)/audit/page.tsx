@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { ClipboardList, Shield, Download } from 'lucide-react';
+import { ClipboardList, Shield } from 'lucide-react';
 import { auditApi } from '@/lib/api';
 import { AuditLog } from '@/types';
 import { Header } from '@/components/layout/Header';
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Input, Select } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { PageLoader } from '@/components/ui/LoadingSpinner';
+import { ExportButton } from '@/components/ui/ExportButton';
 
 const ACTION_COLORS: Record<string, string> = {
   PRODUCT_DISPATCHED: 'purple',
@@ -45,26 +46,27 @@ export default function AuditPage() {
   const logs: AuditLog[] = data?.logs || [];
   const pagination = data?.pagination;
 
-  const exportCsv = () => {
-    const headers = ['Timestamp', 'Action', 'Entity Type', 'Employee ID', 'Name', 'Email', 'Details'];
-    const rows = logs.map((l) => [
-      format(new Date(l.timestamp), 'yyyy-MM-dd HH:mm:ss'),
-      l.action,
-      l.entityType,
-      l.employeeId,
-      l.userName,
-      l.userEmail,
-      JSON.stringify(l.details),
-    ]);
-    const csv = [headers, ...rows].map((r) => r.map((v) => `"${v}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `audit-log-${format(new Date(), 'yyyy-MM-dd')}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const exportRows = logs.map((l) => ({
+    Timestamp: format(new Date(l.timestamp), 'yyyy-MM-dd HH:mm:ss'),
+    Action: l.action,
+    'Entity Type': l.entityType,
+    'Employee ID': l.employeeId,
+    Name: l.userName,
+    Email: l.userEmail,
+    IP: l.ipAddress || '',
+    Details: JSON.stringify(l.details),
+  }));
+
+  const exportCols = [
+    { header: 'Timestamp', key: 'Timestamp' },
+    { header: 'Action', key: 'Action' },
+    { header: 'Entity Type', key: 'Entity Type' },
+    { header: 'Employee ID', key: 'Employee ID' },
+    { header: 'Name', key: 'Name' },
+    { header: 'Email', key: 'Email' },
+    { header: 'IP', key: 'IP' },
+    { header: 'Details', key: 'Details' },
+  ];
 
   return (
     <>
@@ -72,21 +74,23 @@ export default function AuditPage() {
         title="Audit Trail"
         subtitle="Immutable log of all system actions"
         actions={
-          <Button size="sm" variant="outline" onClick={exportCsv} leftIcon={<Download className="h-4 w-4" />}>
-            Export CSV
-          </Button>
+          <ExportButton
+            rows={exportRows}
+            columns={exportCols}
+            baseName="audit-log"
+            title="Audit Trail Report"
+          />
         }
       />
 
-      <div className="p-6 space-y-4">
-        <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-          <Shield className="h-4 w-4 text-blue-600 shrink-0" />
-          <p className="text-sm text-blue-800">
-            All audit records are immutable. No records can be modified or deleted — compliance-safe.
+      <div className="p-4 sm:p-6 space-y-4">
+        <div className="flex items-center gap-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+          <Shield className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0" />
+          <p className="text-sm text-blue-800 dark:text-blue-300">
+            All audit records are immutable — compliance-safe.
           </p>
         </div>
 
-        {/* Filters */}
         <Card padding="sm">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Select
@@ -95,9 +99,8 @@ export default function AuditPage() {
                 { value: 'USER_LOGIN', label: 'Login' },
                 { value: 'PRODUCT_CREATED', label: 'Product Created' },
                 { value: 'IMAGE_UPLOADED', label: 'Image Uploaded' },
-                { value: 'PRODUCT_VERIFIED', label: 'Product Verified' },
+                { value: 'PRODUCT_VERIFIED', label: 'Verified' },
                 { value: 'PRODUCT_DISPATCHED', label: 'Dispatched' },
-                { value: 'DISPATCH_BLOCKED', label: 'Dispatch Blocked' },
                 { value: 'DEFECT_LOGGED', label: 'Defect Logged' },
                 { value: 'EBAY_LISTING_CREATED', label: 'eBay Listed' },
               ]}
@@ -106,28 +109,24 @@ export default function AuditPage() {
             />
             <Select
               options={[
-                { value: '', label: 'All Entity Types' },
+                { value: '', label: 'All Entities' },
                 { value: 'product', label: 'Product' },
                 { value: 'user', label: 'User' },
                 { value: 'defect', label: 'Defect' },
-                { value: 'ebay_listing', label: 'eBay Listing' },
+                { value: 'ebay_listing', label: 'eBay' },
               ]}
               value={entityFilter}
               onChange={(e) => { setEntityFilter(e.target.value); setPage(1); }}
             />
             <Input
               type="date"
-              label=""
               value={startDate}
               onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
-              placeholder="Start date"
             />
             <Input
               type="date"
-              label=""
               value={endDate}
               onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
-              placeholder="End date"
             />
           </div>
         </Card>
@@ -136,8 +135,8 @@ export default function AuditPage() {
           <PageLoader />
         ) : logs.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <ClipboardList className="h-12 w-12 text-slate-300 mb-4" />
-            <p className="text-slate-500">No audit records found</p>
+            <ClipboardList className="h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" />
+            <p className="text-slate-500 dark:text-slate-400">No audit records found</p>
           </div>
         ) : (
           <>
@@ -145,34 +144,43 @@ export default function AuditPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50">
-                      {['Timestamp', 'Action', 'Entity', 'Employee', 'User', 'IP', 'Details'].map((h) => (
-                        <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50">
+                      {['Timestamp', 'Action', 'Entity', 'Employee', 'User', 'Details'].map((h) => (
+                        <th
+                          key={h}
+                          className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+                        >
                           {h}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                     {logs.map((log) => (
-                      <tr key={log._id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap font-mono">
+                      <tr key={log._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                        <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap font-mono">
                           {format(new Date(log.timestamp), 'MMM d, yyyy')}
                           <br />
                           {format(new Date(log.timestamp), 'HH:mm:ss')}
                         </td>
                         <td className="px-4 py-3">
-                          <Badge variant={(ACTION_COLORS[log.action] as 'purple' | 'green' | 'red' | 'blue') || 'gray'} size="sm">
-                            {log.action}
+                          <Badge
+                            variant={(ACTION_COLORS[log.action] as 'purple' | 'green' | 'red' | 'blue') || 'gray'}
+                            size="sm"
+                          >
+                            {log.action.replace(/_/g, ' ')}
                           </Badge>
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-600 capitalize">{log.entityType}</td>
-                        <td className="px-4 py-3 text-xs font-mono text-slate-700">{log.employeeId}</td>
-                        <td className="px-4 py-3 text-xs text-slate-600">{log.userName}</td>
-                        <td className="px-4 py-3 text-xs text-slate-400 font-mono">
-                          {log.ipAddress || '—'}
+                        <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 capitalize">
+                          {log.entityType}
                         </td>
-                        <td className="px-4 py-3 text-xs text-slate-500 max-w-xs">
+                        <td className="px-4 py-3 text-xs font-mono text-slate-700 dark:text-slate-300">
+                          {log.employeeId}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300">
+                          {log.userName}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-xs">
                           <span className="truncate block" title={JSON.stringify(log.details)}>
                             {Object.entries(log.details || {})
                               .slice(0, 2)
@@ -188,8 +196,8 @@ export default function AuditPage() {
             </Card>
 
             {pagination && pagination.pages > 1 && (
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-500">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {pagination.total.toLocaleString()} total records
                 </p>
                 <div className="flex gap-2">

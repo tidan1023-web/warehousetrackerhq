@@ -62,14 +62,14 @@ export function SpecsEditor({ specs, onChange, readOnly }: SpecsEditorProps) {
   return (
     <div className="space-y-2">
       {entries.length === 0 && !addingNew && (
-        <p className="text-sm text-slate-400 italic py-2">No specifications added yet.</p>
+        <p className="text-sm text-slate-400 dark:text-slate-500 italic py-2">No specifications added yet.</p>
       )}
 
       <div className="space-y-1.5">
         {entries.map(([key, value]) => (
           <div
             key={key}
-            className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 border border-slate-200 group"
+            className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 group"
           >
             {editingKey === key ? (
               <>
@@ -94,9 +94,9 @@ export function SpecsEditor({ specs, onChange, readOnly }: SpecsEditorProps) {
               </>
             ) : (
               <>
-                <span className="text-xs font-medium text-slate-600 w-32 shrink-0 truncate">{key}</span>
-                <span className="text-xs text-slate-400 mx-1">·</span>
-                <span className="text-xs text-slate-800 flex-1 truncate">{value}</span>
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300 w-32 shrink-0 truncate">{key}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500 mx-1">·</span>
+                <span className="text-xs text-slate-800 dark:text-slate-200 flex-1 truncate">{value}</span>
                 {!readOnly && (
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
@@ -124,7 +124,7 @@ export function SpecsEditor({ specs, onChange, readOnly }: SpecsEditorProps) {
       {!readOnly && (
         <>
           {addingNew ? (
-            <div className="flex items-end gap-2 p-3 bg-brand-50 border border-brand-200 rounded-lg">
+            <div className="flex items-end gap-2 p-3 bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800 rounded-lg">
               <Input
                 label="Field Name"
                 value={newKey}

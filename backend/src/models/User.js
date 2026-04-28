@@ -47,6 +47,30 @@ const userSchema = new Schema(
     lastLogin: {
       type: Date,
     },
+    department: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
+    about: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+    profilePicture: {
+      s3Key: String,
+      s3Url: String,
+    },
+    performanceRating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
+    loginCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

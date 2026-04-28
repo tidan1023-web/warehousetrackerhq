@@ -21,7 +21,9 @@ import { Input, Select } from '@/components/ui/Input';
 import { ProductStatusBadge, ShipReadinessBadge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { PageLoader } from '@/components/ui/LoadingSpinner';
+import { ExportButton } from '@/components/ui/ExportButton';
 import toast from 'react-hot-toast';
+import { format } from 'date-fns';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Statuses' },
@@ -81,10 +83,10 @@ export default function InventoryPage() {
         }
       />
 
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         {/* Filters */}
         <Card padding="sm">
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
             <div className="flex-1">
               <Input
                 placeholder="Search by SKU or name..."
@@ -110,6 +112,32 @@ export default function InventoryPage() {
               placeholder="All Categories"
               className="sm:w-44"
             />
+            <div className="flex items-center gap-2 sm:ml-auto">
+              <ExportButton
+                rows={products.map((p) => ({
+                  SKU: p.sku,
+                  Name: p.name,
+                  Category: p.category,
+                  Status: p.status,
+                  'Assigned To': (p.assignedTo as { name: string } | null)?.name || '',
+                  Images: p.images?.length ?? 0,
+                  'Dispatched At': p.dispatchedAt ? format(new Date(p.dispatchedAt), 'yyyy-MM-dd') : '',
+                  'Tracking #': p.trackingNumber || '',
+                }))}
+                columns={[
+                  { header: 'SKU', key: 'SKU' },
+                  { header: 'Name', key: 'Name' },
+                  { header: 'Category', key: 'Category' },
+                  { header: 'Status', key: 'Status' },
+                  { header: 'Assigned To', key: 'Assigned To' },
+                  { header: 'Images', key: 'Images' },
+                  { header: 'Dispatched At', key: 'Dispatched At' },
+                  { header: 'Tracking #', key: 'Tracking #' },
+                ]}
+                baseName="inventory"
+                title="Inventory Report"
+              />
+            </div>
           </div>
         </Card>
 
@@ -117,9 +145,9 @@ export default function InventoryPage() {
           <PageLoader />
         ) : products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Package className="h-12 w-12 text-slate-300 mb-4" />
-            <p className="text-slate-500 font-medium">No products found</p>
-            <p className="text-slate-400 text-sm mt-1">
+            <Package className="h-12 w-12 text-slate-300 dark:text-slate-600 mb-4" />
+            <p className="text-slate-500 dark:text-slate-400 font-medium">No products found</p>
+            <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">
               {search || statusFilter ? 'Try adjusting your filters' : 'Add your first product to get started'}
             </p>
             {user?.role === 'admin' && !search && !statusFilter && (
@@ -144,33 +172,33 @@ export default function InventoryPage() {
                   >
                     <Card
                       padding="sm"
-                      className="hover:border-brand-300 hover:shadow-md transition-all cursor-pointer"
+                      className="hover:border-brand-300 dark:hover:border-brand-600 hover:shadow-md transition-all cursor-pointer"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="p-2 bg-slate-100 rounded-lg shrink-0">
-                          <Package className="h-5 w-5 text-slate-500" />
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg shrink-0">
+                          <Package className="h-4 w-4 sm:h-5 sm:w-5 text-slate-500 dark:text-slate-400" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-sm font-semibold text-slate-900 truncate">{product.name}</p>
-                            <span className="text-xs text-slate-400 font-mono">{product.sku}</span>
+                            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{product.name}</p>
+                            <span className="text-xs text-slate-400 dark:text-slate-500 font-mono">{product.sku}</span>
                           </div>
-                          <div className="flex items-center gap-3 mt-1 flex-wrap">
-                            <span className="text-xs text-slate-500">{product.category}</span>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-xs text-slate-500 dark:text-slate-400">{product.category}</span>
                             {assignee && (
-                              <span className="text-xs text-slate-500">
-                                Assigned: {assignee.name} ({assignee.employeeId})
+                              <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+                                → {assignee.name}
                               </span>
                             )}
-                            <span className="text-xs text-slate-400">
-                              {product.images?.length ?? 0} / {product.requiredViews?.length ?? 5} images
+                            <span className="text-xs text-slate-400 dark:text-slate-500">
+                              {product.images?.length ?? 0}/{product.requiredViews?.length ?? 5} imgs
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                           <ShipReadinessBadge ready={isReady} />
                           <ProductStatusBadge status={product.status} />
-                          <ChevronRight className="h-4 w-4 text-slate-400" />
+                          <ChevronRight className="h-4 w-4 text-slate-400 dark:text-slate-500" />
                         </div>
                       </div>
                     </Card>
@@ -181,9 +209,9 @@ export default function InventoryPage() {
 
             {/* Pagination */}
             {pagination && pagination.pages > 1 && (
-              <div className="flex items-center justify-between pt-2">
-                <p className="text-sm text-slate-500">
-                  Showing {(pagination.page - 1) * pagination.limit + 1}–
+              <div className="flex items-center justify-between pt-2 flex-wrap gap-2">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  {(pagination.page - 1) * pagination.limit + 1}–
                   {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
                 </p>
                 <div className="flex gap-2">

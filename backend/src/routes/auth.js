@@ -9,8 +9,15 @@ const {
   login,
   refreshToken,
   getMe,
+  updateProfile,
+  changePassword,
   createUser,
   listUsers,
+  getUserById,
+  getUserStats,
+  updatePerformanceRating,
+  addComment,
+  getComments,
   deactivateUser,
 } = require('../controllers/authController');
 
@@ -34,6 +41,31 @@ router.post(
 
 router.get('/me', authenticate, getMe);
 
+router.patch(
+  '/profile',
+  authenticate,
+  validate([
+    body('name').optional().trim().isLength({ min: 2, max: 100 }),
+    body('department').optional().trim().isLength({ max: 100 }),
+    body('about').optional().trim().isLength({ max: 500 }),
+  ]),
+  updateProfile
+);
+
+router.patch(
+  '/profile/password',
+  authenticate,
+  validate([
+    body('currentPassword').notEmpty().withMessage('Current password required'),
+    body('newPassword')
+      .isLength({ min: 8 })
+      .withMessage('Password must be at least 8 characters')
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+      .withMessage('Password must contain uppercase, lowercase, and a number'),
+  ]),
+  changePassword
+);
+
 router.post(
   '/users',
   authenticate,
@@ -55,6 +87,11 @@ router.post(
 );
 
 router.get('/users', authenticate, requireAdmin, listUsers);
+router.get('/users/:id', authenticate, requireAdmin, getUserById);
 router.patch('/users/:id/deactivate', authenticate, requireAdmin, deactivateUser);
+router.get('/users/:id/stats', authenticate, getUserStats);
+router.patch('/users/:id/rating', authenticate, requireAdmin, updatePerformanceRating);
+router.post('/users/:id/comments', authenticate, requireAdmin, addComment);
+router.get('/users/:id/comments', authenticate, requireAdmin, getComments);
 
 module.exports = router;

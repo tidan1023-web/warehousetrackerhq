@@ -17,6 +17,7 @@ import { SeverityBadge, DefectStatusBadge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
 import { Input, Textarea } from '@/components/ui/Input';
 import { PageLoader } from '@/components/ui/LoadingSpinner';
+import { ExportButton } from '@/components/ui/ExportButton';
 
 export default function DefectsPage() {
   const { user } = useAuth();
@@ -78,18 +79,18 @@ export default function DefectsPage() {
         subtitle={`${openCount} open · ${criticalCount} critical`}
       />
 
-      <div className="p-6 space-y-4">
+      <div className="p-4 sm:p-6 space-y-4">
         {criticalCount > 0 && (
-          <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-300 rounded-xl">
-            <AlertTriangle className="h-5 w-5 text-red-600 shrink-0" />
-            <p className="text-sm font-medium text-red-800">
+          <div className="flex items-center gap-3 p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 rounded-xl">
+            <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0" />
+            <p className="text-sm font-medium text-red-800 dark:text-red-300">
               {criticalCount} critical defect{criticalCount > 1 ? 's' : ''} require immediate attention.
             </p>
           </div>
         )}
 
         {/* Filters */}
-        <div className="flex gap-3 flex-wrap">
+        <div className="flex gap-3 flex-wrap items-center">
           <Select
             options={[
               { value: '', label: 'All Statuses' },
@@ -113,14 +114,36 @@ export default function DefectsPage() {
             onChange={(e) => setSeverityFilter(e.target.value)}
             className="w-40"
           />
+          <ExportButton
+            rows={defects.map((d) => ({
+              SKU: d.productSku,
+              Severity: d.severity,
+              Status: d.status,
+              Description: d.description,
+              'Logged By': `${d.loggedBy.name} (${d.loggedBy.employeeId})`,
+              'Logged At': format(new Date(d.createdAt), 'yyyy-MM-dd HH:mm'),
+              Resolution: d.resolution || '',
+            }))}
+            columns={[
+              { header: 'SKU', key: 'SKU' },
+              { header: 'Severity', key: 'Severity' },
+              { header: 'Status', key: 'Status' },
+              { header: 'Description', key: 'Description' },
+              { header: 'Logged By', key: 'Logged By' },
+              { header: 'Logged At', key: 'Logged At' },
+              { header: 'Resolution', key: 'Resolution' },
+            ]}
+            baseName="defects"
+            title="Defect Log Report"
+          />
         </div>
 
         {isLoading ? (
           <PageLoader />
         ) : defects.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <CheckCircle className="h-12 w-12 text-green-300 mb-4" />
-            <p className="text-slate-500 font-medium">No defects found</p>
+            <CheckCircle className="h-12 w-12 text-green-300 dark:text-green-700 mb-4" />
+            <p className="text-slate-500 dark:text-slate-400 font-medium">No defects found</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -128,53 +151,50 @@ export default function DefectsPage() {
               const productRef = defect.productId as { _id: string; sku: string; name: string };
               return (
                 <Card key={defect._id} padding="sm">
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3">
                     <div className={`p-2 rounded-lg shrink-0 mt-0.5 ${
-                      defect.severity === 'critical' ? 'bg-red-100' :
-                      defect.severity === 'high' ? 'bg-orange-100' : 'bg-amber-100'
+                      defect.severity === 'critical' ? 'bg-red-100 dark:bg-red-900/40' :
+                      defect.severity === 'high' ? 'bg-orange-100 dark:bg-orange-900/40' : 'bg-amber-100 dark:bg-amber-900/40'
                     }`}>
                       <AlertTriangle className={`h-4 w-4 ${
-                        defect.severity === 'critical' ? 'text-red-600' :
-                        defect.severity === 'high' ? 'text-orange-600' : 'text-amber-600'
+                        defect.severity === 'critical' ? 'text-red-600 dark:text-red-400' :
+                        defect.severity === 'high' ? 'text-orange-600 dark:text-orange-400' : 'text-amber-600 dark:text-amber-400'
                       }`} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <SeverityBadge severity={defect.severity} />
                         <DefectStatusBadge status={defect.status} />
-                        <span className="text-xs text-slate-500">
-                          {typeof productRef === 'object' ? `${productRef.sku} — ${productRef.name}` : defect.productSku}
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          {typeof productRef === 'object' ? `${productRef.sku}` : defect.productSku}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-800">{defect.description}</p>
-                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                        <span className="text-xs text-slate-500">
-                          By {defect.loggedBy.name} ({defect.loggedBy.employeeId})
+                      <p className="text-sm text-slate-800 dark:text-slate-200">{defect.description}</p>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          {defect.loggedBy.name}
                         </span>
-                        <span className="text-xs text-slate-400">
-                          {format(new Date(defect.createdAt), 'MMM d, yyyy h:mm a')}
+                        <span className="text-xs text-slate-400 dark:text-slate-500">
+                          {format(new Date(defect.createdAt), 'MMM d, yyyy')}
                         </span>
-                        {defect.images?.length > 0 && (
-                          <span className="text-xs text-brand-600">{defect.images.length} image{defect.images.length > 1 ? 's' : ''}</span>
-                        )}
                       </div>
                       {defect.resolution && (
-                        <div className="mt-2 p-2 bg-green-50 rounded text-xs text-green-800">
+                        <div className="mt-2 p-2 bg-green-50 dark:bg-green-900/20 rounded text-xs text-green-800 dark:text-green-300">
                           <strong>Resolution:</strong> {defect.resolution}
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1.5 shrink-0">
                       {typeof productRef === 'object' && (
                         <Link href={`/inventory/${productRef._id}`}>
                           <Button size="sm" variant="ghost" leftIcon={<Eye className="h-3.5 w-3.5" />}>
-                            Product
+                            View
                           </Button>
                         </Link>
                       )}
                       {user?.role === 'admin' && defect.status === 'open' && (
                         <Button size="sm" variant="secondary" onClick={() => handleAcknowledge(defect)}>
-                          Acknowledge
+                          Ack
                         </Button>
                       )}
                       {user?.role === 'admin' && defect.status !== 'resolved' && (
@@ -206,7 +226,7 @@ export default function DefectsPage() {
       >
         <div className="space-y-4">
           {resolveModal && (
-            <div className="p-3 bg-slate-50 rounded-lg text-sm text-slate-700">
+            <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-sm text-slate-700 dark:text-slate-300">
               {resolveModal.description}
             </div>
           )}

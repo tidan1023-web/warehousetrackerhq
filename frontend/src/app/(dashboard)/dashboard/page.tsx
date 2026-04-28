@@ -43,14 +43,14 @@ export default function DashboardPage() {
     <>
       <Header title="Dashboard" subtitle="Real-time inventory overview" />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Critical Alerts */}
         {(stats?.criticalDefects > 0 || alerts?.itemsNeedingAttention?.length > 0) && (
-          <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-xl">
-            <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-3 p-3.5 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
+            <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-semibold text-red-800">Attention Required</p>
-              <p className="text-sm text-red-700 mt-0.5">
+              <p className="text-sm font-semibold text-red-800 dark:text-red-300">Attention Required</p>
+              <p className="text-sm text-red-700 dark:text-red-400 mt-0.5">
                 {stats?.criticalDefects > 0 && (
                   <span>{stats.criticalDefects} critical defect{stats.criticalDefects > 1 ? 's' : ''} open. </span>
                 )}
@@ -63,21 +63,21 @@ export default function DashboardPage() {
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatsCard title="Total Products" value={stats?.totalProducts ?? 0} icon={Package} />
           <StatsCard title="Pending" value={stats?.pendingProducts ?? 0} icon={Clock} variant="warning" />
           <StatsCard title="Verified" value={stats?.verifiedProducts ?? 0} icon={CheckCircle} variant="success" />
           <StatsCard title="Dispatched" value={stats?.dispatchedProducts ?? 0} icon={Truck} />
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard title="Images Uploaded" value={stats?.imagesUploadedProducts ?? 0} icon={TrendingUp} variant="info" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <StatsCard title="Imgs Uploaded" value={stats?.imagesUploadedProducts ?? 0} icon={TrendingUp} variant="info" />
           <StatsCard title="Defective" value={stats?.defectiveProducts ?? 0} icon={XCircle} variant="danger" />
           <StatsCard title="Open Defects" value={stats?.openDefects ?? 0} icon={AlertTriangle} variant="danger" />
           <StatsCard title="Active Users" value={stats?.totalUsers ?? 0} icon={Users} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Ready to Ship */}
           <Card>
             <CardHeader
@@ -95,19 +95,19 @@ export default function DashboardPage() {
                   <Link
                     key={product._id}
                     href={`/inventory/${product._id}`}
-                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                   >
                     <div className="h-2 w-2 rounded-full bg-green-500 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-slate-900 truncate">{product.name}</p>
-                      <p className="text-xs text-slate-500">{product.sku}</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{product.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{product.sku}</p>
                     </div>
                     <ProductStatusBadge status="verified" />
                   </Link>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-400 py-4 text-center">No products ready to ship</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 py-4 text-center">No products ready to ship</p>
             )}
           </Card>
 
@@ -128,19 +128,19 @@ export default function DashboardPage() {
                   <Link
                     key={product._id}
                     href={`/inventory/${product._id}`}
-                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                   >
                     <div className={`h-2 w-2 rounded-full shrink-0 ${product.status === 'defective' ? 'bg-red-500' : 'bg-amber-500'}`} />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-slate-900 truncate">{product.name}</p>
-                      <p className="text-xs text-slate-500">{product.sku}</p>
+                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{product.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{product.sku}</p>
                     </div>
                     <ProductStatusBadge status={product.status} />
                   </Link>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-slate-400 py-4 text-center">No items need attention</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 py-4 text-center">No items need attention</p>
             )}
           </Card>
         </div>
