@@ -8,6 +8,7 @@ const materialPriceSchema = new mongoose.Schema({
   unit: { type: String, required: true, trim: true },
   deliveryFee: { type: Number, default: 0, min: 0 },
   location: { type: String, trim: true },
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

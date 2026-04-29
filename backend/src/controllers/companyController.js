@@ -1,7 +1,7 @@
 const Company = require('../models/Company');
 
 const getCompany = async (req, res) => {
-  const company = await Company.findOne().populate('updatedBy', 'name email');
+  const company = await Company.findById(req.user.companyId).populate('updatedBy', 'name email');
   if (!company) {
     return res.status(404).json({ message: 'Company settings not configured yet' });
   }
@@ -19,13 +19,11 @@ const upsertCompany = async (req, res) => {
     }
   }
 
-  let company = await Company.findOne();
-  if (company) {
-    Object.assign(company, data);
-    await company.save();
-  } else {
-    company = await Company.create(data);
-  }
+  const company = await Company.findByIdAndUpdate(
+    req.user.companyId,
+    data,
+    { new: true, runValidators: true }
+  );
 
   res.json({ message: 'Company settings saved', company });
 };
@@ -41,14 +39,13 @@ const uploadAsset = async (req, res) => {
     return res.status(400).json({ message: 'No file uploaded' });
   }
 
-  let company = await Company.findOne();
-  if (!company) {
-    company = new Company({ companyName: 'My Company' });
-  }
-  company[type] = req.file.path;
-  await company.save();
+  const company = await Company.findByIdAndUpdate(
+    req.user.companyId,
+    { [type]: req.file.path },
+    { new: true }
+  );
 
-  res.json({ message: `${type} uploaded successfully`, url: req.file.path });
+  res.json({ message: `${type} uploaded successfully`, url: req.file.path, company });
 };
 
 module.exports = { getCompany, upsertCompany, uploadAsset };

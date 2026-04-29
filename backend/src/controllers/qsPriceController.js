@@ -1,7 +1,7 @@
 const QsPrice = require('../models/QsPrice');
 
 const getAll = async (req, res) => {
-  const filter = {};
+  const filter = { companyId: req.user.companyId };
   if (req.query.category) filter.category = new RegExp(req.query.category, 'i');
 
   const prices = await QsPrice.find(filter)
@@ -12,13 +12,13 @@ const getAll = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const price = await QsPrice.create({ ...req.body, createdBy: req.user._id });
+  const price = await QsPrice.create({ ...req.body, companyId: req.user.companyId, createdBy: req.user._id });
   res.status(201).json({ message: 'Price entry created', price });
 };
 
 const update = async (req, res) => {
-  const price = await QsPrice.findByIdAndUpdate(
-    req.params.id,
+  const price = await QsPrice.findOneAndUpdate(
+    { _id: req.params.id, companyId: req.user.companyId },
     { ...req.body, updatedAt: Date.now() },
     { new: true, runValidators: true }
   );
@@ -27,7 +27,7 @@ const update = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  const price = await QsPrice.findByIdAndDelete(req.params.id);
+  const price = await QsPrice.findOneAndDelete({ _id: req.params.id, companyId: req.user.companyId });
   if (!price) return res.status(404).json({ message: 'Price entry not found' });
   res.json({ message: 'Price entry deleted' });
 };

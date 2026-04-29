@@ -11,6 +11,7 @@ const boqVersionSchema = new mongoose.Schema({
   },
   currency: { type: String, default: 'NGN' },
   totalCost: { type: Number, default: 0 },
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

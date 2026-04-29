@@ -26,6 +26,7 @@ const companySchema = new mongoose.Schema({
   signature: { type: String },
   stamp: { type: String },
   updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   updatedAt: { type: Date, default: Date.now },
 });
 

@@ -89,8 +89,8 @@ export default function Landing() {
               <Building2 size={18} className="text-white" />
             </div>
             <div className="leading-tight">
-              <p className="text-sm font-bold text-primary-900">Pico Bello Projekte</p>
-              <p className="text-xs text-gray-400">BOQ System</p>
+              <p className="text-sm font-bold text-primary-900">Pico Bello Projekte Limited</p>
+              <p className="text-xs text-gray-400">BOQ Management System</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -307,7 +307,7 @@ export default function Landing() {
             <div className="w-7 h-7 bg-primary-900 rounded-lg flex items-center justify-center">
               <Building2 size={14} className="text-white" />
             </div>
-            <span className="text-sm font-semibold text-gray-700">Pico Bello Projekte BOQ System</span>
+            <span className="text-sm font-semibold text-gray-700">Pico Bello Projekte Limited</span>
           </div>
           <p className="text-xs text-gray-400">© {new Date().getFullYear()} Pico Bello Projekte. All rights reserved.</p>
         </div>

@@ -2,12 +2,11 @@ const ProgressUpdate = require('../models/ProgressUpdate');
 const ChangeOrder = require('../models/ChangeOrder');
 const BoqVersion = require('../models/BoqVersion');
 const Project = require('../models/Project');
-const Notification = require('../models/Notification');
 
 // ── Progress Updates ──────────────────────────────────────────────────────────
 
 exports.getUpdates = async (req, res) => {
-  const filter = {};
+  const filter = { companyId: req.user.companyId };
   if (req.query.projectId) filter.projectId = req.query.projectId;
   if (req.query.phase) filter.phase = req.query.phase;
 
@@ -20,19 +19,14 @@ exports.getUpdates = async (req, res) => {
 
 exports.createUpdate = async (req, res) => {
   const { projectId, phase, title, notes, date, completionPercent, actualCost } = req.body;
-
-  // req.files comes from multer-cloudinary middleware
   const images = (req.files || []).map((f) => f.path);
 
   const update = await ProgressUpdate.create({
-    projectId,
-    phase,
-    title,
-    notes,
-    images,
+    projectId, phase, title, notes, images,
     date: date || new Date(),
     completionPercent: Number(completionPercent) || 0,
     actualCost: Number(actualCost) || 0,
+    companyId: req.user.companyId,
     createdBy: req.user._id,
   });
 
@@ -42,7 +36,7 @@ exports.createUpdate = async (req, res) => {
 
 exports.updateUpdate = async (req, res) => {
   const { phase, title, notes, date, completionPercent, actualCost } = req.body;
-  const update = await ProgressUpdate.findById(req.params.id);
+  const update = await ProgressUpdate.findOne({ _id: req.params.id, companyId: req.user.companyId });
   if (!update) return res.status(404).json({ message: 'Progress update not found' });
 
   if (phase !== undefined) update.phase = phase;
@@ -51,48 +45,42 @@ exports.updateUpdate = async (req, res) => {
   if (date !== undefined) update.date = date;
   if (completionPercent !== undefined) update.completionPercent = Number(completionPercent);
   if (actualCost !== undefined) update.actualCost = Number(actualCost);
-
-  // Append new images if uploaded
-  if (req.files && req.files.length > 0) {
-    update.images.push(...req.files.map((f) => f.path));
-  }
+  if (req.files && req.files.length > 0) update.images.push(...req.files.map((f) => f.path));
 
   await update.save();
   res.json({ update });
 };
 
 exports.deleteUpdate = async (req, res) => {
-  await ProgressUpdate.findByIdAndDelete(req.params.id);
+  await ProgressUpdate.findOneAndDelete({ _id: req.params.id, companyId: req.user.companyId });
   res.json({ message: 'Deleted' });
 };
 
 // ── Budget Alert ──────────────────────────────────────────────────────────────
 
 exports.getBudgetAlerts = async (req, res) => {
-  const projects = await Project.find({ status: { $in: ['planning', 'active', 'on_hold'] } });
+  const cId = req.user.companyId;
+  const projects = await Project.find({ companyId: cId, status: { $in: ['planning', 'active', 'on_hold'] } });
 
   const alerts = await Promise.all(
     projects.map(async (project) => {
       if (!project.budget || project.budget === 0) return null;
 
-      // Latest approved/final BOQ version cost
       const boqVersion = await BoqVersion.findOne({
-        projectId: project._id,
+        projectId: project._id, companyId: cId,
         status: { $in: ['approved', 'final'] },
       }).sort({ updatedAt: -1 });
 
       const estimatedCost = boqVersion?.totalCost || 0;
 
-      // Sum of approved change orders (positive differences only)
       const changeDelta = await ChangeOrder.aggregate([
-        { $match: { projectId: project._id, status: 'approved' } },
+        { $match: { projectId: project._id, companyId: cId, status: 'approved' } },
         { $group: { _id: null, total: { $sum: '$difference' } } },
       ]);
       const changeTotal = changeDelta[0]?.total || 0;
 
-      // Sum of actual costs from progress updates
       const actualAgg = await ProgressUpdate.aggregate([
-        { $match: { projectId: project._id } },
+        { $match: { projectId: project._id, companyId: cId } },
         { $group: { _id: null, total: { $sum: '$actualCost' } } },
       ]);
       const actualCostTotal = actualAgg[0]?.total || 0;
@@ -103,10 +91,7 @@ exports.getBudgetAlerts = async (req, res) => {
 
       return {
         project: { _id: project._id, name: project.name, client: project.client, budget: project.budget, currency: project.currency },
-        estimatedCost,
-        changeTotal,
-        projectedCost,
-        actualCostTotal,
+        estimatedCost, changeTotal, projectedCost, actualCostTotal,
         projectedRatio: parseFloat(projectedRatio.toFixed(4)),
         actualRatio: parseFloat(actualRatio.toFixed(4)),
         overBudget: projectedRatio > 1,

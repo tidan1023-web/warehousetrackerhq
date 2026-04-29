@@ -90,8 +90,8 @@ export default function Sidebar({ onClose }) {
             <Building2 size={18} />
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-bold">Pico Bello</p>
-            <p className="text-xs text-blue-300">Projekte BOQ System</p>
+            <p className="text-sm font-bold leading-tight">Pico Bello Projekte</p>
+            <p className="text-xs text-blue-300">Limited · BOQ System</p>
           </div>
         </div>
       </div>

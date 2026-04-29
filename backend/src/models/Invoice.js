@@ -21,6 +21,7 @@ const invoiceSchema = new mongoose.Schema({
   balance: { type: Number, default: 0 },
   notes: { type: String },
   sentAt: { type: Date },
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 

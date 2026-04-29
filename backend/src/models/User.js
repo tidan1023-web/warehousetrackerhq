@@ -14,8 +14,9 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['admin', 'qs', 'project_manager', 'client'],
-    default: 'client',
+    default: 'admin',
   },
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true },
   isActive: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
 });

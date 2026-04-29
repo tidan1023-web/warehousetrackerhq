@@ -8,12 +8,13 @@ const changeOrderSchema = new mongoose.Schema({
   reason: { type: String },
   originalCost: { type: Number, required: true, min: 0 },
   newCost: { type: Number, required: true, min: 0 },
-  difference: { type: Number, default: 0 }, // computed: newCost - originalCost
+  difference: { type: Number, default: 0 },
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected', 'cancelled'],
     default: 'pending',
   },
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true },
   requestedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   approvedAt: { type: Date, default: null },

@@ -1,7 +1,7 @@
 const Project = require('../models/Project');
 
 const getProjects = async (req, res) => {
-  const filter = {};
+  const filter = { companyId: req.user.companyId };
   if (req.query.status) filter.status = req.query.status;
 
   const projects = await Project.find(filter)
@@ -12,19 +12,24 @@ const getProjects = async (req, res) => {
 };
 
 const getProject = async (req, res) => {
-  const project = await Project.findById(req.params.id).populate('createdBy', 'name email');
+  const project = await Project.findOne({ _id: req.params.id, companyId: req.user.companyId })
+    .populate('createdBy', 'name email');
   if (!project) return res.status(404).json({ message: 'Project not found' });
   res.json({ project });
 };
 
 const createProject = async (req, res) => {
-  const project = await Project.create({ ...req.body, createdBy: req.user._id });
+  const project = await Project.create({
+    ...req.body,
+    companyId: req.user.companyId,
+    createdBy: req.user._id,
+  });
   res.status(201).json({ message: 'Project created', project });
 };
 
 const updateProject = async (req, res) => {
-  const project = await Project.findByIdAndUpdate(
-    req.params.id,
+  const project = await Project.findOneAndUpdate(
+    { _id: req.params.id, companyId: req.user.companyId },
     { ...req.body, updatedAt: Date.now() },
     { new: true, runValidators: true }
   );
@@ -33,7 +38,7 @@ const updateProject = async (req, res) => {
 };
 
 const deleteProject = async (req, res) => {
-  const project = await Project.findByIdAndDelete(req.params.id);
+  const project = await Project.findOneAndDelete({ _id: req.params.id, companyId: req.user.companyId });
   if (!project) return res.status(404).json({ message: 'Project not found' });
   res.json({ message: 'Project deleted' });
 };

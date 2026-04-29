@@ -9,11 +9,12 @@ function fmt2(n) { return parseFloat(Number(n || 0).toFixed(2)); }
 
 // ── 1. Profit Report ──────────────────────────────────────────────────────────
 exports.getProfitReport = async (req, res) => {
-  const projects = await Project.find().sort({ createdAt: -1 });
+  const cId = req.user.companyId;
+  const projects = await Project.find({ companyId: cId }).sort({ createdAt: -1 });
 
   const rows = await Promise.all(
     projects.map(async (p) => {
-      const invoices = await Invoice.find({ projectId: p._id, status: { $ne: 'cancelled' } });
+      const invoices = await Invoice.find({ projectId: p._id, companyId: cId, status: { $ne: 'cancelled' } });
       const paidInvoices = invoices.filter((i) => i.status === 'paid');
 
       const totalInvoiced = fmt2(invoices.reduce((s, i) => s + i.total, 0));
@@ -67,7 +68,8 @@ exports.getProfitReport = async (req, res) => {
 
 // ── 2. Cost Variance ──────────────────────────────────────────────────────────
 exports.getCostVariance = async (req, res) => {
-  const projects = await Project.find({ status: { $in: ['active', 'on_hold', 'completed'] } });
+  const cId = req.user.companyId;
+  const projects = await Project.find({ companyId: cId, status: { $in: ['active', 'on_hold', 'completed'] } });
 
   const rows = await Promise.all(
     projects.map(async (p) => {
@@ -109,7 +111,7 @@ exports.getCostVariance = async (req, res) => {
 
 // ── 3. Outstanding Invoices ────────────────────────────────────────────────────
 exports.getOutstandingInvoices = async (req, res) => {
-  const invoices = await Invoice.find({ balance: { $gt: 0 }, status: { $nin: ['cancelled', 'paid'] } })
+  const invoices = await Invoice.find({ companyId: req.user.companyId, balance: { $gt: 0 }, status: { $nin: ['cancelled', 'paid'] } })
     .populate('projectId', 'name client')
     .sort({ dueDate: 1 });
 
@@ -149,7 +151,8 @@ exports.getOutstandingInvoices = async (req, res) => {
 exports.getSupplierPriceHistory = async (req, res) => {
   const material = req.query.material || '';
 
-  const match = material ? { material: { $regex: material, $options: 'i' } } : {};
+  const match = { companyId: req.user.companyId };
+  if (material) match.material = { $regex: material, $options: 'i' };
 
   const records = await MaterialPrice.find(match)
     .sort({ material: 1, createdAt: 1 })

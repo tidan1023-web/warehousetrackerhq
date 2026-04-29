@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Company = require('../models/Company');
 
 const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -14,6 +15,14 @@ const authenticate = async (req, res, next) => {
     if (!user || !user.isActive) {
       return res.status(401).json({ message: 'User not found or inactive' });
     }
+
+    // Auto-create a company for legacy users who don't have one yet
+    if (!user.companyId) {
+      const company = await Company.create({ companyName: 'My Company', createdBy: user._id });
+      user.companyId = company._id;
+      await user.save();
+    }
+
     req.user = user;
     next();
   } catch {
@@ -21,4 +30,11 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticate };
+const authorize = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user?.role)) {
+    return res.status(403).json({ message: 'Insufficient permissions' });
+  }
+  next();
+};
+
+module.exports = { authenticate, authorize };

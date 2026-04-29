@@ -29,13 +29,13 @@ async function recalcInvoice(invoice) {
 // ── CRUD ──────────────────────────────────────────────────────────────────────
 
 exports.getInvoices = async (req, res) => {
-  const filter = {};
+  const filter = { companyId: req.user.companyId };
   if (req.query.status) filter.status = req.query.status;
   if (req.query.projectId) filter.projectId = req.query.projectId;
 
   // Clients only see invoices for projects they are assigned to
   if (req.user.role === 'client') {
-    const projects = await Project.find({ assignedClientId: req.user._id }).select('_id');
+    const projects = await Project.find({ companyId: req.user.companyId, assignedClientId: req.user._id }).select('_id');
     filter.projectId = { $in: projects.map((p) => p._id) };
   }
 
@@ -66,9 +66,9 @@ exports.createInvoice = async (req, res) => {
   const { projectId, boqVersionId, vatPercent = 0, dueDate, notes, currency } = req.body;
 
   const [version, project, company, items] = await Promise.all([
-    BoqVersion.findById(boqVersionId),
-    Project.findById(projectId),
-    Company.findOne(),
+    BoqVersion.findOne({ _id: boqVersionId, companyId: req.user.companyId }),
+    Project.findOne({ _id: projectId, companyId: req.user.companyId }),
+    Company.findById(req.user.companyId),
     BoqItem.find({ versionId: boqVersionId }),
   ]);
 
@@ -111,6 +111,7 @@ exports.createInvoice = async (req, res) => {
     vatAmount,
     total,
     balance: total,
+    companyId: req.user.companyId,
     createdBy: req.user._id,
   });
 
