@@ -97,7 +97,7 @@ export default function Sidebar({ onClose }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto scrollbar-hide">
+      <nav className="flex-1 px-3 py-3 space-y-2 overflow-y-auto">
         {NAV_SECTIONS.map((section) => {
           if (!canSee(section.roles)) return null;
           const visibleItems = section.items.filter((item) => canSee(item.roles));
