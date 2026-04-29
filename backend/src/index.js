@@ -22,13 +22,19 @@ const progressRoutes = require('./routes/progress');
 const changeOrderRoutes = require('./routes/changeOrders');
 const analyticsRoutes = require('./routes/analytics');
 
-// Configure web-push VAPID keys
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-  webpush.setVapidDetails(
-    `mailto:${process.env.VAPID_EMAIL || 'admin@picobello.com'}`,
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
+// Configure web-push VAPID keys (only when real keys are provided)
+const vapidPublic = (process.env.VAPID_PUBLIC_KEY || '').trim();
+const vapidPrivate = (process.env.VAPID_PRIVATE_KEY || '').trim();
+if (vapidPublic.length > 10 && vapidPrivate.length > 10) {
+  try {
+    webpush.setVapidDetails(
+      `mailto:${(process.env.VAPID_EMAIL || 'admin@picobello.com').trim()}`,
+      vapidPublic,
+      vapidPrivate
+    );
+  } catch (e) {
+    console.warn('VAPID configuration skipped:', e.message);
+  }
 }
 
 const app = express();
