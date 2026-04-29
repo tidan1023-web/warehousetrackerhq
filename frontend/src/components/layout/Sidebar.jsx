@@ -82,12 +82,12 @@ export default function Sidebar({ onClose }) {
   const canSee = (roles) => !roles || roles.includes(user?.role);
 
   return (
-    <aside className="w-64 min-h-screen bg-primary-900 text-white flex flex-col shrink-0">
+    <aside className="w-64 h-screen bg-primary-900 text-white flex flex-col">
       {/* Brand */}
-      <div className="px-5 py-5 border-b border-primary-800">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shrink-0">
-            <Building2 size={22} />
+      <div className="px-4 py-4 border-b border-primary-800 shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shrink-0">
+            <Building2 size={18} />
           </div>
           <div className="leading-tight">
             <p className="text-sm font-bold">Pico Bello</p>
@@ -97,7 +97,7 @@ export default function Sidebar({ onClose }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-3 space-y-2 overflow-y-auto">
+      <nav className="flex-1 px-2 py-2 space-y-1 overflow-y-auto min-h-0">
         {NAV_SECTIONS.map((section) => {
           if (!canSee(section.roles)) return null;
           const visibleItems = section.items.filter((item) => canSee(item.roles));
@@ -105,7 +105,7 @@ export default function Sidebar({ onClose }) {
 
           return (
             <div key={section.title}>
-              <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider px-3 mb-1">
+              <p className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider px-2 mb-0.5 mt-1">
                 {section.title}
               </p>
               <div className="space-y-0.5">
@@ -115,14 +115,14 @@ export default function Sidebar({ onClose }) {
                     to={to}
                     onClick={onClose}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                      `flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors ${
                         isActive
-                          ? 'bg-blue-600 text-white shadow-sm'
+                          ? 'bg-blue-600 text-white'
                           : 'text-blue-200 hover:bg-primary-800 hover:text-white'
                       }`
                     }
                   >
-                    <Icon size={17} className="shrink-0" />
+                    <Icon size={15} className="shrink-0" />
                     {label}
                   </NavLink>
                 ))}
@@ -133,16 +133,16 @@ export default function Sidebar({ onClose }) {
       </nav>
 
       {/* User footer */}
-      <div className="px-3 py-4 border-t border-primary-800">
-        <div className="px-3 py-2 mb-1">
+      <div className="px-2 py-3 border-t border-primary-800 shrink-0">
+        <div className="px-2 py-1 mb-1">
           <p className="text-sm font-semibold truncate">{user?.name}</p>
           <p className="text-xs text-blue-300 truncate">{ROLE_LABEL[user?.role] ?? user?.role}</p>
         </div>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-blue-200 hover:bg-primary-800 hover:text-white transition-colors"
+          className="flex items-center gap-2.5 w-full px-2.5 py-1.5 rounded-md text-sm text-blue-200 hover:bg-primary-800 hover:text-white transition-colors"
         >
-          <LogOut size={18} />
+          <LogOut size={15} />
           Logout
         </button>
       </div>

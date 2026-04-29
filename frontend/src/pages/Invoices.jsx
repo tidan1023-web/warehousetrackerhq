@@ -179,7 +179,8 @@ export default function Invoices() {
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
                 <th className="text-left px-5 py-3">Invoice #</th>
@@ -236,6 +237,7 @@ export default function Invoices() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

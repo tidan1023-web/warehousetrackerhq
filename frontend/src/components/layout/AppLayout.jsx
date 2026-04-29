@@ -30,7 +30,7 @@ export default function AppLayout() {
     ?? (pathname.startsWith('/app/invoices/') ? 'Invoice Detail' : 'Pico Bello Projekte');
 
   return (
-    <div className="flex min-h-screen relative">
+    <div className="flex h-screen overflow-hidden relative">
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
