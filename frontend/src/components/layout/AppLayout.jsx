@@ -11,12 +11,19 @@ const TITLES = {
   '/app/material-pricing': 'Material Prices',
   '/app/pricing-intelligence': 'Pricing Intelligence',
   '/app/boq': 'BOQ Builder',
+  '/app/invoices': 'Invoices',
+  '/app/client-portal': 'My Projects',
+  '/app/client-boq': 'Review BOQ',
+  '/app/client-invoices': 'My Invoices',
+  '/app/client-comments': 'Project Comments',
   '/app/settings': 'Company Settings',
 };
 
 export default function AppLayout() {
   const { pathname } = useLocation();
-  const title = TITLES[pathname] ?? 'Pico Bello Projekte';
+  // Dynamic route fallback: /app/invoices/:id → 'Invoice Detail'
+  const title = TITLES[pathname]
+    ?? (pathname.startsWith('/app/invoices/') ? 'Invoice Detail' : 'Pico Bello Projekte');
 
   return (
     <div className="flex min-h-screen">

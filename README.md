@@ -362,7 +362,10 @@ boq-tracker/
 │   │   │   ├── materialPriceController.js
 │   │   │   ├── pricingController.js
 │   │   │   ├── boqController.js
-│   │   │   └── notificationController.js
+│   │   │   ├── notificationController.js
+│   │   │   ├── invoiceController.js
+│   │   │   ├── approvalController.js
+│   │   │   └── commentController.js
 │   │   ├── middleware/
 │   │   │   ├── auth.js
 │   │   │   └── rbac.js
@@ -376,7 +379,11 @@ boq-tracker/
 │   │   │   ├── BoqVersion.js
 │   │   │   ├── BoqItem.js
 │   │   │   ├── Notification.js
-│   │   │   └── PushSubscription.js
+│   │   │   ├── PushSubscription.js
+│   │   │   ├── Invoice.js
+│   │   │   ├── Payment.js
+│   │   │   ├── Approval.js
+│   │   │   └── Comment.js
 │   │   ├── routes/
 │   │   │   ├── auth.js
 │   │   │   ├── company.js
@@ -387,7 +394,10 @@ boq-tracker/
 │   │   │   ├── materialPrices.js
 │   │   │   ├── pricing.js
 │   │   │   ├── boq.js
-│   │   │   └── notifications.js
+│   │   │   ├── notifications.js
+│   │   │   ├── invoices.js
+│   │   │   ├── approvals.js
+│   │   │   └── comments.js
 │   │   └── index.js
 │   ├── .env.example
 │   ├── package.json
@@ -418,7 +428,13 @@ boq-tracker/
 │   │   │   ├── ArtisanPricing.jsx
 │   │   │   ├── MaterialPricing.jsx
 │   │   │   ├── PricingIntelligence.jsx
-│   │   │   └── BoqBuilder.jsx
+│   │   │   ├── BoqBuilder.jsx
+│   │   │   ├── Invoices.jsx
+│   │   │   ├── InvoiceDetail.jsx
+│   │   │   ├── ClientPortal.jsx
+│   │   │   ├── ClientBOQ.jsx
+│   │   │   ├── ClientInvoices.jsx
+│   │   │   └── ClientComments.jsx
 │   │   ├── services/
 │   │   │   ├── api.js
 │   │   │   └── notifications.js
@@ -568,26 +584,198 @@ The `render.yaml` files in each subdirectory automate this configuration.
 
 ---
 
+## Phase 3 — Invoice Generator
+
+### Invoice Structure
+- Linked to a **Project** and a **BOQ Version**
+- Snapshots company settings at creation time (name, address, bank details, logo)
+- If client has selected option tiers (basic/standard/premium), those costs are used when computing subtotal
+- Fields: invoiceNumber (auto: `INV-YYYY-XXXX`), status, issueDate, dueDate, currency, subtotal, vatPercent, vatAmount, total, amountPaid, balance, notes
+
+### PDF Logic
+- Generated server-side using **PDFKit** — streamed directly as `application/pdf`
+- Blue header band with company name and "INVOICE" title
+- Invoice number, dates, status badge
+- Bill-To / project details block
+- Line items table (description, unit, qty, base cost, OH+P%, total)
+- Totals section (subtotal → VAT → grand total → paid → balance)
+- Bank details and payment instructions from company snapshot
+- Payment history list
+- Dark blue footer
+
+### Payment Tracking
+```
+Invoice created → balance = total (amountPaid = 0)
+      │
+Admin/QS records payment via POST /api/invoices/:id/payments
+      │
+amountPaid recalculated from all payment records
+      │
+balance = total - amountPaid
+      │
+If balance = 0 → status auto-set to "paid"
+```
+
+### Invoice API Routes — `/api/invoices`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Any | List invoices (`?status=`, `?projectId=`) |
+| GET | `/:id` | Any | Invoice + items + payments |
+| GET | `/:id/pdf` | Any | Stream PDF |
+| POST | `/` | Admin/QS/PM | Create from BOQ version |
+| PUT | `/:id` | Admin/QS/PM | Update status / VAT / notes |
+| DELETE | `/:id` | Admin | Delete invoice + payments |
+| POST | `/:id/payments` | Admin/QS/PM | Record payment |
+| DELETE | `/:id/payments/:pid` | Admin/QS | Delete payment record |
+
+### Invoice MongoDB Schemas
+
+#### `invoices`
+```
+invoiceNumber   String (unique, auto: INV-YYYY-XXXX)
+projectId       ObjectId → projects
+boqVersionId    ObjectId → boqversions
+companySnapshot Object (snapshot at creation)
+status          Enum: draft | sent | paid | overdue | cancelled
+issueDate       Date
+dueDate         Date
+currency        String
+subtotal        Number
+vatPercent      Number
+vatAmount       Number
+total           Number
+amountPaid      Number (recalculated from payments)
+balance         Number
+notes           String
+sentAt          Date
+createdBy       ObjectId → users
+```
+
+#### `payments`
+```
+invoiceId    ObjectId → invoices (required)
+amount       Number (required)
+method       Enum: bank_transfer | cash | cheque | card | other
+reference    String
+paymentDate  Date
+notes        String
+recordedBy   ObjectId → users
+```
+
+---
+
+## Phase 4 — Client Portal
+
+### Client Journey
+```
+Client registers / is assigned to a project
+      │
+Logs in → redirected to Client Portal (/app/client-portal)
+      │
+Views assigned projects → clicks "View BOQ"
+      │
+Sees BOQ line items → selects tier (basic/standard/premium) if options exist
+      │
+Approves or rejects individual items
+      │
+Optionally approves/rejects entire BOQ version
+      │
+If version approved → BoqVersion.status set to "approved"
+      │
+QS/Admin notified via in-app notification
+      │
+Client views invoices → downloads PDF
+      │
+Client comments on project via threaded comment system
+```
+
+### Approval Flow
+- Clients submit per-item decisions: `approved` | `rejected` with optional tier and note
+- Clients can also approve/reject the entire BOQ version
+- On version approval, `BoqVersion.status` updates to `approved` and the creator is notified
+- Admins/QS can view all pending approvals at `GET /api/approvals/pending`
+- When generating an invoice, client-selected tiers are applied to compute accurate costs
+
+### Option Pricing (Basic / Standard / Premium)
+- `BoqItem.options[]` stores up to 3 tier objects: `{ tier, label, baseCost }`
+- QS/Admin define options when building the BOQ
+- Client selects a tier in the Review BOQ page
+- Selected tier's `baseCost` is used in invoice generation via the Approval record
+
+### Comment System
+- Threaded comments per project (1 level of nesting)
+- All roles can comment; client role restricted to assigned projects
+- Owners and admins can delete comments (cascade deletes replies)
+
+### Approval & Comment API Routes
+
+#### `/api/approvals`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/` | Any | Approvals (`?projectId=`, `?boqVersionId=`) |
+| GET | `/pending` | Admin/QS/PM | All pending approvals |
+| POST | `/item` | Client | Submit item approval/rejection |
+| POST | `/version/:boqVersionId` | Client | Approve/reject entire version |
+
+#### `/api/comments`
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/?projectId=` | Any | Threaded comments for project |
+| POST | `/` | Any | Add comment (or reply with parentId) |
+| DELETE | `/:id` | Owner/Admin | Delete comment + replies |
+
+### Phase 4 MongoDB Schemas
+
+#### `approvals`
+```
+projectId    ObjectId → projects (required)
+boqVersionId ObjectId → boqversions (required)
+boqItemId    ObjectId → boqitems (null for version-level)
+clientId     ObjectId → users (required)
+type         Enum: item | version
+status       Enum: pending | approved | rejected
+selectedTier Enum: basic | standard | premium | null
+note         String
+decidedAt    Date
+```
+
+#### `comments`
+```
+projectId  ObjectId → projects (required)
+userId     ObjectId → users (required)
+message    String (required, max 2000 chars)
+parentId   ObjectId → comments (null for root)
+createdAt  Date
+```
+
+### Updated `boqitems` (Phase 4 addition)
+```
+options  [{ tier: basic|standard|premium, label: String, baseCost: Number }]
+```
+
+### Updated `projects` (Phase 4 addition)
+```
+assignedClientId  ObjectId → users (optional — links client user to this project)
+```
+
+### Role Permissions — Phase 3 & 4
+
+| Action | Admin | QS | Project Manager | Client |
+|---|:---:|:---:|:---:|:---:|
+| Create invoice | ✓ | ✓ | ✓ | — |
+| View invoices | ✓ | ✓ | ✓ | own |
+| Download PDF | ✓ | ✓ | ✓ | own |
+| Record payment | ✓ | ✓ | ✓ | — |
+| Delete invoice | ✓ | — | — | — |
+| View client portal | — | — | — | ✓ |
+| Review/approve BOQ | — | — | — | ✓ |
+| Select option tier | — | — | — | ✓ |
+| Add comment | ✓ | ✓ | ✓ | ✓ |
+| View pending approvals | ✓ | ✓ | ✓ | — |
+
+---
+
 ## Data Flow
-
-```
-Browser (React)
-   │  axios request with JWT header
-   ▼
-Express API (Node.js)
-   │  authenticate → verify JWT
-   │  authorize   → check role
-   ▼
-Controller → Mongoose query
-   ▼
-MongoDB Atlas
-
-File uploads (logo/sig/stamp):
-   multer-storage-cloudinary → Cloudinary CDN (bypasses Express response)
-
-Push notifications:
-   notificationController → web-push → browser SW → showNotification()
-```
 
 ---
 

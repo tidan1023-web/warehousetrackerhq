@@ -15,6 +15,9 @@ const materialPricesRoutes = require('./routes/materialPrices');
 const pricingRoutes = require('./routes/pricing');
 const boqRoutes = require('./routes/boq');
 const notificationRoutes = require('./routes/notifications');
+const invoiceRoutes = require('./routes/invoices');
+const approvalRoutes = require('./routes/approvals');
+const commentRoutes = require('./routes/comments');
 
 // Configure web-push VAPID keys
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
@@ -57,6 +60,9 @@ app.use('/api/material-prices', materialPricesRoutes);
 app.use('/api/pricing', pricingRoutes);
 app.use('/api/boq', boqRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/approvals', approvalRoutes);
+app.use('/api/comments', commentRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

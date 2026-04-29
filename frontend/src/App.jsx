@@ -14,6 +14,12 @@ import ArtisanPricing from './pages/ArtisanPricing';
 import MaterialPricing from './pages/MaterialPricing';
 import PricingIntelligence from './pages/PricingIntelligence';
 import BoqBuilder from './pages/BoqBuilder';
+import Invoices from './pages/Invoices';
+import InvoiceDetail from './pages/InvoiceDetail';
+import ClientPortal from './pages/ClientPortal';
+import ClientBOQ from './pages/ClientBOQ';
+import ClientInvoices from './pages/ClientInvoices';
+import ClientComments from './pages/ClientComments';
 
 export default function App() {
   return (
@@ -38,6 +44,12 @@ export default function App() {
           <Route path="material-pricing" element={<MaterialPricing />} />
           <Route path="pricing-intelligence" element={<PricingIntelligence />} />
           <Route path="boq" element={<BoqBuilder />} />
+          <Route path="invoices" element={<Invoices />} />
+          <Route path="invoices/:id" element={<InvoiceDetail />} />
+          <Route path="client-portal" element={<ClientPortal />} />
+          <Route path="client-boq" element={<ClientBOQ />} />
+          <Route path="client-invoices" element={<ClientInvoices />} />
+          <Route path="client-comments" element={<ClientComments />} />
           <Route path="settings" element={<CompanySettings />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

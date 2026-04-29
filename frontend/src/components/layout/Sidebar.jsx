@@ -4,11 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, FolderOpen, Settings, LogOut, Building2,
   BookOpen, HardHat, Package, BarChart2, FileSpreadsheet,
+  Receipt, LayoutGrid, CheckSquare, FileText, MessageSquare,
 } from 'lucide-react';
 
 const NAV_SECTIONS = [
   {
     title: 'General',
+    roles: ['admin', 'qs', 'project_manager'],
     items: [
       { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/app/projects', icon: FolderOpen, label: 'Projects' },
@@ -25,10 +27,21 @@ const NAV_SECTIONS = [
     ],
   },
   {
-    title: 'BOQ',
+    title: 'BOQ & Invoices',
     roles: ['admin', 'qs', 'project_manager'],
     items: [
       { to: '/app/boq', icon: FileSpreadsheet, label: 'BOQ Builder' },
+      { to: '/app/invoices', icon: Receipt, label: 'Invoices' },
+    ],
+  },
+  {
+    title: 'Client Portal',
+    roles: ['client'],
+    items: [
+      { to: '/app/client-portal', icon: LayoutGrid, label: 'My Projects' },
+      { to: '/app/client-boq', icon: CheckSquare, label: 'Review BOQ' },
+      { to: '/app/client-invoices', icon: FileText, label: 'My Invoices' },
+      { to: '/app/client-comments', icon: MessageSquare, label: 'Comments' },
     ],
   },
   {

@@ -11,6 +11,13 @@ const boqItemSchema = new mongoose.Schema({
   profitPercent: { type: Number, default: 0, min: 0 },
   finalUnitPrice: { type: Number, default: 0 },
   totalCost: { type: Number, default: 0 },
+  options: [
+    {
+      tier: { type: String, enum: ['basic', 'standard', 'premium'] },
+      label: { type: String },
+      baseCost: { type: Number, min: 0 },
+    },
+  ],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
