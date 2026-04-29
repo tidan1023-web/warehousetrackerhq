@@ -5,6 +5,7 @@ import {
   LayoutDashboard, FolderOpen, Settings, LogOut, Building2,
   BookOpen, HardHat, Package, BarChart2, FileSpreadsheet,
   Receipt, LayoutGrid, CheckSquare, FileText, MessageSquare,
+  TrendingUp, GitMerge, PieChart,
 } from 'lucide-react';
 
 const NAV_SECTIONS = [
@@ -35,6 +36,15 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    title: 'Execution',
+    roles: ['admin', 'qs', 'project_manager'],
+    items: [
+      { to: '/app/progress', icon: TrendingUp, label: 'Progress Tracker' },
+      { to: '/app/change-orders', icon: GitMerge, label: 'Change Orders' },
+      { to: '/app/analytics', icon: PieChart, label: 'Analytics' },
+    ],
+  },
+  {
     title: 'Client Portal',
     roles: ['client'],
     items: [
@@ -59,13 +69,14 @@ const ROLE_LABEL = {
   client: 'Client',
 };
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+    onClose?.();
   };
 
   const canSee = (roles) => !roles || roles.includes(user?.role);
@@ -102,6 +113,7 @@ export default function Sidebar() {
                   <NavLink
                     key={to}
                     to={to}
+                    onClick={onClose}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                         isActive

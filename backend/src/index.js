@@ -18,6 +18,9 @@ const notificationRoutes = require('./routes/notifications');
 const invoiceRoutes = require('./routes/invoices');
 const approvalRoutes = require('./routes/approvals');
 const commentRoutes = require('./routes/comments');
+const progressRoutes = require('./routes/progress');
+const changeOrderRoutes = require('./routes/changeOrders');
+const analyticsRoutes = require('./routes/analytics');
 
 // Configure web-push VAPID keys
 if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
@@ -63,6 +66,9 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/approvals', approvalRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/progress', progressRoutes);
+app.use('/api/change-orders', changeOrderRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

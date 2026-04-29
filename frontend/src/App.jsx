@@ -20,6 +20,9 @@ import ClientPortal from './pages/ClientPortal';
 import ClientBOQ from './pages/ClientBOQ';
 import ClientInvoices from './pages/ClientInvoices';
 import ClientComments from './pages/ClientComments';
+import ProgressTracker from './pages/ProgressTracker';
+import ChangeOrders from './pages/ChangeOrders';
+import Analytics from './pages/Analytics';
 
 export default function App() {
   return (
@@ -50,6 +53,9 @@ export default function App() {
           <Route path="client-boq" element={<ClientBOQ />} />
           <Route path="client-invoices" element={<ClientInvoices />} />
           <Route path="client-comments" element={<ClientComments />} />
+          <Route path="progress" element={<ProgressTracker />} />
+          <Route path="change-orders" element={<ChangeOrders />} />
+          <Route path="analytics" element={<Analytics />} />
           <Route path="settings" element={<CompanySettings />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
