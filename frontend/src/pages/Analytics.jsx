@@ -44,7 +44,7 @@ function ProfitTab() {
     <div className="space-y-5">
       {/* Totals banner */}
       {data?.totals && (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Total Invoiced', value: data.totals.totalInvoiced, icon: DollarSign, color: 'text-blue-500 bg-blue-50' },
             { label: 'Revenue Collected', value: data.totals.totalRevenue, icon: TrendingUp, color: 'text-green-500 bg-green-50' },
@@ -63,8 +63,8 @@ function ProfitTab() {
       )}
 
       {/* Per-project table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
               <th className="text-left px-5 py-3">Project</th>
@@ -130,7 +130,7 @@ function VarianceTab() {
               </span>
             )}
           </div>
-          <div className="grid grid-cols-4 gap-4 mb-3 text-sm">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-3 text-sm">
             <div>
               <p className="text-xs text-gray-400">Estimated (BOQ)</p>
               <p className="font-semibold text-gray-700">{r.project.currency} {fmt(r.estimatedCost)}</p>
@@ -299,7 +299,7 @@ function SupplierTab() {
 
       {(data?.materials || []).map((mat) => (
         <div key={mat.material} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
+          <div className="px-5 py-4 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h3 className="font-semibold text-gray-800">{mat.material}</h3>
             <div className="flex gap-4 text-xs text-gray-500">
               <span>Min: <strong>₦{fmt(mat.min)}</strong></span>
@@ -307,7 +307,8 @@ function SupplierTab() {
               <span>Max: <strong>₦{fmt(mat.max)}</strong></span>
             </div>
           </div>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[480px]">
             <thead>
               <tr className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                 <th className="text-left px-5 py-2">Supplier</th>
@@ -329,6 +330,7 @@ function SupplierTab() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ))}
     </div>
@@ -362,21 +364,23 @@ export default function Analytics() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-1 bg-gray-100 p-1 rounded-xl">
-          {TABS.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => setTab(id)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                tab === id ? 'bg-white text-primary-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-              }`}>
-              <Icon size={14} /> {label}
-            </button>
-          ))}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div className="overflow-x-auto w-full sm:w-auto">
+          <div className="flex gap-1 bg-gray-100 p-1 rounded-xl min-w-max">
+            {TABS.map(({ id, label, icon: Icon }) => (
+              <button key={id} onClick={() => setTab(id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                  tab === id ? 'bg-white text-primary-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                }`}>
+                <Icon size={14} /> {label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           {reminderResult && <span className="text-xs text-green-600">{reminderResult}</span>}
           <button onClick={sendReminders} disabled={sending}
-            className="flex items-center gap-1.5 text-sm border border-gray-200 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-60">
+            className="flex items-center gap-1.5 text-sm border border-gray-200 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-60 whitespace-nowrap">
             <AlertCircle size={14} /> {sending ? 'Sending…' : 'Send Reminders'}
           </button>
         </div>

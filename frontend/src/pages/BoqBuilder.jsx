@@ -338,16 +338,16 @@ export default function BoqBuilder() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => setActiveVersion(null)} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary-900 transition-colors">
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <button onClick={() => setActiveVersion(null)} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary-900 transition-colors shrink-0">
           <ChevronLeft size={16} /> Back
         </button>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <h2 className="font-semibold text-gray-800">{activeVersion.name}</h2>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_COLORS[activeVersion.status]}`}>{activeVersion.status}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="font-semibold text-gray-800 truncate">{activeVersion.name}</h2>
+            <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize shrink-0 ${STATUS_COLORS[activeVersion.status]}`}>{activeVersion.status}</span>
           </div>
-          <p className="text-xs text-gray-500">{activeVersion.projectId?.name} — {activeVersion.projectId?.client}</p>
+          <p className="text-xs text-gray-500 truncate">{activeVersion.projectId?.name} — {activeVersion.projectId?.client}</p>
         </div>
         {canEdit && (
           <button onClick={() => { setEditingItem(null); setItemModal(true); }}
@@ -368,7 +368,7 @@ export default function BoqBuilder() {
       ) : (
         <>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto mb-4">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[700px]">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
                   {['Item', 'Unit', 'Qty', 'Base Cost', 'OH %', 'Profit %', 'Unit Price', 'Total', ''].map((h) => (

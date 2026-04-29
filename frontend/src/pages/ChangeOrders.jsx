@@ -151,7 +151,7 @@ export default function ChangeOrders() {
   return (
     <div className="space-y-5">
       {/* Summary strip */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[['pending', 'Pending'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['cancelled', 'Cancelled']].map(([st, label]) => {
           const count = orders.filter((o) => o.status === st).length;
           return (
@@ -201,8 +201,8 @@ export default function ChangeOrders() {
       ) : orders.length === 0 ? (
         <div className="text-center py-16 text-gray-400">No change orders found.</div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-x-auto">
+          <table className="w-full text-sm min-w-[650px]">
             <thead>
               <tr className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
                 <th className="text-left px-5 py-3">Title / Project</th>
