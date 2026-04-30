@@ -16,6 +16,7 @@ import Estimator          from './pages/Estimator';
 import EstimateDetail     from './pages/EstimateDetail';
 import EstimateHistory    from './pages/EstimateHistory';
 import HistoricalProjects from './pages/HistoricalProjects';
+import Simulator          from './pages/Simulator';
 import SiteReports        from './pages/SiteReports';
 import CompanySettings    from './pages/CompanySettings';
 
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="estimates"              element={<EstimateHistory />} />
             <Route path="estimates/:id"          element={<EstimateDetail />} />
             <Route path="historical-projects"    element={<HistoricalProjects />} />
+            <Route path="simulator"              element={<Simulator />} />
             <Route path="site-reports"           element={<SiteReports />} />
             <Route path="settings"               element={<CompanySettings />} />
           </Route>

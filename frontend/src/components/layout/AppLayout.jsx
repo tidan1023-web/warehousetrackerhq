@@ -6,6 +6,7 @@ import Header from './Header';
 const TITLES = {
   '/app/dashboard':           'Dashboard',
   '/app/estimator':           'New Estimate',
+  '/app/simulator':           'Scenario Simulator',
   '/app/estimates':           'Estimate History',
   '/app/historical-projects': 'Historical Projects',
   '/app/site-reports':        'Site Reports',

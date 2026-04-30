@@ -4,12 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, Calculator, Clock, Database,
-  ClipboardList, Settings, LogOut, Building2, Moon, Sun,
+  ClipboardList, Settings, LogOut, Building2, Moon, Sun, Sliders,
 } from 'lucide-react';
 
 const NAV = [
   { to: '/app/dashboard',           icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/app/estimator',           icon: Calculator,      label: 'New Estimate' },
+  { to: '/app/simulator',           icon: Sliders,         label: 'Simulator' },
   { to: '/app/estimates',           icon: Clock,           label: 'Estimate History' },
   { to: '/app/historical-projects', icon: Database,        label: 'Historical Projects' },
   { to: '/app/site-reports',        icon: ClipboardList,   label: 'Site Reports' },
