@@ -50,6 +50,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok', service: 'Pico Bello BOQ API', version: '1.0.0' });
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'pico-bello-boq-api', timestamp: new Date().toISOString() });
 });
