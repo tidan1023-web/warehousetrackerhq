@@ -7,11 +7,14 @@ const connectDB = async () => {
     return;
   }
   try {
-    const conn = await mongoose.connect(uri);
+    const conn = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 10000,
+      bufferCommands: false,
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('MongoDB connection error:', error.message);
-    // Retry after 5 seconds instead of crashing
+    console.error(`MongoDB connection FAILED: ${error.message}`);
+    console.error('Check: 1) MONGODB_URI is correct  2) Atlas IP whitelist includes 0.0.0.0/0');
     setTimeout(connectDB, 5000);
   }
 };
