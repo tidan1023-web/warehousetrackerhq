@@ -1,7 +1,9 @@
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const Company = require('../models/Company');
+const { sendWelcome, sendPasswordReset } = require('../utils/email');
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -29,6 +31,7 @@ const register = async (req, res) => {
   await company.save();
 
   const token = generateToken(user._id);
+  sendWelcome(user).catch((e) => console.warn('Welcome email failed:', e.message));
   res.status(201).json({ message: 'Registration successful', token, user });
 };
 
@@ -82,4 +85,45 @@ const googleAuth = async (req, res) => {
   res.json({ message: 'Google login successful', token, user });
 };
 
-module.exports = { register, login, getMe, googleAuth };
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: 'Email is required' });
+
+  const user = await User.findOne({ email });
+  // Always respond the same way so we don't reveal whether an email exists
+  if (!user) return res.json({ message: 'If that email is registered, a reset link has been sent.' });
+
+  const token = crypto.randomBytes(32).toString('hex');
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  await user.save();
+
+  const resetUrl = `${process.env.FRONTEND_URL || 'https://pico-bello-boq.onrender.com'}/reset-password/${token}`;
+  await sendPasswordReset(user, resetUrl);
+
+  res.json({ message: 'If that email is registered, a reset link has been sent.' });
+};
+
+const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  if (!password || password.length < 6)
+    return res.status(400).json({ message: 'Password must be at least 6 characters' });
+
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) return res.status(400).json({ message: 'Reset link is invalid or has expired.' });
+
+  user.password = password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+
+  res.json({ message: 'Password reset successful. You can now log in.' });
+};
+
+module.exports = { register, login, getMe, googleAuth, forgotPassword, resetPassword };

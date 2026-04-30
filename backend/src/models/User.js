@@ -18,6 +18,8 @@ const userSchema = new mongoose.Schema({
   },
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company', index: true },
   isActive: { type: Boolean, default: true },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
   createdAt: { type: Date, default: Date.now },
 });
 
