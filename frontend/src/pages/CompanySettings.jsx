@@ -199,7 +199,7 @@ export default function CompanySettings() {
         {/* Brand Assets */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <SectionTitle icon={Building2} title="Brand Assets" />
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <UploadCard label="Company Logo" fieldKey="logo" value={assets.logo} onUpload={handleUpload} uploading={uploading} />
             <UploadCard label="Signature" fieldKey="signature" value={assets.signature} onUpload={handleUpload} uploading={uploading} />
             <UploadCard label="Stamp / Seal" fieldKey="stamp" value={assets.stamp} onUpload={handleUpload} uploading={uploading} />
@@ -286,7 +286,7 @@ export default function CompanySettings() {
                   >
                     <Trash2 size={15} />
                   </button>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       { label: 'Bank Name', key: 'bankName', placeholder: 'First Bank' },
                       { label: 'Account Name', key: 'accountName', placeholder: 'Pico Bello Ltd' },

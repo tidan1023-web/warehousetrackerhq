@@ -33,7 +33,7 @@ function Comment({ comment, projectId, onReply, onDelete, depth = 0 }) {
   const canDelete = user?._id === comment.userId?._id || user?.role === 'admin';
 
   return (
-    <div className={`${depth > 0 ? 'ml-8 border-l-2 border-gray-100 pl-4' : ''}`}>
+    <div className={`${depth > 0 ? 'ml-4 sm:ml-8 border-l-2 border-gray-100 pl-3 sm:pl-4' : ''}`}>
       <div className="bg-white rounded-xl border border-gray-100 p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export default function ClientComments() {
     <div className="flex flex-col h-full max-w-3xl space-y-4">
       {/* Project selector */}
       <select value={selProjectId} onChange={(e) => setSelProjectId(e.target.value)}
-        className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-900/30 w-64">
+        className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-900/30 w-full sm:w-64">
         <option value="">Select project…</option>
         {projects.map((p) => <option key={p._id} value={p._id}>{p.name}</option>)}
       </select>

@@ -72,7 +72,7 @@ function ItemRow({ item, approval, onDecide }) {
           {hasOptions && (
             <div className="mt-3">
               <p className="text-xs font-semibold text-gray-500 mb-2">Select an option:</p>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {item.options.map((opt) => {
                   const overhead = 1 + (item.overheadPercent || 0) / 100;
                   const profit = 1 + (item.profitPercent || 0) / 100;

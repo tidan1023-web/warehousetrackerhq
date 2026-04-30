@@ -405,16 +405,14 @@ export default function BoqBuilder() {
           </div>
 
           {/* Grand total */}
-          <div className="flex justify-end">
-            <div className="bg-primary-900 text-white rounded-xl px-6 py-4 flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <CheckCircle size={18} className="opacity-70" />
-                <span className="text-sm opacity-80">{items.length} item{items.length !== 1 ? 's' : ''}</span>
-              </div>
-              <div className="text-right">
-                <p className="text-xs opacity-70">Grand Total</p>
-                <p className="text-xl font-bold">{activeVersion.currency} {Number(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-              </div>
+          <div className="bg-primary-900 text-white rounded-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <CheckCircle size={18} className="opacity-70" />
+              <span className="text-sm opacity-80">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div className="text-right">
+              <p className="text-xs opacity-70">Grand Total</p>
+              <p className="text-xl font-bold">{activeVersion.currency} {Number(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
           </div>
         </>

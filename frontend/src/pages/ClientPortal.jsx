@@ -62,7 +62,7 @@ export default function ClientPortal() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-9 h-9 bg-blue-50 rounded-xl flex items-center justify-center">
@@ -141,7 +141,7 @@ export default function ClientPortal() {
           </div>
           <div className="divide-y divide-gray-50">
             {invoices.slice(0, 5).map((inv) => (
-              <div key={inv._id} className="px-5 py-3 flex items-center justify-between">
+              <div key={inv._id} className="px-5 py-3 flex items-start sm:items-center justify-between gap-2">
                 <div>
                   <p className="text-sm font-medium font-mono text-primary-900">{inv.invoiceNumber}</p>
                   <p className="text-xs text-gray-400">{inv.projectId?.name}</p>

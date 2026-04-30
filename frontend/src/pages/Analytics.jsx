@@ -204,7 +204,7 @@ function OutstandingTab() {
   return (
     <div className="space-y-5">
       {/* Grand total banner */}
-      <div className="bg-primary-900 text-white rounded-2xl p-5 flex items-center justify-between">
+      <div className="bg-primary-900 text-white rounded-2xl p-5 flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="text-blue-300 text-sm">Total Outstanding</p>
           <p className="text-3xl font-bold">₦{fmt(data?.grandTotal || 0)}</p>

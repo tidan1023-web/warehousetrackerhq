@@ -180,7 +180,7 @@ export default function InvoiceDetail() {
             <p className="text-blue-200 text-xs">Due: {fmtDate(invoice.dueDate)}</p>
           </div>
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-4">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <p className="text-blue-400 text-xs">Total</p>
             <p className="text-xl font-bold">{invoice.currency} {fmt(invoice.total)}</p>
