@@ -80,6 +80,10 @@ app.use('/api/progress', progressRoutes);
 app.use('/api/change-orders', changeOrderRoutes);
 app.use('/api/analytics', analyticsRoutes);
 
+app.use((_req, res) => {
+  res.status(404).json({ message: 'Not found' });
+});
+
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(err.status || 500).json({ message: err.message || 'Internal server error' });
