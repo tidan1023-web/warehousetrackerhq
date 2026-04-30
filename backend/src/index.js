@@ -41,9 +41,23 @@ const app = express();
 
 connectDB();
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: (origin, cb) => {
+      // allow requests with no origin (mobile apps, curl, Render health checks)
+      if (!origin) return cb(null, true);
+      if (allowedOrigins.some((o) => origin.startsWith(o))) return cb(null, true);
+      // also allow any onrender.com subdomain so staging URLs work automatically
+      if (origin.endsWith('.onrender.com')) return cb(null, true);
+      console.warn(`CORS blocked origin: ${origin}`);
+      cb(new Error(`CORS: origin ${origin} not allowed`));
+    },
     credentials: true,
   })
 );
