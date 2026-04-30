@@ -73,6 +73,11 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 app.use('/api/', apiLimiter);
 
+app.get('/', (_req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  res.redirect(301, frontendUrl);
+});
+
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
