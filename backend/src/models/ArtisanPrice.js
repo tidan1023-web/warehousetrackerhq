@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const artisanPriceSchema = new mongoose.Schema({
   service: { type: String, required: true, trim: true },
+  category: { type: String, trim: true },
   rate: { type: Number, required: true, min: 0 },
   currency: { type: String, default: 'NGN' },
   rateUnit: {

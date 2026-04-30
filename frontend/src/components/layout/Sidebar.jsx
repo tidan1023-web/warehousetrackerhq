@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, FolderOpen, Settings, LogOut, Building2,
   BookOpen, HardHat, Package, BarChart2, FileSpreadsheet,
   Receipt, LayoutGrid, CheckSquare, FileText, MessageSquare,
-  TrendingUp, GitMerge, PieChart,
+  TrendingUp, GitMerge, PieChart, ClipboardList, Users2,
+  GitCompare, Moon, Sun,
 } from 'lucide-react';
 
 const NAV_SECTIONS = [
@@ -15,6 +17,7 @@ const NAV_SECTIONS = [
     items: [
       { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/app/projects', icon: FolderOpen, label: 'Projects' },
+      { to: '/app/contacts', icon: Users2, label: 'Contacts' },
     ],
   },
   {
@@ -22,6 +25,7 @@ const NAV_SECTIONS = [
     roles: ['admin', 'qs', 'project_manager'],
     items: [
       { to: '/app/qs-pricing', icon: BookOpen, label: 'QS Prices', roles: ['admin', 'qs'] },
+      { to: '/app/qs-comparison', icon: GitCompare, label: 'QS Comparison', roles: ['admin', 'qs'] },
       { to: '/app/artisan-pricing', icon: HardHat, label: 'Artisan Rates', roles: ['admin', 'qs'] },
       { to: '/app/material-pricing', icon: Package, label: 'Materials', roles: ['admin', 'qs'] },
       { to: '/app/pricing-intelligence', icon: BarChart2, label: 'Price Intelligence' },
@@ -41,6 +45,7 @@ const NAV_SECTIONS = [
     items: [
       { to: '/app/progress', icon: TrendingUp, label: 'Progress Tracker' },
       { to: '/app/change-orders', icon: GitMerge, label: 'Change Orders' },
+      { to: '/app/site-reports', icon: ClipboardList, label: 'Site Reports' },
       { to: '/app/analytics', icon: PieChart, label: 'Analytics' },
     ],
   },
@@ -71,6 +76,7 @@ const ROLE_LABEL = {
 
 export default function Sidebar({ onClose }) {
   const { user, logout } = useAuth();
+  const { dark, toggle: toggleDark } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -138,6 +144,13 @@ export default function Sidebar({ onClose }) {
           <p className="text-sm font-semibold truncate">{user?.name}</p>
           <p className="text-xs text-blue-300 truncate">{ROLE_LABEL[user?.role] ?? user?.role}</p>
         </div>
+        <button
+          onClick={toggleDark}
+          className="flex items-center gap-2.5 w-full px-2.5 py-1.5 rounded-md text-sm text-blue-200 hover:bg-primary-800 hover:text-white transition-colors mb-0.5"
+        >
+          {dark ? <Sun size={15} /> : <Moon size={15} />}
+          {dark ? 'Light Mode' : 'Dark Mode'}
+        </button>
         <button
           onClick={handleLogout}
           className="flex items-center gap-2.5 w-full px-2.5 py-1.5 rounded-md text-sm text-blue-200 hover:bg-primary-800 hover:text-white transition-colors"

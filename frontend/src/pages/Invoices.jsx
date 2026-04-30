@@ -148,7 +148,10 @@ export default function Invoices() {
     load();
   };
 
-  const openPDF = (id) => window.open(`/api/invoices/${id}/pdf`, '_blank');
+  const openPDF = (id) => {
+    const base = (import.meta.env.VITE_API_URL || '/api').replace(/\/api\/?$/, '');
+    window.open(`${base}/api/invoices/${id}/pdf`, '_blank');
+  };
 
   return (
     <div className="space-y-5">

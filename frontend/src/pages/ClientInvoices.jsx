@@ -88,7 +88,7 @@ export default function ClientInvoices() {
                       className="p-1.5 text-gray-400 hover:text-primary-900 rounded-lg hover:bg-primary-50" title="View">
                       <Eye size={15} />
                     </button>
-                    <button onClick={() => window.open(`/api/invoices/${inv._id}/pdf`, '_blank')}
+                    <button onClick={() => { const base = (import.meta.env.VITE_API_URL || '/api').replace(/\/api\/?$/, ''); window.open(`${base}/api/invoices/${inv._id}/pdf`, '_blank'); }}
                       className="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50" title="Download PDF">
                       <Download size={15} />
                     </button>

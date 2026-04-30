@@ -21,6 +21,8 @@ const commentRoutes = require('./routes/comments');
 const progressRoutes = require('./routes/progress');
 const changeOrderRoutes = require('./routes/changeOrders');
 const analyticsRoutes = require('./routes/analytics');
+const siteReportRoutes = require('./routes/siteReports');
+const contactRoutes = require('./routes/contacts');
 
 // Configure web-push VAPID keys (only when real keys are provided)
 const vapidPublic = (process.env.VAPID_PUBLIC_KEY || '').trim();
@@ -93,6 +95,8 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/change-orders', changeOrderRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/site-reports', siteReportRoutes);
+app.use('/api/contacts', contactRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ message: 'Not found' });

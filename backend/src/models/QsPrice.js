@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const qsPriceSchema = new mongoose.Schema({
   category: { type: String, required: true, trim: true },
+  subCategory: { type: String, trim: true },
   item: { type: String, required: true, trim: true },
   unit: { type: String, required: true, trim: true },
   source: { type: String, trim: true },

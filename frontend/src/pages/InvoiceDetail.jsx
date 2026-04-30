@@ -126,7 +126,10 @@ export default function InvoiceDetail() {
     load();
   };
 
-  const openPDF = () => window.open(`/api/invoices/${id}/pdf`, '_blank');
+  const openPDF = () => {
+    const base = (import.meta.env.VITE_API_URL || '/api').replace(/\/api\/?$/, '');
+    window.open(`${base}/api/invoices/${id}/pdf`, '_blank');
+  };
 
   if (loading) return <div className="text-center py-20 text-gray-400">Loading invoice…</div>;
   if (!data) return <div className="text-center py-20 text-red-500">Invoice not found</div>;

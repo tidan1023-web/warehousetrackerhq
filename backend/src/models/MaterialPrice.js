@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const materialPriceSchema = new mongoose.Schema({
   supplier: { type: String, required: true, trim: true },
   material: { type: String, required: true, trim: true },
+  category: { type: String, trim: true },
   price: { type: Number, required: true, min: 0 },
   currency: { type: String, default: 'NGN' },
   unit: { type: String, required: true, trim: true },
