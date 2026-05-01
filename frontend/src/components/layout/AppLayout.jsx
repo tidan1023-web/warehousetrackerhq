@@ -8,6 +8,7 @@ const TITLES = {
   '/app/estimator':           'New Estimate',
   '/app/simulator':           'Scenario Simulator',
   '/app/estimates':           'Estimate History',
+  '/app/invoices':            'Invoices',
   '/app/historical-projects': 'Historical Projects',
   '/app/site-reports':        'Site Reports',
   '/app/settings':            'Company Settings',
@@ -18,7 +19,9 @@ export default function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const title = TITLES[pathname]
-    ?? (pathname.startsWith('/app/estimates/') ? 'Estimate Detail' : 'Pico Bello');
+    ?? (pathname.startsWith('/app/estimates/') ? 'Estimate Detail'
+      : pathname.startsWith('/app/invoices/')  ? 'Invoice Detail'
+      : 'Pico Bello');
 
   return (
     <div className="flex h-screen overflow-hidden relative">

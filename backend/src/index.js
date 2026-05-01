@@ -11,6 +11,7 @@ const companyRoutes            = require('./routes/company');
 const siteReportRoutes         = require('./routes/siteReports');
 const historicalProjectRoutes  = require('./routes/historicalProjects');
 const estimateRoutes           = require('./routes/estimates');
+const invoiceRoutes            = require('./routes/invoices');
 
 const app = express();
 connectDB();
@@ -42,6 +43,7 @@ app.use('/api/company',             companyRoutes);
 app.use('/api/site-reports',        siteReportRoutes);
 app.use('/api/historical-projects', historicalProjectRoutes);
 app.use('/api/estimates',           estimateRoutes);
+app.use('/api/invoices',            invoiceRoutes);
 
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
 app.use(errorHandler);

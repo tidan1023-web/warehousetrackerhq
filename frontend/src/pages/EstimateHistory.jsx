@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Download, Trash2, Search, Loader2 } from 'lucide-react';
+import { FileText, Download, Trash2, Search, Loader2, Eye } from 'lucide-react';
 import api from '../services/api';
 
 const STATUS_COLORS = {
@@ -113,23 +113,36 @@ export default function EstimateHistory() {
           {/* Mobile: cards */}
           <div className="sm:hidden divide-y divide-gray-50">
             {filtered.map(e => (
-              <div key={e._id} onClick={() => navigate(`/app/estimates/${e._id}`)}
-                className="p-4 hover:bg-gray-50 cursor-pointer">
+              <div key={e._id} className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <p className="font-semibold text-gray-800 text-sm">{e.projectName}</p>
+                  <div className="min-w-0 flex-1" onClick={() => navigate(`/app/estimates/${e._id}`)}>
+                    <p className="font-semibold text-gray-800 text-sm truncate">{e.projectName}</p>
                     <p className="text-xs text-gray-400">{e.estimateNumber} · {e.clientName || '—'}</p>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${STATUS_COLORS[e.status]}`}>{e.status}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full capitalize shrink-0 ${STATUS_COLORS[e.status]}`}>{e.status}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" onClick={() => navigate(`/app/estimates/${e._id}`)}>
                     <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${TIER_COLORS[e.selectedTier]}`}>
                       {e.selectedTier?.replace('_', '-')}
                     </span>
                     <span className="text-xs text-gray-400">{e.sizeM2}m²</span>
+                    <p className="text-sm font-bold text-gray-800">₦{fmt(e.selectedTotal)}</p>
                   </div>
-                  <p className="text-sm font-bold text-gray-800">₦{fmt(e.selectedTotal)}</p>
+                  <div className="flex items-center gap-1" onClick={ev => ev.stopPropagation()}>
+                    <button onClick={() => navigate(`/app/estimates/${e._id}`)}
+                      className="p-1.5 text-gray-400 hover:text-primary-900 rounded-lg hover:bg-gray-100">
+                      <Eye size={13} />
+                    </button>
+                    <button data-id={e._id} data-num={e.estimateNumber} onClick={handlePdf}
+                      className="p-1.5 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50">
+                      {pdfId === e._id ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
+                    </button>
+                    <button onClick={() => handleDelete(e._id)}
+                      className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50">
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

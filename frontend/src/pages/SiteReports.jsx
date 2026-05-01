@@ -140,11 +140,8 @@ function ReportModal({ open, onClose, onSaved, editing, projects }) {
                 <input required value={form.title} onChange={set('title')} className={inputCls} placeholder={`e.g. ${tpl?.label} - ${new Date().toLocaleDateString()}`} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Project *</label>
-                <select required value={form.projectId} onChange={set('projectId')} className={inputCls}>
-                  <option value="">Select project…</option>
-                  {projects.map((p) => <option key={p._id} value={p._id}>{p.name}</option>)}
-                </select>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Project (optional)</label>
+                <input value={form.projectId} onChange={set('projectId')} className={inputCls} placeholder="Project name or reference" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Report Date</label>
@@ -420,12 +417,8 @@ export default function SiteReports() {
       const params = {};
       if (projectFilter) params.projectId = projectFilter;
       if (templateFilter) params.template = templateFilter;
-      const [repRes, projRes] = await Promise.all([
-        api.get('/site-reports', { params }),
-        api.get('/projects'),
-      ]);
+      const repRes = await api.get('/site-reports', { params });
       setReports(repRes.data.reports || []);
-      setProjects(projRes.data.projects || []);
     } finally { setLoading(false); }
   }, [projectFilter, templateFilter]);
 
@@ -458,11 +451,6 @@ export default function SiteReports() {
           <input type="text" placeholder="Search reports…" value={search} onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-900" />
         </div>
-        <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}
-          className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-900">
-          <option value="">All projects</option>
-          {projects.map((p) => <option key={p._id} value={p._id}>{p.name}</option>)}
-        </select>
         <select value={templateFilter} onChange={(e) => setTemplateFilter(e.target.value)}
           className="px-3 py-2.5 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary-900">
           <option value="">All templates</option>

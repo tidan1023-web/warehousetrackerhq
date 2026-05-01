@@ -20,7 +20,9 @@ const schema = new mongoose.Schema({
   includesFurniture: { type: Boolean, default: false },
   includesKitchen: { type: Boolean, default: false },
   includesWardrobes: { type: Boolean, default: false },
-  notes: { type: String, trim: true },
+  notes:        { type: String, trim: true },
+  documentUrl:  { type: String },
+  documentName: { type: String },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 

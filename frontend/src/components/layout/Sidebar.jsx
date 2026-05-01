@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
   LayoutDashboard, Calculator, Clock, Database,
-  ClipboardList, Settings, LogOut, Building2, Moon, Sun, Sliders,
+  ClipboardList, Settings, LogOut, Building2, Moon, Sun, Sliders, FileText,
 } from 'lucide-react';
 
 const NAV = [
@@ -12,6 +12,7 @@ const NAV = [
   { to: '/app/estimator',           icon: Calculator,      label: 'New Estimate' },
   { to: '/app/simulator',           icon: Sliders,         label: 'Simulator' },
   { to: '/app/estimates',           icon: Clock,           label: 'Estimate History' },
+  { to: '/app/invoices',            icon: FileText,        label: 'Invoices' },
   { to: '/app/historical-projects', icon: Database,        label: 'Historical Projects' },
   { to: '/app/site-reports',        icon: ClipboardList,   label: 'Site Reports' },
 ];

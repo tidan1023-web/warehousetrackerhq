@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, XCircle, Download, Save, ArrowLeft, Loader2, Info } from 'lucide-react';
+import { CheckCircle, XCircle, Download, Save, ArrowLeft, Loader2, Info, Trash2, FileText } from 'lucide-react';
 import api from '../services/api';
 
 const CONDITION_LABELS = {
@@ -38,6 +38,7 @@ export default function EstimateDetail() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [toast, setToast]       = useState('');
   const [form, setForm]         = useState({});
+  const [creatingInvoice, setCreatingInvoice] = useState(false);
 
   useEffect(() => {
     api.get(`/estimates/${id}`)
@@ -69,6 +70,21 @@ export default function EstimateDetail() {
       setEstimate(data.estimate);
       showToast('Estimate saved');
     } finally { setSaving(false); }
+  };
+
+  const handleDelete = async () => {
+    if (!confirm('Delete this estimate permanently?')) return;
+    await api.delete(`/estimates/${id}`);
+    navigate('/app/estimates');
+  };
+
+  const handleCreateInvoice = async () => {
+    setCreatingInvoice(true);
+    try {
+      const { data } = await api.post('/invoices', { estimateId: id });
+      navigate(`/app/invoices/${data.invoice._id}`);
+    } catch { showToast('Failed to create invoice'); }
+    finally { setCreatingInvoice(false); }
   };
 
   const handlePdf = async () => {
@@ -122,7 +138,16 @@ export default function EstimateDetail() {
           </div>
           <p className="text-xs text-gray-400">{estimate.clientName} · {estimate.sizeM2}m² · {CONDITION_LABELS[estimate.condition]}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={handleDelete}
+            className="flex items-center gap-1.5 border border-red-200 text-red-500 px-3 py-2 rounded-lg text-sm hover:bg-red-50 transition-colors">
+            <Trash2 size={14} /> Delete
+          </button>
+          <button onClick={handleCreateInvoice} disabled={creatingInvoice}
+            className="flex items-center gap-1.5 border border-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-50 disabled:opacity-60 transition-colors">
+            {creatingInvoice ? <Loader2 size={14} className="animate-spin" /> : <FileText size={14} />}
+            {creatingInvoice ? 'Creating…' : 'Create Invoice'}
+          </button>
           <button onClick={handleSave} disabled={saving}
             className="flex items-center gap-1.5 border border-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-60">
             {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save

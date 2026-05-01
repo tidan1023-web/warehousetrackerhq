@@ -1,4 +1,29 @@
 const HistoricalProject = require('../models/HistoricalProject');
+const { cloudinary, upload } = require('../config/cloudinary');
+
+exports.uploadDocument = [
+  upload.single('file'),
+  async (req, res, next) => {
+    try {
+      const project = await HistoricalProject.findOne({ _id: req.params.id, companyId: req.user.companyId });
+      if (!project) return res.status(404).json({ message: 'Project not found' });
+      if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+
+      // Delete previous document from Cloudinary if it exists
+      if (project.documentUrl) {
+        try {
+          const publicId = project.documentUrl.split('/').slice(-2).join('/').replace(/\.[^.]+$/, '');
+          await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' }).catch(() => {});
+        } catch {}
+      }
+
+      project.documentUrl  = req.file.path || req.file.secure_url;
+      project.documentName = req.file.originalname || req.file.public_id;
+      await project.save();
+      res.json({ project });
+    } catch (err) { next(err); }
+  },
+];
 
 exports.list = async (req, res, next) => {
   try {

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Database, TrendingUp } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Plus, Pencil, Trash2, Database, Paperclip, ExternalLink, Loader2 } from 'lucide-react';
 import api from '../services/api';
 
 const CONDITIONS = [
@@ -36,11 +36,15 @@ const EMPTY = {
 const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-900/30';
 
 function ProjectModal({ open, onClose, onSaved, editing }) {
-  const [form, setForm]   = useState(EMPTY);
-  const [saving, setSaving] = useState(false);
+  const [form, setForm]       = useState(EMPTY);
+  const [saving, setSaving]   = useState(false);
+  const [docFile, setDocFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef();
 
   useEffect(() => {
     setForm(editing ? { ...EMPTY, ...editing } : EMPTY);
+    setDocFile(null);
   }, [editing, open]);
 
   if (!open) return null;
@@ -51,11 +55,34 @@ function ProjectModal({ open, onClose, onSaved, editing }) {
     setSaving(true);
     try {
       const payload = { ...form, sizeM2: Number(form.sizeM2), totalCost: Number(form.totalCost) };
-      if (editing) await api.put(`/historical-projects/${editing._id}`, payload);
-      else         await api.post('/historical-projects', payload);
+      let savedProject;
+      if (editing) {
+        const { data } = await api.put(`/historical-projects/${editing._id}`, payload);
+        savedProject = data.project;
+      } else {
+        const { data } = await api.post('/historical-projects', payload);
+        savedProject = data.project;
+      }
+
+      // Upload document if selected
+      if (docFile && savedProject?._id) {
+        setUploading(true);
+        try {
+          const fd = new FormData();
+          fd.append('file', docFile);
+          await api.post(`/historical-projects/${savedProject._id}/document`, fd, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          });
+        } catch {
+          // doc upload failed but project was saved — proceed
+        } finally { setUploading(false); }
+      }
+
       onSaved();
     } finally { setSaving(false); }
   };
+
+  const busy = saving || uploading;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-3 sm:p-6 overflow-y-auto">
@@ -114,7 +141,7 @@ function ProjectModal({ open, onClose, onSaved, editing }) {
 
           <div>
             <p className="text-xs font-medium text-gray-700 mb-2">Included in Scope</p>
-            <div className="flex gap-3">
+            <div className="flex gap-3 flex-wrap">
               {[['includesFurniture','Furniture'],['includesKitchen','Kitchen'],['includesWardrobes','Wardrobes']].map(([k,l]) => (
                 <label key={k} className="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer select-none">
                   <input type="checkbox" checked={form[k]} onChange={e => set(k, e.target.checked)} className="rounded" />
@@ -130,12 +157,44 @@ function ProjectModal({ open, onClose, onSaved, editing }) {
               className={inputCls + ' resize-none'} placeholder="Any special circumstances or context…" />
           </div>
 
+          {/* Document upload */}
+          <div className="border border-dashed border-gray-200 rounded-xl p-4">
+            <p className="text-xs font-medium text-gray-700 mb-2">Reference Document (optional)</p>
+            {editing?.documentUrl && !docFile && (
+              <div className="flex items-center gap-2 mb-2 text-xs text-blue-600">
+                <Paperclip size={13} />
+                <a href={editing.documentUrl} target="_blank" rel="noreferrer"
+                  className="hover:underline truncate max-w-[220px]">
+                  {editing.documentName || 'Attached document'}
+                </a>
+                <ExternalLink size={11} />
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <button type="button" onClick={() => fileRef.current?.click()}
+                className="flex items-center gap-1.5 border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg text-xs hover:bg-gray-50">
+                <Paperclip size={13} />
+                {docFile ? 'Change file' : (editing?.documentUrl ? 'Replace document' : 'Attach file')}
+              </button>
+              {docFile && (
+                <div className="flex items-center gap-1.5 text-xs text-gray-500 min-w-0">
+                  <span className="truncate max-w-[180px]">{docFile.name}</span>
+                  <button type="button" onClick={() => setDocFile(null)} className="text-gray-400 hover:text-red-500 shrink-0">×</button>
+                </div>
+              )}
+            </div>
+            <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden"
+              onChange={(e) => setDocFile(e.target.files[0] || null)} />
+            <p className="text-xs text-gray-400 mt-1.5">PDF, JPG, PNG up to 5 MB. Attach the original estimate or invoice for this project.</p>
+          </div>
+
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="flex-1 bg-primary-900 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-primary-800 disabled:opacity-60">
-              {saving ? 'Saving…' : editing ? 'Update Project' : 'Add Project'}
+            <button type="submit" disabled={busy} className="flex-1 bg-primary-900 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-primary-800 disabled:opacity-60 flex items-center justify-center gap-2">
+              {busy && <Loader2 size={14} className="animate-spin" />}
+              {uploading ? 'Uploading…' : saving ? 'Saving…' : editing ? 'Update Project' : 'Add Project'}
             </button>
           </div>
         </form>
@@ -168,7 +227,6 @@ export default function HistoricalProjects() {
   const openAdd  = ()  => { setEditing(null); setModal(true); };
   const openEdit = (p) => { setEditing(p);    setModal(true); };
 
-  // Stats
   const avgRate = projects.length
     ? projects.reduce((s, p) => s + (p.totalCost / p.sizeM2), 0) / projects.length
     : 0;
@@ -187,10 +245,10 @@ export default function HistoricalProjects() {
       {projects.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Projects in database', value: projects.length, suffix: '' },
-            { label: 'Avg rate / m²', value: `₦${fmt(avgRate)}`, suffix: '' },
-            { label: 'Oldest year', value: Math.min(...years), suffix: '' },
-            { label: 'Latest year', value: Math.max(...years), suffix: '' },
+            { label: 'Projects in database', value: projects.length },
+            { label: 'Avg rate / m²', value: `₦${fmt(avgRate)}` },
+            { label: 'Oldest year', value: Math.min(...years) },
+            { label: 'Latest year', value: Math.max(...years) },
           ].map(({ label, value }) => (
             <div key={label} className="bg-white rounded-xl border border-gray-100 p-4">
               <p className="text-xl font-bold text-gray-800">{value}</p>
@@ -235,11 +293,11 @@ export default function HistoricalProjects() {
             {projects.map(p => (
               <div key={p._id} className="p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <p className="font-semibold text-gray-800 text-sm">{p.name}</p>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-800 text-sm truncate">{p.name}</p>
                     <p className="text-xs text-gray-400">{p.location || p.client || '—'} · {p.completedYear}</p>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 shrink-0">
                     <button onClick={() => openEdit(p)} className="p-1.5 text-gray-400 hover:text-primary-900 rounded-lg hover:bg-gray-100">
                       <Pencil size={13} />
                     </button>
@@ -258,6 +316,12 @@ export default function HistoricalProjects() {
                   <span className="text-xs text-gray-500 font-semibold ml-auto">₦{fmt(p.totalCost)}</span>
                   <span className="text-xs text-gray-400">{p.sizeM2}m² · ₦{fmt(p.totalCost / p.sizeM2)}/m²</span>
                 </div>
+                {p.documentUrl && (
+                  <a href={p.documentUrl} target="_blank" rel="noreferrer"
+                    className="flex items-center gap-1 mt-2 text-xs text-blue-500 hover:underline">
+                    <Paperclip size={11} /> {p.documentName || 'Reference document'}
+                  </a>
+                )}
               </div>
             ))}
           </div>
@@ -267,7 +331,7 @@ export default function HistoricalProjects() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
-                  {['Project', 'Location', 'Year', 'Size', 'Condition', 'Tier', 'Total Cost', 'Rate/m²', ''].map(h => (
+                  {['Project', 'Location', 'Year', 'Size', 'Condition', 'Tier', 'Total Cost', 'Rate/m²', 'Doc', ''].map(h => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
@@ -294,6 +358,14 @@ export default function HistoricalProjects() {
                     </td>
                     <td className="px-4 py-3 font-semibold text-gray-800 whitespace-nowrap">₦{fmt(p.totalCost)}</td>
                     <td className="px-4 py-3 text-gray-500 whitespace-nowrap">₦{fmt(p.totalCost / p.sizeM2)}</td>
+                    <td className="px-4 py-3">
+                      {p.documentUrl ? (
+                        <a href={p.documentUrl} target="_blank" rel="noreferrer" title={p.documentName || 'Document'}
+                          className="text-blue-400 hover:text-blue-600 transition-colors">
+                          <Paperclip size={14} />
+                        </a>
+                      ) : '—'}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
                         <button onClick={() => openEdit(p)} className="p-1.5 text-gray-400 hover:text-primary-900 rounded-lg hover:bg-gray-100 transition-colors">

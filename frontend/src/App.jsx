@@ -19,6 +19,8 @@ import HistoricalProjects from './pages/HistoricalProjects';
 import Simulator          from './pages/Simulator';
 import SiteReports        from './pages/SiteReports';
 import CompanySettings    from './pages/CompanySettings';
+import Invoices           from './pages/Invoices';
+import InvoiceDetail      from './pages/InvoiceDetail';
 
 export default function App() {
   return (
@@ -40,6 +42,8 @@ export default function App() {
             <Route path="historical-projects"    element={<HistoricalProjects />} />
             <Route path="simulator"              element={<Simulator />} />
             <Route path="site-reports"           element={<SiteReports />} />
+            <Route path="invoices"               element={<Invoices />} />
+            <Route path="invoices/:id"           element={<InvoiceDetail />} />
             <Route path="settings"               element={<CompanySettings />} />
           </Route>
 
