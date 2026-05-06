@@ -4,32 +4,37 @@ const partners = [
   {
     name: "FOTWRLD",
     role: "Curatorial Platform & Lead Producer",
-    logo: "/logos/fotwrld.svg",
+    logo: "/logos/fotwrld.png",
     wide: true,
+    bg: "#ffffff",
   },
   {
     name: "Basketball for Peace",
     role: "Founding Organisation",
     logo: "/logos/bb4p.svg",
     wide: false,
+    bg: "transparent",
   },
   {
     name: "National Commission for Museums & Monuments",
     role: "Institutional Host — Kaduna",
-    logo: "/logos/ncmm.svg",
+    logo: "/logos/ncmm.jpg",
     wide: false,
+    bg: "#ffffff",
   },
   {
     name: "Ahmadu Bello University",
     role: "Academic Partner — Zaria",
-    logo: "/logos/abu.svg",
+    logo: "/logos/abu.png",
     wide: false,
+    bg: "#ffffff",
   },
   {
     name: "Olusegun Obasanjo Presidential Library",
     role: "Venue Host — Ogun State",
-    logo: "/logos/oopl.svg",
-    wide: false,
+    logo: "/logos/oopl.jpg",
+    wide: true,
+    bg: "transparent",
   },
 ];
 
@@ -150,14 +155,17 @@ export default function Sponsors() {
                 className="flex flex-col items-center gap-4 p-5 sm:p-6 rounded"
                 style={{ background: "rgba(27,42,74,0.5)", border: "1px solid rgba(201,162,39,0.15)" }}
               >
-                <div className={`relative flex items-center justify-center ${p.wide ? "w-full h-14" : "w-20 h-20"}`}>
+                <div
+                  className="relative flex items-center justify-center w-full rounded overflow-hidden"
+                  style={{ height: p.wide ? "80px" : "96px", background: p.bg || "transparent" }}
+                >
                   <Image
                     src={p.logo}
                     alt={p.name}
-                    fill={!p.wide}
-                    width={p.wide ? 180 : undefined}
-                    height={p.wide ? 56 : undefined}
-                    className="object-contain"
+                    fill
+                    className="object-contain p-2"
+                    sizes="(max-width:768px) 40vw, 180px"
+                    quality={100}
                   />
                 </div>
                 <div className="text-center">

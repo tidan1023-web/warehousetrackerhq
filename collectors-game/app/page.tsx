@@ -80,12 +80,11 @@ export default function Home() {
       </section>
 
       {/* ── THE COLLECTOR (OBJ image + intro) ── */}
-      <section id="collector" className="py-20 px-4 sm:px-6" style={{ background: "var(--navy)" }}>
+      <section id="collector" className="py-20 px-4 sm:px-6" style={{ background: "#f9f7f4" }}>
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="relative h-80 sm:h-[500px] rounded overflow-hidden order-2 md:order-1">
               <Image src="/images/obj-portrait.jpeg" alt="Coach Oliver Berdeen Johnson" fill className="object-cover object-top" sizes="(max-width:768px) 100vw, 50vw" quality={100} />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,29,53,0.7) 0%, transparent 50%)" }} />
               <p className="absolute bottom-4 left-4 right-4 text-white text-xs italic" style={{ fontFamily: "Georgia, serif" }}>
                 Coach Oliver Berdeen Johnson — Chairman, Basketball for Peace
               </p>
@@ -93,16 +92,16 @@ export default function Home() {
             <div className="order-1 md:order-2">
               <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>The Collector</p>
               <div className="section-divider" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mt-6 mb-5 leading-tight">The Man Who Kept Everything</h2>
-              <p className="text-gray-300 leading-relaxed mb-5" style={{ fontFamily: "Georgia, serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold mt-6 mb-5 leading-tight" style={{ color: "#1B2A4A" }}>The Man Who Kept Everything</h2>
+              <p className="text-gray-700 leading-relaxed mb-5" style={{ fontFamily: "Georgia, serif" }}>
                 On the 11th of December 1969, Oliver Berdeen Johnson stepped off a plane in Lagos on a 21-day visitor&rsquo;s permit. He has not left since.
               </p>
-              <p className="text-gray-300 leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
+              <p className="text-gray-700 leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
                 He coached Nigeria&rsquo;s first national basketball team, spotted Hakeem Olajuwon as a teenager, mentored a young Masai Ujiri in Zaria, and spent 40 years quietly assembling one of Nigeria&rsquo;s most significant private collections of West African art.
               </p>
-              <blockquote className="border-l-2 pl-5 italic text-white text-lg mb-8" style={{ borderColor: "var(--gold)", fontFamily: "Georgia, serif" }}>
+              <blockquote className="border-l-2 pl-5 italic text-gray-700 text-lg mb-8" style={{ borderColor: "var(--gold)", fontFamily: "Georgia, serif" }}>
                 &ldquo;You cannot talk about basketball in Nigeria without him.&rdquo;
-                <cite className="block text-gray-400 text-xs not-italic mt-2">— Col. Sam Ahmedu, FIBA Africa Zone 3 President</cite>
+                <cite className="block text-gray-500 text-xs not-italic mt-2">— Col. Sam Ahmedu, FIBA Africa Zone 3 President</cite>
               </blockquote>
               <Link href="/collector" className="inline-block text-xs tracking-widest uppercase font-bold border-b pb-0.5 transition-opacity hover:opacity-70" style={{ color: "var(--gold)", borderColor: "var(--gold)", letterSpacing: "0.15em" }}>
                 Read the full story →
@@ -113,13 +112,13 @@ export default function Home() {
       </section>
 
       {/* ── THE COLLECTION PREVIEW ── */}
-      <section className="py-20 px-4 sm:px-6" style={{ background: "var(--navy-dark)" }}>
+      <section className="py-20 px-4 sm:px-6" style={{ background: "#eeeae4" }}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
             <div>
               <p className="text-xs tracking-widest uppercase mb-3" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>The Collection</p>
               <div className="section-divider" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-white mt-6 leading-tight">
+              <h2 className="text-3xl sm:text-4xl font-bold mt-6 leading-tight" style={{ color: "#1B2A4A" }}>
                 Objects That Outlast<br className="hidden sm:block" /> Their Makers
               </h2>
             </div>
@@ -128,14 +127,14 @@ export default function Home() {
             </Link>
           </div>
 
-          <p className="text-gray-300 leading-relaxed max-w-2xl mb-12" style={{ fontFamily: "Georgia, serif" }}>
+          <p className="text-gray-700 leading-relaxed max-w-2xl mb-12" style={{ fontFamily: "Georgia, serif" }}>
             Ladi Kwali Pottery. Benin bronzes. Bronze sculptures. 40 years of deliberate acquisition across 13 catalogued artefacts — each a manufactured argument about craft, culture, and the material history of West Africa.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {previewArtefacts.map((a) => (
               <Link key={a.id} href="/collection" className="group relative aspect-square rounded overflow-hidden block">
-                <Image src={a.img} alt={a.name} fill className="object-contain group-hover:scale-105 transition-transform duration-500" style={{ background: "rgba(201,162,39,0.06)" }} sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 16vw" quality={100} />
+                <Image src={a.img} alt={a.name} fill className="object-contain group-hover:scale-105 transition-transform duration-500" style={{ background: "#f9f7f4" }} sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 16vw" quality={100} />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2" style={{ background: "linear-gradient(to top, rgba(17,29,53,0.9) 0%, transparent 60%)" }}>
                   <p className="text-white text-xs leading-tight">{a.name}</p>
                 </div>
