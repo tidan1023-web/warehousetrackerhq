@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100" width="240" height="100">
+  <!-- Background pill -->
+  <rect width="240" height="100" rx="8" fill="#111d35"/>
+  <!-- Gold accent bar -->
+  <rect x="0" y="0" width="6" height="100" rx="3" fill="#c9a227"/>
+  <!-- F monogram mark -->
+  <text x="28" y="62" font-family="Georgia, serif" font-size="52" font-weight="900" fill="#c9a227">F</text>
+  <!-- Full wordmark -->
+  <text x="72" y="48" font-family="Georgia, serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="4">FOTWRLD</text>
+  <!-- Sub-label -->
+  <text x="72" y="68" font-family="Georgia, serif" font-size="9" fill="#c9a227" letter-spacing="2">FACTORIES OF THE WORLD</text>
+  <!-- Tagline -->
+  <text x="72" y="82" font-family="Georgia, serif" font-size="7.5" fill="rgba(255,255,255,0.45)" letter-spacing="1">KADUNA · NIGERIA</text>
+</svg>
