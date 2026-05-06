@@ -1,10 +1,10 @@
 'use strict';
 const { Router } = require('express');
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { validate } = require('../middleware/validate');
 const { authenticate } = require('../middleware/auth');
 const { requireAdmin } = require('../middleware/rbac');
-const { authLimiter } = require('../middleware/rateLimiter');
+const { authLimiter, deletionLimiter } = require('../middleware/rateLimiter');
 const {
   login,
   refreshToken,
@@ -19,16 +19,21 @@ const {
   addComment,
   getComments,
   deactivateUser,
+  exportMyData,
+  deleteAccount,
+  deleteUser,
 } = require('../controllers/authController');
 
 const router = Router();
+
+// ---- Public ----
 
 router.post(
   '/login',
   authLimiter,
   validate([
     body('email').isEmail().normalizeEmail().withMessage('Valid email required'),
-    body('password').isLength({ min: 1 }).withMessage('Password required'),
+    body('password').notEmpty().withMessage('Password required'),
   ]),
   login
 );
@@ -39,7 +44,12 @@ router.post(
   refreshToken
 );
 
+// ---- Authenticated ----
+
 router.get('/me', authenticate, getMe);
+
+// GDPR: download everything stored about yourself
+router.get('/me/export', authenticate, exportMyData);
 
 router.patch(
   '/profile',
@@ -66,6 +76,22 @@ router.patch(
   changePassword
 );
 
+// App Store / GDPR: delete own account (requires password + confirmation phrase)
+router.delete(
+  '/account',
+  authenticate,
+  deletionLimiter,
+  validate([
+    body('password').notEmpty().withMessage('Password required'),
+    body('confirmPhrase')
+      .equals('DELETE MY ACCOUNT')
+      .withMessage('Confirmation phrase must be "DELETE MY ACCOUNT"'),
+  ]),
+  deleteAccount
+);
+
+// ---- Admin only ----
+
 router.post(
   '/users',
   authenticate,
@@ -87,11 +113,68 @@ router.post(
 );
 
 router.get('/users', authenticate, requireAdmin, listUsers);
-router.get('/users/:id', authenticate, requireAdmin, getUserById);
-router.patch('/users/:id/deactivate', authenticate, requireAdmin, deactivateUser);
-router.get('/users/:id/stats', authenticate, getUserStats);
-router.patch('/users/:id/rating', authenticate, requireAdmin, updatePerformanceRating);
-router.post('/users/:id/comments', authenticate, requireAdmin, addComment);
-router.get('/users/:id/comments', authenticate, requireAdmin, getComments);
+
+router.get(
+  '/users/:id',
+  authenticate,
+  requireAdmin,
+  validate([param('id').isMongoId().withMessage('Invalid user ID')]),
+  getUserById
+);
+
+router.patch(
+  '/users/:id/deactivate',
+  authenticate,
+  requireAdmin,
+  validate([param('id').isMongoId().withMessage('Invalid user ID')]),
+  deactivateUser
+);
+
+// Admin deletes a user's account entirely (irreversible)
+router.delete(
+  '/users/:id',
+  authenticate,
+  requireAdmin,
+  deletionLimiter,
+  validate([param('id').isMongoId().withMessage('Invalid user ID')]),
+  deleteUser
+);
+
+router.get(
+  '/users/:id/stats',
+  authenticate,
+  validate([param('id').isMongoId().withMessage('Invalid user ID')]),
+  getUserStats
+);
+
+router.patch(
+  '/users/:id/rating',
+  authenticate,
+  requireAdmin,
+  validate([
+    param('id').isMongoId().withMessage('Invalid user ID'),
+    body('rating').isFloat({ min: 0, max: 5 }).withMessage('Rating must be 0–5'),
+  ]),
+  updatePerformanceRating
+);
+
+router.post(
+  '/users/:id/comments',
+  authenticate,
+  requireAdmin,
+  validate([
+    param('id').isMongoId().withMessage('Invalid user ID'),
+    body('comment').trim().notEmpty().isLength({ max: 1000 }).withMessage('Comment required, max 1000 chars'),
+  ]),
+  addComment
+);
+
+router.get(
+  '/users/:id/comments',
+  authenticate,
+  requireAdmin,
+  validate([param('id').isMongoId().withMessage('Invalid user ID')]),
+  getComments
+);
 
 module.exports = router;

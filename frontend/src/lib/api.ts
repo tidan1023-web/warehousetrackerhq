@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export const apiClient = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: `${API_URL}/api/v1`,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
 });
@@ -61,6 +61,16 @@ export const authApi = {
     apiClient.get(`/auth/users/${id}/comments`).then((r) => r.data),
   deactivateUser: (id: string) =>
     apiClient.patch(`/auth/users/${id}/deactivate`).then((r) => r.data),
+  // GDPR / App Store: download a JSON export of all data held about the caller
+  exportMyData: () => apiClient.get('/auth/me/export').then((r) => r.data),
+  // GDPR / App Store: permanently delete own account
+  deleteAccount: (password: string) =>
+    apiClient
+      .delete('/auth/account', { data: { password, confirmPhrase: 'DELETE MY ACCOUNT' } })
+      .then((r) => r.data),
+  // Admin: permanently delete any user's account
+  deleteUser: (id: string) =>
+    apiClient.delete(`/auth/users/${id}`).then((r) => r.data),
 };
 
 // ---- Products ----

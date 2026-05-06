@@ -11,17 +11,17 @@ async function authenticate(req, res, next) {
     }
 
     const token = authHeader.split(' ')[1];
-    const secret = process.env.JWT_SECRET;
 
     let decoded;
     try {
-      decoded = jwt.verify(token, secret);
-    } catch (err) {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
       res.status(401).json({ error: 'Invalid or expired token' });
       return;
     }
 
-    const user = await User.findById(decoded.id).select('+password');
+    // password is select:false — not loaded here intentionally
+    const user = await User.findById(decoded.id);
     if (!user || !user.isActive) {
       res.status(401).json({ error: 'Account not found or deactivated' });
       return;
@@ -41,8 +41,9 @@ function generateTokens(user) {
     employeeId: user.employeeId,
   };
 
+  // Default: 15 minutes for access tokens (short-lived for security)
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+    expiresIn: process.env.JWT_EXPIRES_IN || '15m',
   });
 
   const refreshToken = jwt.sign(
