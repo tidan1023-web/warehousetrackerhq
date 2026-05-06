@@ -1,52 +1,73 @@
+import Link from "next/link";
+
 const navLinks = [
-  { href: "#exhibition", label: "The Exhibition" },
-  { href: "#collector", label: "The Collector" },
-  { href: "#collection", label: "The Collection" },
-  { href: "#venues", label: "Venues" },
-  { href: "#fotwrld", label: "FOTWRLD" },
+  { href: "/exhibition", label: "The Exhibition" },
+  { href: "/collector", label: "The Collector" },
+  { href: "/collection", label: "The Collection" },
+  { href: "/venues", label: "Venues" },
+  { href: "/about", label: "FOTWRLD" },
 ];
 
 export default function Footer() {
   return (
-    <footer
-      className="py-16 px-6"
-      style={{
-        background: "#0a1220",
-        borderTop: "1px solid rgba(201,162,39,0.2)",
-      }}
-    >
-      <div className="max-w-6xl mx-auto">
-        {/* Top row */}
-        <div className="flex flex-col md:flex-row justify-between gap-12 mb-12">
+    <footer style={{ background: "#0a1220", borderTop: "1px solid rgba(201,162,39,0.25)" }}>
+
+      {/* Navigation bar at top of footer — bold */}
+      <div
+        className="px-6 py-6"
+        style={{ borderBottom: "1px solid rgba(201,162,39,0.15)" }}
+      >
+        <div className="max-w-6xl mx-auto flex flex-wrap gap-x-10 gap-y-3 justify-center md:justify-start">
+          {navLinks.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="text-white font-bold text-sm uppercase tracking-widest hover:opacity-70 transition-opacity"
+              style={{ letterSpacing: "0.15em" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <a
+            href="#partners"
+            className="text-white font-bold text-sm uppercase tracking-widest hover:opacity-70 transition-opacity"
+            style={{ letterSpacing: "0.15em", color: "var(--gold)" }}
+          >
+            Contact
+          </a>
+        </div>
+      </div>
+
+      {/* Main footer body */}
+      <div className="px-6 py-14">
+        <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-3 gap-12">
+
           {/* Brand */}
-          <div className="max-w-sm">
-            <p className="text-white font-bold text-lg mb-1">
+          <div className="sm:col-span-2 md:col-span-1">
+            <p className="text-white font-bold text-xl mb-1">
               The Collector&rsquo;s Game
             </p>
-            <p className="text-gray-500 text-sm italic mb-4" style={{ fontFamily: "Georgia, serif" }}>
+            <p className="text-white text-sm italic mb-5" style={{ fontFamily: "Georgia, serif" }}>
               Art, Basketball, and the Private Life of a Public Man
             </p>
-            <p className="text-gray-500 text-xs leading-relaxed">
+            <p className="text-white text-xs leading-relaxed opacity-70">
               A travelling exhibition presented by FOTWRLD × Basketball for Peace.
               Submitted to Ecobank / EPAC Creative Studio, March 2026.
               Produced by Halima Abdul (Sadia) / FOTWRLD.
             </p>
           </div>
 
-          {/* Nav */}
+          {/* Navigate */}
           <div>
-            <p className="text-xs uppercase tracking-widest text-gray-500 mb-4" style={{ letterSpacing: "0.15em" }}>
+            <p className="text-white font-bold text-xs uppercase tracking-widest mb-5" style={{ letterSpacing: "0.2em" }}>
               Navigate
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {navLinks.map((l) => (
                 <li key={l.href}>
-                  <a
-                    href={l.href}
-                    className="text-gray-400 text-sm hover:text-white transition-colors"
-                  >
+                  <Link href={l.href} className="text-white text-sm hover:opacity-70 transition-opacity">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -54,29 +75,35 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <p className="text-xs uppercase tracking-widest text-gray-500 mb-4" style={{ letterSpacing: "0.15em" }}>
+            <p className="text-white font-bold text-xs uppercase tracking-widest mb-5" style={{ letterSpacing: "0.2em" }}>
               Contact
             </p>
-            <p className="text-gray-400 text-sm mb-1">fotwrldinfo@gmail.com</p>
-            <p className="text-gray-400 text-sm mb-4">www.fotwrld.com</p>
-            <p className="text-gray-500 text-xs">
-              NCMM, No. 33 Ali Akilu Road
-              <br />
-              Kaduna, Nigeria
-            </p>
+            <div className="space-y-2">
+              <p className="text-white text-sm">fotwrldinfo@gmail.com</p>
+              <p className="text-white text-sm">www.fotwrld.com</p>
+              <p className="text-white text-xs mt-4 opacity-70">
+                NCMM, No. 33 Ali Akilu Road<br />Kaduna, Nigeria
+              </p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Divider */}
-        <div className="border-t mb-8" style={{ borderColor: "rgba(201,162,39,0.1)" }} />
-
-        {/* Bottom row */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-600 text-xs">
+      {/* Bottom bar */}
+      <div
+        className="px-6 py-6"
+        style={{ borderTop: "1px solid rgba(201,162,39,0.15)" }}
+      >
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <p className="text-white text-xs opacity-60">
             &copy; 2026 FOTWRLD × Basketball for Peace. All rights reserved.
           </p>
-          <p className="text-gray-700 text-xs italic" style={{ fontFamily: "Georgia, serif" }}>
-            &ldquo;There is no comparable event in Nigerian cultural history. A living legend. His private collection. Three venues. One implementing partner.&rdquo;
+          <p
+            className="text-white text-xs italic max-w-md opacity-80 leading-relaxed"
+            style={{ fontFamily: "Georgia, serif" }}
+          >
+            &ldquo;There is no comparable event in Nigerian cultural history. A living legend.
+            His private collection. Three venues. One implementing partner.&rdquo;
           </p>
         </div>
       </div>

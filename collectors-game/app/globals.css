@@ -6,47 +6,32 @@
   --gold: #C9A227;
   --gold-light: #e0b840;
   --cream: #F5F0E8;
-  --off-white: #faf8f4;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--navy-dark);
   color: #ffffff;
   font-family: Georgia, 'Times New Roman', serif;
+  overflow-x: hidden;
 }
 
-.font-display {
-  font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: 0.05em;
-}
-
-.text-gold {
-  color: var(--gold);
-}
-
-.bg-navy {
-  background-color: var(--navy);
-}
-
-.bg-navy-dark {
-  background-color: var(--navy-dark);
-}
-
-.bg-gold {
-  background-color: var(--gold);
-}
-
-.border-gold {
-  border-color: var(--gold);
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 .section-divider {
   width: 60px;
   height: 3px;
   background: var(--gold);
-  margin: 1.5rem 0;
-}
-
-html {
-  scroll-behavior: smooth;
+  margin: 0.75rem 0;
 }
