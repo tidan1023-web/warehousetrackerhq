@@ -22,9 +22,10 @@ const artefacts = [
 
 export default function CollectionPage() {
   return (
-    <main>
+    <main style={{ background: "#f9f7f4" }}>
       <Nav />
 
+      {/* Hero — dark for impact */}
       <section className="pt-32 sm:pt-40 pb-16 px-4 sm:px-6" style={{ background: "linear-gradient(160deg, #111d35 0%, #1B2A4A 100%)" }}>
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>The Collection</p>
@@ -38,21 +39,23 @@ export default function CollectionPage() {
       </section>
 
       <div className="relative w-full h-48 sm:h-64 md:h-80">
-        <Image src="/images/editorial-pottery.jpeg" alt="Ladi Kwali pottery collection editorial" fill className="object-cover object-top" sizes="100vw" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, #1B2A4A 0%, transparent 30%, transparent 70%, #111d35 100%)" }} />
+        <Image src="/images/editorial-pottery.jpeg" alt="Ladi Kwali pottery collection editorial" fill className="object-cover object-top" sizes="100vw" quality={100} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, #1B2A4A 0%, transparent 30%, transparent 70%, #f9f7f4 100%)" }} />
       </div>
 
-      <section className="py-8 px-4 sm:px-6 sticky top-[65px] z-40" style={{ background: "rgba(17,29,53,0.97)", borderBottom: "1px solid rgba(201,162,39,0.15)" }}>
+      {/* Category filter strip */}
+      <section className="py-6 px-4 sm:px-6 sticky top-[65px] z-40" style={{ background: "rgba(249,247,244,0.97)", borderBottom: "1px solid rgba(201,162,39,0.2)" }}>
         <div className="max-w-6xl mx-auto flex flex-wrap gap-2">
           {["All", "Ladi Kwali Pottery", "Benin Bronzes", "Bronze Sculptures"].map((c) => (
-            <span key={c} className="px-3 py-1 text-xs tracking-widest uppercase rounded-full border" style={{ borderColor: c === "All" ? "var(--gold)" : "rgba(201,162,39,0.3)", color: c === "All" ? "var(--gold)" : "#9ca3af", letterSpacing: "0.1em" }}>
+            <span key={c} className="px-3 py-1 text-xs tracking-widest uppercase rounded-full border cursor-default" style={{ borderColor: c === "All" ? "var(--gold)" : "rgba(201,162,39,0.4)", color: c === "All" ? "#8b6914" : "#6b7280", letterSpacing: "0.1em", background: c === "All" ? "rgba(201,162,39,0.1)" : "transparent" }}>
               {c}
             </span>
           ))}
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 px-4 sm:px-6" style={{ background: "var(--navy-dark)" }}>
+      {/* Artefacts */}
+      <section className="py-12 sm:py-16 px-4 sm:px-6" style={{ background: "#f9f7f4" }}>
         <div className="max-w-6xl mx-auto space-y-16 sm:space-y-24">
           {artefacts.map((a, idx) => (
             <div key={a.id} className={`flex flex-col ${idx % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} gap-8 md:gap-14 items-center`}>
@@ -60,8 +63,8 @@ export default function CollectionPage() {
               {/* Images */}
               <div className="w-full md:w-1/2 flex gap-2 sm:gap-3">
                 {a.images.map((src, i) => (
-                  <div key={src} className={`relative rounded overflow-hidden ${a.images.length > 1 ? (i === 0 ? "flex-[2]" : "flex-1") : "flex-1"}`} style={{ minHeight: "260px" }}>
-                    <Image src={src} alt={`${a.name} — view ${i + 1}`} fill className="object-contain" style={{ background: "rgba(201,162,39,0.04)" }} sizes="(max-width:768px) 80vw, 40vw" />
+                  <div key={src} className={`relative rounded overflow-hidden shadow-md ${a.images.length > 1 ? (i === 0 ? "flex-[2]" : "flex-1") : "flex-1"}`} style={{ minHeight: "260px", background: "#eeeae4" }}>
+                    <Image src={src} alt={`${a.name} — view ${i + 1}`} fill className="object-contain" sizes="(max-width:768px) 80vw, 40vw" quality={100} />
                   </div>
                 ))}
               </div>
@@ -69,18 +72,18 @@ export default function CollectionPage() {
               {/* Text */}
               <div className="w-full md:w-1/2">
                 <p className="text-xs font-mono mb-2" style={{ color: "var(--gold)" }}>Artefact {a.id}</p>
-                <span className="text-xs px-2 py-0.5 rounded-full inline-block mb-3" style={{ background: "rgba(201,162,39,0.1)", color: "var(--gold)" }}>{a.category}</span>
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mt-2 mb-3 leading-snug">{a.name}</h2>
+                <span className="text-xs px-2 py-0.5 rounded-full inline-block mb-3" style={{ background: "rgba(201,162,39,0.12)", color: "#8b6914" }}>{a.category}</span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mt-2 mb-3 leading-snug" style={{ color: "#1B2A4A" }}>{a.name}</h2>
                 {a.dims !== "—" && <p className="text-xs text-gray-500 font-mono mb-4">{a.dims}</p>}
                 <div className="w-8 h-px mb-4" style={{ background: "var(--gold)" }} />
-                <p className="text-gray-300 leading-relaxed text-sm sm:text-base" style={{ fontFamily: "Georgia, serif" }}>{a.description}</p>
+                <p className="text-gray-700 leading-relaxed text-sm sm:text-base" style={{ fontFamily: "Georgia, serif" }}>{a.description}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="max-w-6xl mx-auto mt-20 pt-10 border-t" style={{ borderColor: "rgba(201,162,39,0.2)" }}>
-          <p className="text-gray-400 text-sm leading-relaxed max-w-2xl italic" style={{ fontFamily: "Georgia, serif" }}>
+        <div className="max-w-6xl mx-auto mt-20 pt-10 border-t" style={{ borderColor: "rgba(201,162,39,0.3)" }}>
+          <p className="text-gray-600 text-sm leading-relaxed max-w-2xl italic" style={{ fontFamily: "Georgia, serif" }}>
             These are not passive acquisitions. Collecting at this level requires the same deliberate attention that competitive sport demands. You have to know what you&rsquo;re looking for. You have to be willing to wait. What you&rsquo;re building is not just a personal treasury: it is a record.
           </p>
         </div>

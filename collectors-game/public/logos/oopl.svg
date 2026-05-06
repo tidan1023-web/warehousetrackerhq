@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="200" height="220">
+  <!-- OOPL - Olusegun Obasanjo Presidential Library -->
+  <!-- Circular emblem -->
+  <circle cx="100" cy="95" r="88" fill="#0a1a3a"/>
+  <circle cx="100" cy="95" r="88" fill="none" stroke="#c9a227" stroke-width="3.5"/>
+
+  <!-- Open book / library motif -->
+  <!-- Left page -->
+  <path d="M52 105 L52 62 Q76 55 100 62 L100 105 Q76 98 52 105 Z" fill="#c9a227" opacity="0.9"/>
+  <!-- Right page -->
+  <path d="M148 105 L148 62 Q124 55 100 62 L100 105 Q124 98 148 105 Z" fill="#e8d080" opacity="0.9"/>
+  <!-- Spine -->
+  <rect x="97" y="60" width="6" height="47" rx="3" fill="#8b6914"/>
+
+  <!-- Lines on left page -->
+  <line x1="62" y1="74" x2="93" y2="72" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <line x1="62" y1="81" x2="93" y2="79" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <line x1="62" y1="88" x2="93" y2="86" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <line x1="62" y1="95" x2="93" y2="93" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <!-- Lines on right page -->
+  <line x1="107" y1="72" x2="138" y2="74" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <line x1="107" y1="79" x2="138" y2="81" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <line x1="107" y1="86" x2="138" y2="88" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+  <line x1="107" y1="93" x2="138" y2="95" stroke="#7a5500" stroke-width="1.3" opacity="0.7"/>
+
+  <!-- Star above book -->
+  <polygon points="100,30 104,42 116,42 107,50 110,62 100,55 90,62 93,50 84,42 96,42" fill="#c9a227"/>
+
+  <!-- Nigerian coat of arms eagle silhouette (simplified) -->
+  <!-- Vertical stripe motif (Nigerian flag) -->
+  <rect x="85" y="115" width="10" height="16" rx="1" fill="#008751"/>
+  <rect x="95" y="115" width="10" height="16" rx="1" fill="#ffffff"/>
+  <rect x="105" y="115" width="10" height="16" rx="1" fill="#008751"/>
+
+  <!-- Text -->
+  <text x="100" y="153" text-anchor="middle" font-family="Georgia, serif" font-size="8" font-weight="bold" fill="#c9a227" letter-spacing="1">OLUSEGUN OBASANJO</text>
+  <text x="100" y="165" text-anchor="middle" font-family="Georgia, serif" font-size="8" font-weight="bold" fill="#c9a227" letter-spacing="1">PRESIDENTIAL LIBRARY</text>
+
+  <!-- Bottom text -->
+  <text x="100" y="196" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="bold" fill="#c9a227">OOPL</text>
+  <text x="100" y="210" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="rgba(201,162,39,0.7)">ABEOKUTA · OGUN STATE</text>
+</svg>

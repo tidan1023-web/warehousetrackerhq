@@ -25,6 +25,12 @@ const partners = [
     logo: "/logos/abu.svg",
     wide: false,
   },
+  {
+    name: "Olusegun Obasanjo Presidential Library",
+    role: "Venue Host — Ogun State",
+    logo: "/logos/oopl.svg",
+    wide: false,
+  },
 ];
 
 const tiers = [
@@ -137,7 +143,7 @@ export default function Sponsors() {
           </p>
           <div className="section-divider" />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mt-10">
             {partners.map((p) => (
               <div
                 key={p.name}

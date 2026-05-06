@@ -1,20 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- Outer ring -->
-  <circle cx="100" cy="100" r="95" fill="#1a5c1a" />
-  <circle cx="100" cy="100" r="88" fill="none" stroke="#c9a227" stroke-width="3"/>
-  <!-- Inner shield shape -->
-  <path d="M100 30 L150 55 L150 115 Q150 155 100 175 Q50 155 50 115 L50 55 Z" fill="#0d3d0d" stroke="#c9a227" stroke-width="2"/>
-  <!-- Book -->
-  <rect x="75" y="85" width="22" height="28" rx="2" fill="#c9a227"/>
-  <rect x="103" y="85" width="22" height="28" rx="2" fill="#e8c84a"/>
-  <line x1="100" y1="85" x2="100" y2="113" stroke="#0d3d0d" stroke-width="2"/>
-  <!-- Torch -->
-  <line x1="100" y1="60" x2="100" y2="82" stroke="#c9a227" stroke-width="3"/>
-  <ellipse cx="100" cy="56" rx="6" ry="9" fill="#ff8c00"/>
-  <ellipse cx="100" cy="53" rx="3" ry="5" fill="#ffdd00"/>
-  <!-- Text -->
-  <text x="100" y="143" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#c9a227">AHMADU BELLO</text>
-  <text x="100" y="157" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#c9a227">UNIVERSITY</text>
-  <!-- Outer label -->
-  <text x="100" y="185" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#c9a227">ZARIA · NIGERIA · EST. 1962</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="200" height="240">
+  <!-- ABU Zaria Coat of Arms style logo -->
+  <!-- Outer shield -->
+  <path d="M100 8 L185 45 L185 140 Q185 195 100 228 Q15 195 15 140 L15 45 Z" fill="#1a5c1a" stroke="#c9a227" stroke-width="3"/>
+  <!-- Inner shield lighter -->
+  <path d="M100 22 L172 55 L172 138 Q172 186 100 215 Q28 186 28 138 L28 55 Z" fill="#0d3d0d"/>
+
+  <!-- Eagle / spread wings motif at top -->
+  <path d="M100 35 L68 52 L58 48 L68 62 L100 55 L132 62 L142 48 L132 52 Z" fill="#c9a227"/>
+  <!-- Eagle head -->
+  <circle cx="100" cy="35" r="8" fill="#c9a227"/>
+  <polygon points="100,28 106,33 100,36 94,33" fill="#e8c84a"/>
+
+  <!-- Open Book in center -->
+  <rect x="76" y="92" width="22" height="28" rx="2" fill="#c9a227" stroke="#0d3d0d" stroke-width="1"/>
+  <rect x="102" y="92" width="22" height="28" rx="2" fill="#e8d080" stroke="#0d3d0d" stroke-width="1"/>
+  <line x1="100" y1="92" x2="100" y2="120" stroke="#0d3d0d" stroke-width="2.5"/>
+  <!-- Book lines -->
+  <line x1="80" y1="100" x2="95" y2="100" stroke="#0d3d0d" stroke-width="1.2"/>
+  <line x1="80" y1="106" x2="95" y2="106" stroke="#0d3d0d" stroke-width="1.2"/>
+  <line x1="80" y1="112" x2="95" y2="112" stroke="#0d3d0d" stroke-width="1.2"/>
+  <line x1="105" y1="100" x2="120" y2="100" stroke="#0d3d0d" stroke-width="1.2"/>
+  <line x1="105" y1="106" x2="120" y2="106" stroke="#0d3d0d" stroke-width="1.2"/>
+  <line x1="105" y1="112" x2="120" y2="112" stroke="#0d3d0d" stroke-width="1.2"/>
+
+  <!-- Torch above book -->
+  <rect x="97" y="68" width="6" height="20" rx="2" fill="#c9a227"/>
+  <ellipse cx="100" cy="64" rx="7" ry="10" fill="#ff7700"/>
+  <ellipse cx="100" cy="60" rx="4" ry="6" fill="#ffdd00"/>
+
+  <!-- Stars row -->
+  <text x="100" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="#c9a227">★  ★  ★</text>
+
+  <!-- Motto banner -->
+  <path d="M30 160 Q100 152 170 160" fill="#8b6914" stroke="#c9a227" stroke-width="1.5"/>
+  <path d="M30 160 Q100 172 170 160" fill="#8b6914" stroke="#c9a227" stroke-width="1.5"/>
+  <text x="100" y="168" text-anchor="middle" font-family="Georgia, serif" font-size="7.5" font-weight="bold" fill="#fff5cc">AHMADU BELLO UNIVERSITY</text>
+
+  <!-- Name below shield -->
+  <text x="100" y="198" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#c9a227">AHMADU BELLO</text>
+  <text x="100" y="213" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" fill="#c9a227">UNIVERSITY</text>
+  <text x="100" y="228" text-anchor="middle" font-family="Georgia, serif" font-size="8.5" fill="rgba(201,162,39,0.75)">ZARIA · NIGERIA · EST. 1962</text>
 </svg>

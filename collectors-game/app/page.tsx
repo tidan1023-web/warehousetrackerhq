@@ -30,10 +30,10 @@ export default function Home() {
 
         {/* Side image strips — hidden on small screens */}
         <div className="absolute left-0 top-0 h-full w-20 md:w-40 overflow-hidden opacity-20 hidden sm:block">
-          <Image src="/images/editorial-pottery.jpeg" alt="" fill className="object-cover object-center" sizes="160px" />
+          <Image src="/images/editorial-pottery.jpeg" alt="" fill className="object-cover object-center" sizes="160px" quality={100} />
         </div>
         <div className="absolute right-0 top-0 h-full w-20 md:w-40 overflow-hidden opacity-20 hidden sm:block">
-          <Image src="/images/exhibition-crowd.jpeg" alt="" fill className="object-cover object-center" sizes="160px" />
+          <Image src="/images/exhibition-crowd.jpeg" alt="" fill className="object-cover object-center" sizes="160px" quality={100} />
         </div>
 
         <p className="relative z-10 text-xs tracking-widest uppercase mb-8 opacity-80" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>
@@ -84,7 +84,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="relative h-80 sm:h-[500px] rounded overflow-hidden order-2 md:order-1">
-              <Image src="/images/obj-portrait.jpeg" alt="Coach Oliver Berdeen Johnson" fill className="object-cover object-top" sizes="(max-width:768px) 100vw, 50vw" />
+              <Image src="/images/obj-portrait.jpeg" alt="Coach Oliver Berdeen Johnson" fill className="object-cover object-top" sizes="(max-width:768px) 100vw, 50vw" quality={100} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,29,53,0.7) 0%, transparent 50%)" }} />
               <p className="absolute bottom-4 left-4 right-4 text-white text-xs italic" style={{ fontFamily: "Georgia, serif" }}>
                 Coach Oliver Berdeen Johnson — Chairman, Basketball for Peace
@@ -135,7 +135,7 @@ export default function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {previewArtefacts.map((a) => (
               <Link key={a.id} href="/collection" className="group relative aspect-square rounded overflow-hidden block">
-                <Image src={a.img} alt={a.name} fill className="object-contain group-hover:scale-105 transition-transform duration-500" style={{ background: "rgba(201,162,39,0.06)" }} sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 16vw" />
+                <Image src={a.img} alt={a.name} fill className="object-contain group-hover:scale-105 transition-transform duration-500" style={{ background: "rgba(201,162,39,0.06)" }} sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 16vw" quality={100} />
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2" style={{ background: "linear-gradient(to top, rgba(17,29,53,0.9) 0%, transparent 60%)" }}>
                   <p className="text-white text-xs leading-tight">{a.name}</p>
                 </div>

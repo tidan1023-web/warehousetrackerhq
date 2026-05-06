@@ -1,31 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <!-- Background -->
-  <circle cx="100" cy="100" r="95" fill="#2c1810"/>
-  <circle cx="100" cy="100" r="88" fill="none" stroke="#c9a227" stroke-width="3"/>
-  <!-- Stylised Benin mask / Nigerian art motif -->
-  <!-- Mask face -->
-  <ellipse cx="100" cy="90" rx="28" ry="38" fill="#c9a227"/>
-  <!-- Eyes -->
-  <ellipse cx="90" cy="82" rx="5" ry="6" fill="#2c1810"/>
-  <ellipse cx="110" cy="82" rx="5" ry="6" fill="#2c1810"/>
-  <!-- Nose bridge -->
-  <rect x="97" y="88" width="6" height="10" rx="3" fill="#2c1810"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 220" width="200" height="220">
+  <!-- NCMM - National Commission for Museums & Monuments Nigeria -->
+  <!-- Circular emblem background -->
+  <circle cx="100" cy="95" r="88" fill="#1a0a00"/>
+  <circle cx="100" cy="95" r="88" fill="none" stroke="#c9a227" stroke-width="3.5"/>
+  <circle cx="100" cy="95" r="80" fill="none" stroke="#c9a227" stroke-width="1" opacity="0.4"/>
+
+  <!-- Stylised Ife/Benin bronze head — simplified accurate form -->
+  <!-- Neck collar (rows of beads) -->
+  <rect x="76" y="128" width="48" height="6" rx="3" fill="#c9a227" opacity="0.9"/>
+  <rect x="72" y="136" width="56" height="6" rx="3" fill="#c9a227" opacity="0.7"/>
+  <rect x="68" y="143" width="64" height="5" rx="2.5" fill="#c9a227" opacity="0.5"/>
+
+  <!-- Head shape -->
+  <ellipse cx="100" cy="95" rx="30" ry="38" fill="#b87c2a"/>
+  <!-- Face slightly lighter -->
+  <ellipse cx="100" cy="96" rx="24" ry="31" fill="#c9872e"/>
+
+  <!-- Crown / cap at top -->
+  <ellipse cx="100" cy="60" rx="22" ry="8" fill="#8b5e0a"/>
+  <rect x="78" y="56" width="44" height="10" rx="4" fill="#8b5e0a"/>
+  <!-- Crown lines/pattern -->
+  <line x1="85" y1="56" x2="85" y2="66" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+  <line x1="92" y1="56" x2="92" y2="66" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+  <line x1="100" y1="56" x2="100" y2="66" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+  <line x1="108" y1="56" x2="108" y2="66" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+  <line x1="115" y1="56" x2="115" y2="66" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Scarification lines on forehead -->
+  <line x1="88" y1="73" x2="88" y2="82" stroke="#7a4a10" stroke-width="1.5"/>
+  <line x1="93" y1="71" x2="93" y2="81" stroke="#7a4a10" stroke-width="1.5"/>
+  <line x1="100" y1="70" x2="100" y2="80" stroke="#7a4a10" stroke-width="1.5"/>
+  <line x1="107" y1="71" x2="107" y2="81" stroke="#7a4a10" stroke-width="1.5"/>
+  <line x1="112" y1="73" x2="112" y2="82" stroke="#7a4a10" stroke-width="1.5"/>
+
+  <!-- Eyes — almond shaped -->
+  <ellipse cx="90" cy="89" rx="6" ry="4" fill="#3a2000"/>
+  <ellipse cx="110" cy="89" rx="6" ry="4" fill="#3a2000"/>
+  <ellipse cx="90" cy="89" rx="3" ry="2.5" fill="#1a0800"/>
+  <ellipse cx="110" cy="89" rx="3" ry="2.5" fill="#1a0800"/>
+
+  <!-- Nose -->
+  <path d="M96 96 Q100 102 104 96" fill="none" stroke="#7a4a10" stroke-width="1.5"/>
+
   <!-- Mouth -->
-  <rect x="88" y="102" width="24" height="5" rx="2" fill="#2c1810"/>
-  <!-- Crown / headdress lines -->
-  <line x1="100" y1="52" x2="100" y2="62" stroke="#c9a227" stroke-width="3"/>
-  <line x1="86" y1="55" x2="89" y2="64" stroke="#c9a227" stroke-width="2.5"/>
-  <line x1="114" y1="55" x2="111" y2="64" stroke="#c9a227" stroke-width="2.5"/>
-  <line x1="76" y1="62" x2="81" y2="69" stroke="#c9a227" stroke-width="2"/>
-  <line x1="124" y1="62" x2="119" y2="69" stroke="#c9a227" stroke-width="2"/>
-  <!-- Neck strands -->
-  <line x1="86" y1="126" x2="82" y2="140" stroke="#c9a227" stroke-width="2"/>
-  <line x1="93" y1="128" x2="91" y2="142" stroke="#c9a227" stroke-width="2"/>
-  <line x1="100" y1="128" x2="100" y2="142" stroke="#c9a227" stroke-width="2"/>
-  <line x1="107" y1="128" x2="109" y2="142" stroke="#c9a227" stroke-width="2"/>
-  <line x1="114" y1="126" x2="118" y2="140" stroke="#c9a227" stroke-width="2"/>
-  <!-- Text -->
-  <text x="100" y="158" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="bold" fill="#c9a227">NATIONAL COMMISSION FOR</text>
-  <text x="100" y="170" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="bold" fill="#c9a227">MUSEUMS &amp; MONUMENTS</text>
-  <text x="100" y="185" text-anchor="middle" font-family="Georgia, serif" font-size="8" fill="#c9a227">NIGERIA</text>
+  <path d="M92 108 Q100 113 108 108" fill="none" stroke="#7a4a10" stroke-width="2"/>
+
+  <!-- Text arc around emblem -->
+  <text x="100" y="196" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="bold" fill="#c9a227" letter-spacing="0.5">NATIONAL COMMISSION FOR</text>
+  <text x="100" y="208" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="bold" fill="#c9a227" letter-spacing="0.5">MUSEUMS &amp; MONUMENTS</text>
 </svg>

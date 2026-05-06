@@ -53,9 +53,10 @@ const venues = [
 
 export default function VenuesPage() {
   return (
-    <main>
+    <main style={{ background: "#f9f7f4" }}>
       <Nav />
 
+      {/* Hero — dark */}
       <section className="pt-32 sm:pt-40 pb-16 px-4 sm:px-6" style={{ background: "linear-gradient(160deg, #111d35 0%, #1B2A4A 100%)" }}>
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>The Venues</p>
@@ -68,14 +69,14 @@ export default function VenuesPage() {
         </div>
       </section>
 
-      <section className="py-16 px-4 sm:px-6" style={{ background: "var(--navy-dark)" }}>
+      <section className="py-16 px-4 sm:px-6" style={{ background: "#f9f7f4" }}>
         <div className="max-w-6xl mx-auto space-y-20">
           {venues.map((v, i) => (
             <div key={v.city} className={`grid md:grid-cols-2 gap-8 md:gap-14 items-start ${i % 2 === 1 ? "md:[direction:rtl]" : ""}`}>
 
               {/* Image */}
-              <div className={`relative h-64 sm:h-80 md:h-[420px] rounded overflow-hidden ${i % 2 === 1 ? "[direction:ltr]" : ""}`}>
-                <Image src={v.img} alt={v.institution} fill className="object-cover object-center" sizes="(max-width:768px) 100vw, 50vw" />
+              <div className={`relative h-64 sm:h-80 md:h-[420px] rounded overflow-hidden shadow-md ${i % 2 === 1 ? "[direction:ltr]" : ""}`}>
+                <Image src={v.img} alt={v.institution} fill className="object-cover object-center" sizes="(max-width:768px) 100vw, 50vw" quality={100} />
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,29,53,0.85) 0%, transparent 55%)" }} />
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                   <span className="text-xs font-mono block mb-1" style={{ color: "var(--gold)" }}>Venue {v.number}</span>
@@ -87,11 +88,11 @@ export default function VenuesPage() {
               {/* Text */}
               <div className={i % 2 === 1 ? "[direction:ltr]" : ""}>
                 <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <span className="text-xs px-3 py-1 rounded-full" style={{ background: "rgba(201,162,39,0.15)", color: "var(--gold)" }}>
+                  <span className="text-xs px-3 py-1 rounded-full" style={{ background: "rgba(201,162,39,0.12)", color: "#8b6914" }}>
                     {v.region}
                   </span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">{v.institution}</h2>
+                <h2 className="text-xl sm:text-2xl font-bold mb-1" style={{ color: "#1B2A4A" }}>{v.institution}</h2>
                 <p className="text-gray-500 text-xs mb-5">{v.address}</p>
 
                 <div className="w-8 h-px mb-6" style={{ background: "var(--gold)" }} />
@@ -99,21 +100,21 @@ export default function VenuesPage() {
                 <div className="space-y-5">
                   <div>
                     <p className="text-xs uppercase tracking-widest mb-2 text-gray-500" style={{ letterSpacing: "0.12em" }}>The Argument</p>
-                    <p className="text-gray-200 text-sm leading-relaxed italic" style={{ fontFamily: "Georgia, serif" }}>
+                    <p className="text-gray-700 text-sm leading-relaxed italic" style={{ fontFamily: "Georgia, serif" }}>
                       &ldquo;{v.argument}&rdquo;
                     </p>
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-widest mb-2 text-gray-500" style={{ letterSpacing: "0.12em" }}>The Venue</p>
-                    <p className="text-gray-300 text-sm leading-relaxed" style={{ fontFamily: "Georgia, serif" }}>{v.description}</p>
+                    <p className="text-gray-700 text-sm leading-relaxed" style={{ fontFamily: "Georgia, serif" }}>{v.description}</p>
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-widest mb-2 text-gray-500" style={{ letterSpacing: "0.12em" }}>The Audience</p>
-                    <p className="text-gray-300 text-sm leading-relaxed" style={{ fontFamily: "Georgia, serif" }}>{v.audience}</p>
+                    <p className="text-gray-700 text-sm leading-relaxed" style={{ fontFamily: "Georgia, serif" }}>{v.audience}</p>
                   </div>
                 </div>
 
-                <p className="text-xs text-gray-600 mt-5 italic" style={{ fontFamily: "Georgia, serif" }}>{v.imgCaption}</p>
+                <p className="text-xs text-gray-400 mt-5 italic" style={{ fontFamily: "Georgia, serif" }}>{v.imgCaption}</p>
               </div>
             </div>
           ))}
