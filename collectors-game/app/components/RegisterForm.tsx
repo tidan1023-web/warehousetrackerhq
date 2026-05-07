@@ -3,10 +3,11 @@ import { useState } from "react";
 
 const locations = [
   { value: "ncmm-kaduna", label: "NCMM, Kaduna" },
+  { value: "open-art-abuja", label: "Open Art Expo Exhibition Pavilion, Abuja" },
   { value: "obasanjo-ogun", label: "Obasanjo Library, Ogun State" },
   { value: "lagos", label: "Lagos" },
   { value: "abuja", label: "Abuja" },
-  { value: "all", label: "Both Venues — I'll attend wherever I can" },
+  { value: "all", label: "All Venues — I'll attend wherever I can" },
 ];
 
 const partnerTypes = [

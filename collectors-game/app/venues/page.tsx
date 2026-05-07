@@ -17,7 +17,17 @@ const confirmedVenues = [
     audience: "Students, practitioners, and the northern Nigerian cultural community will encounter the collection in a space that knows how to hold objects carefully.",
   },
   {
-    number: "02", city: "Ogun State", region: "Southwest Nigeria",
+    number: "02", city: "Abuja", region: "FCT",
+    institution: "Open Art Expo Exhibition Pavilion",
+    address: "Abuja, Federal Capital Territory",
+    img: "/images/collection-display.jpeg",
+    imgCaption: "Young visitors engaging with art and cultural objects",
+    argument: "Abuja is the administrative centre where culture and policy intersect.",
+    description: "The collection meets Nigeria's contemporary art world. Abuja's gallery community draws collectors, diplomats, cultural attachés, and the professional class that follows the intersection of visual art and institutional life.",
+    audience: "This is where the conversation about private collecting, cultural stewardship, and the relationship between basketball and art reaches its most commercially and diplomatically engaged audience.",
+  },
+  {
+    number: "03", city: "Ogun State", region: "Southwest Nigeria",
     institution: "Olusegun Obasanjo Presidential Library",
     address: "Abeokuta, Ogun State",
     img: "/images/oopl-building.jpg",
@@ -35,12 +45,6 @@ const seekingVenues = [
     pitch: "Lagos is the NBA's most important city outside of North America. The basketball community here is enormous — and so is the art audience. We are looking for a gallery, cultural space, or community institution in Lagos that wants to co-present The Collector's Game.",
     looking: ["Gallery or exhibition space", "Cultural foundation or arts centre", "Basketball club or community space", "Corporate cultural programme"],
   },
-  {
-    city: "Abuja",
-    region: "FCT",
-    pitch: "Abuja draws collectors, diplomats, cultural attachés, and the professional class that follows the intersection of art and public life. The right partner in Abuja makes this exhibition a national conversation. We are actively seeking that partner.",
-    looking: ["Gallery or exhibition space", "Cultural foundation or institution", "University gallery", "Government or diplomatic cultural programme"],
-  },
 ];
 
 export default function VenuesPage() {
@@ -56,7 +60,7 @@ export default function VenuesPage() {
             Four Cities,<br />One Journey
           </h1>
           <p className="text-base sm:text-lg italic text-gray-300 max-w-2xl" style={{ fontFamily: "Georgia, serif" }}>
-            Two venues confirmed. Two cities still open — we are calling on galleries and institutions in Lagos and Abuja to join us.
+            Three venues confirmed. Lagos still open — we are calling on galleries and institutions to join us.
           </p>
         </div>
       </section>
