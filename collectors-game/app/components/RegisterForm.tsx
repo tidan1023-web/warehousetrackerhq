@@ -4,6 +4,8 @@ import { useState } from "react";
 const locations = [
   { value: "ncmm-kaduna", label: "NCMM, Kaduna" },
   { value: "obasanjo-ogun", label: "Obasanjo Library, Ogun State" },
+  { value: "lagos", label: "Lagos" },
+  { value: "abuja", label: "Abuja" },
   { value: "all", label: "Both Venues — I'll attend wherever I can" },
 ];
 
