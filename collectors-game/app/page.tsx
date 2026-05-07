@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Nav from "./components/Nav";
 import Sponsors from "./components/Sponsors";
+import RegisterForm from "./components/RegisterForm";
 import Footer from "./components/Footer";
 
 const previewArtefacts = [
@@ -57,9 +58,9 @@ export default function Home() {
           The question is what you want to say about Nigerian culture in 2026.&rdquo;
         </p>
 
-        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-4 px-4">
+        <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-3 px-4">
           {["NCMM, Kaduna", "Open Art Expo, Abuja", "EPAC, Lagos", "Obasanjo Library, Ogun"].map((v) => (
-            <span key={v} className="text-xs tracking-widest uppercase text-gray-500" style={{ letterSpacing: "0.12em" }}>{v}</span>
+            <a key={v} href="#register" className="text-xs tracking-widest uppercase px-3 py-1 rounded-full border transition-all hover:border-yellow-600 hover:text-yellow-600" style={{ letterSpacing: "0.12em", color: "#9ca3af", borderColor: "rgba(255,255,255,0.15)" }}>{v}</a>
           ))}
         </div>
 
@@ -143,6 +144,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── REGISTER / PARTNER INTEREST ── */}
+      <RegisterForm />
 
       {/* ── SPONSORS / PARTNERS ── */}
       <Sponsors />
