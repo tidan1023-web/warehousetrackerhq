@@ -18,7 +18,7 @@ const venues = [
   },
   {
     number: "02", city: "Abuja", region: "FCT",
-    institution: "Open Art Expo Gallery",
+    institution: "Open Art Expo",
     address: "Abuja, Federal Capital Territory",
     significance: "Where culture and policy intersect",
     img: "/images/collection-display.jpeg",
@@ -29,8 +29,8 @@ const venues = [
   },
   {
     number: "03", city: "Lagos", region: "Southwest Nigeria",
-    institution: "EPAC Creative Studio, Ecobank Headquarters",
-    address: "Ecobank Headquarters, Lagos State",
+    institution: "EPAC Creative Studio",
+    address: "Lagos State",
     significance: "The NBA's most important African city",
     img: "/images/obj-bwob.jpeg",
     imgCaption: "Basketball Without Borders Africa — the sporting culture that underpins Lagos's relationship with the game",
