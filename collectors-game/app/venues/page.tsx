@@ -9,7 +9,6 @@ const venues = [
     number: "01", city: "Kaduna", region: "North Nigeria",
     institution: "National Commission for Museums and Monuments",
     address: "No. 33 Ali Akilu Road, Kaduna",
-    significance: "Nigeria's formal heritage infrastructure",
     img: "/images/exhibition-audience.jpeg",
     imgCaption: "Audience at ABU Zaria — the academic community that gives this exhibition its intellectual foundation",
     argument: "Kaduna carries Nigeria's northern heritage and the authority of the National Commission for Museums and Monuments.",
@@ -17,32 +16,9 @@ const venues = [
     audience: "Students, practitioners, and the northern Nigerian cultural community will encounter the collection in a space that knows how to hold objects carefully.",
   },
   {
-    number: "02", city: "Abuja", region: "FCT",
-    institution: "Open Art Expo",
-    address: "Abuja, Federal Capital Territory",
-    significance: "Where culture and policy intersect",
-    img: "/images/collection-display.jpeg",
-    imgCaption: "Young visitors engaging with art and cultural objects",
-    argument: "Abuja is the administrative centre where culture and policy intersect.",
-    description: "The collection meets Nigeria's contemporary art world. Abuja's gallery community draws collectors, diplomats, cultural attachés, and the professional class that follows the intersection of visual art and institutional life.",
-    audience: "This is where the conversation about private collecting, cultural stewardship, and the relationship between basketball and art in Nigeria reaches its most commercially and diplomatically engaged audience.",
-  },
-  {
-    number: "03", city: "Lagos", region: "Southwest Nigeria",
-    institution: "EPAC Creative Studio",
-    address: "Lagos State",
-    significance: "The NBA's most important African city",
-    img: "/images/obj-bwob.jpeg",
-    imgCaption: "Basketball Without Borders Africa — the sporting culture that underpins Lagos's relationship with the game",
-    argument: "Lagos is raving about basketball. The NBA has been saying it for years.",
-    description: "Lagos is the NBA's most important city outside of North America. People here do not go to basketball events because they are fashionable — they go because the sport is woven into the social fabric of the city.",
-    audience: "The city's basketball community, art audiences, and the broad Lagos cultural public that turned out for NBA Africa events.",
-  },
-  {
-    number: "04", city: "Ogun State", region: "Southwest Nigeria",
+    number: "02", city: "Ogun State", region: "Southwest Nigeria",
     institution: "Olusegun Obasanjo Presidential Library",
-    address: "Olusegun Obasanjo Presidential Library, Abeokuta",
-    significance: "A site designed for legacy and documentation",
+    address: "Abeokuta, Ogun State",
     img: "/images/editorial-pottery.jpeg",
     imgCaption: "The material objects of OBJ's collection — placed now in an institution designed for national legacy",
     argument: "Ogun State is a site already accustomed to holding Nigerian history at the level it deserves.",
@@ -61,7 +37,7 @@ export default function VenuesPage() {
         <div className="max-w-6xl mx-auto">
           <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>The Venues</p>
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white leading-none mb-6">
-            Four Cities,<br />One Journey
+            Two Venues,<br />One Journey
           </h1>
           <p className="text-base sm:text-lg italic text-gray-300 max-w-2xl" style={{ fontFamily: "Georgia, serif" }}>
             Each venue was chosen not for convenience but for argument.

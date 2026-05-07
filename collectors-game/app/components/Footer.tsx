@@ -52,7 +52,7 @@ export default function Footer() {
             </p>
             <p className="text-white text-xs leading-relaxed opacity-70">
               A travelling exhibition presented by FOTWRLD × Basketball for Peace.
-              Submitted to Ecobank / EPAC Creative Studio, March 2026.
+              Produced by Halima Abdul (Sadia) / FOTWRLD.
               Produced by Halima Abdul (Sadia) / FOTWRLD.
             </p>
           </div>

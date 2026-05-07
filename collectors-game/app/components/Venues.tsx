@@ -8,24 +8,8 @@ const venues = [
     significance: "Nigeria's formal heritage infrastructure",
   },
   {
-    city: "Abuja",
-    number: "02",
-    institution: "Open Art Expo Gallery",
-    description:
-      "The collection meets Nigeria's contemporary art world. Abuja's gallery community draws collectors, diplomats, cultural attachés, and the professional class that follows the intersection of visual art and institutional life. This is where the conversation about private collecting, cultural stewardship, and the relationship between basketball and art in Nigeria reaches its most commercially and diplomatically engaged audience.",
-    significance: "Administrative centre — culture and policy intersect",
-  },
-  {
-    city: "Lagos",
-    number: "03",
-    institution: "EPAC Creative Studio, Ecobank Headquarters",
-    description:
-      "Lagos is the NBA's most important city outside of North America. The city does not go to basketball events because they are fashionable. They go because the sport is woven into the social fabric in a way that football gets all the credit for — but basketball, quietly, has always matched. The Collector's Game lands here.",
-    significance: "The NBA's most important African city",
-  },
-  {
     city: "Ogun State",
-    number: "04",
+    number: "02",
     institution: "Olusegun Obasanjo Presidential Library",
     description:
       "An institution built around the life of a man who defined an era of Nigerian public history. The resonance is not incidental. OBJ has lived a life of comparable public consequence in his own field, and placing his collection in a space designed for legacy and documentation is a deliberate editorial choice.",
@@ -37,7 +21,6 @@ export default function Venues() {
   return (
     <section id="venues" className="py-28 px-6" style={{ background: "var(--navy)" }}>
       <div className="max-w-6xl mx-auto">
-        {/* Section label */}
         <p className="text-xs tracking-widest uppercase mb-4" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>
           The Venues
         </p>
@@ -45,7 +28,7 @@ export default function Venues() {
 
         <div className="flex flex-col md:flex-row md:items-end justify-between mt-12 mb-16 gap-6">
           <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight">
-            Four Cities,
+            Two Venues,
             <br />
             One Journey
           </h2>
@@ -64,7 +47,6 @@ export default function Venues() {
                 border: "1px solid rgba(201,162,39,0.2)",
               }}
             >
-              {/* Large number watermark */}
               <span
                 className="absolute top-4 right-6 text-8xl font-black opacity-5 select-none"
                 style={{ color: "var(--gold)", lineHeight: 1 }}

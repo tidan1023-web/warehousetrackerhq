@@ -59,7 +59,7 @@ export default function Home() {
         </p>
 
         <div className="relative z-10 mt-8 flex flex-wrap justify-center gap-3 px-4">
-          {["NCMM, Kaduna", "Open Art Expo, Abuja", "EPAC, Lagos", "Obasanjo Library, Ogun"].map((v) => (
+          {["NCMM, Kaduna", "Obasanjo Library, Ogun"].map((v) => (
             <a key={v} href="#register" className="text-xs tracking-widest uppercase px-3 py-1 rounded-full border transition-all hover:border-yellow-600 hover:text-yellow-600" style={{ letterSpacing: "0.12em", color: "#9ca3af", borderColor: "rgba(255,255,255,0.15)" }}>{v}</a>
           ))}
         </div>

@@ -3,16 +3,16 @@ import { useState } from "react";
 
 const locations = [
   { value: "ncmm-kaduna", label: "NCMM, Kaduna" },
-  { value: "open-art-abuja", label: "Open Art Expo, Abuja" },
-  { value: "epac-lagos", label: "EPAC, Lagos" },
   { value: "obasanjo-ogun", label: "Obasanjo Library, Ogun State" },
-  { value: "all", label: "All Venues — I'll attend wherever I can" },
+  { value: "all", label: "Both Venues — I'll attend wherever I can" },
 ];
 
 const partnerTypes = [
   "Gallery or Exhibition Space",
   "Cultural Foundation or NGO",
   "University or Research Institution",
+  "Secondary School",
+  "Primary School",
   "Basketball Club or Sports Organisation",
   "Community Organisation",
   "Corporate Cultural Programme",
@@ -77,7 +77,7 @@ export default function RegisterForm() {
             <span style={{ color: "var(--gold)" }}>or Partner With Us</span>
           </h2>
           <p className="text-gray-400 leading-relaxed self-end" style={{ fontFamily: "Georgia, serif" }}>
-            Whether you want to attend the exhibition in your city, or you represent a gallery, club,
+            Whether you want to attend the exhibition in your city, or you represent a gallery, club, school, university,
             or community that wants to be part of this — we want to hear from you.
           </p>
         </div>
@@ -230,7 +230,7 @@ export default function RegisterForm() {
             <div>
               <h3 className="text-xl font-bold text-white mb-4">We Are Looking for Partners</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
-                We are actively seeking galleries, cultural clubs, community organisations,
+                We are actively seeking galleries, schools, universities, cultural clubs, community organisations,
                 and institutions in all four cities who want to co-present, host satellite events,
                 or be formally associated with The Collector&rsquo;s Game.
               </p>
@@ -323,8 +323,8 @@ export default function RegisterForm() {
                     >
                       <option value="" disabled selected>Select…</option>
                       <option value="kaduna">Kaduna</option>
-                      <option value="abuja">Abuja</option>
-                      <option value="lagos">Lagos</option>
+                      
+                      
                       <option value="ogun">Ogun State</option>
                       <option value="multiple">Multiple cities</option>
                     </select>

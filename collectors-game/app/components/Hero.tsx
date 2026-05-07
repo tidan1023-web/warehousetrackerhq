@@ -72,14 +72,14 @@ export default function Hero() {
       <div className="relative z-10 my-8 w-16 h-px" style={{ background: "var(--gold)" }} />
 
       <p className="relative z-10 italic text-sm md:text-base text-gray-400 max-w-lg leading-relaxed" style={{ fontFamily: "Georgia, serif" }}>
-        &ldquo;The question is not whether this exhibition merits Ecobank&rsquo;s support.
+        &ldquo;The question is not whether this exhibition merits support.
         <br />
-        The question is what Ecobank wants to say about Nigerian culture in 2026.&rdquo;
+        The question is what you want to say about Nigerian culture in 2026.&rdquo;
       </p>
 
       {/* Venue pills */}
       <div className="relative z-10 mt-10 flex flex-wrap justify-center gap-x-8 gap-y-2">
-        {["NCMM, Kaduna", "Open Art Expo, Abuja", "EPAC, Lagos", "Obasanjo Library, Ogun"].map((v) => (
+        {["NCMM, Kaduna", "Obasanjo Library, Ogun"].map((v) => (
           <span key={v} className="text-xs tracking-widest uppercase text-gray-500" style={{ letterSpacing: "0.15em" }}>
             {v}
           </span>
