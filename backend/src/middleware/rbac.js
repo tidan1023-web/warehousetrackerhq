@@ -1,12 +1,6 @@
-const authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        message: `Access denied. Requires role: ${roles.join(' or ')}`,
-      });
-    }
-    next();
-  };
-};
-
+'use strict';
+// authorize is now the canonical version in middleware/auth.js.
+// This file re-exports it for backward compatibility so any controllers
+// that still import from rbac.js continue to work without changes.
+const { authorize } = require('./auth');
 module.exports = { authorize };

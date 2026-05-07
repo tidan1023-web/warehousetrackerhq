@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const { authenticate } = require('../middleware/auth');
-const { authorize }    = require('../middleware/rbac');
+const { authenticate, authorize } = require('../middleware/auth');
+const { zodValidate, schemas }    = require('../middleware/zodValidate');
 const {
   getInvoices, getInvoice, createInvoice, updateInvoice, deleteInvoice,
   addPayment, deletePayment, generatePDF,
@@ -8,15 +8,18 @@ const {
 
 router.use(authenticate);
 
-router.get('/',    getInvoices);
-router.get('/:id', getInvoice);
+// Clients can read invoices addressed to their company
+router.get('/',        getInvoices);
+router.get('/:id',     getInvoice);
 router.get('/:id/pdf', generatePDF);
 
-router.post('/',   authorize('admin', 'qs', 'project_manager'), createInvoice);
-router.put('/:id', authorize('admin', 'qs', 'project_manager'), updateInvoice);
-router.delete('/:id', authorize('admin', 'qs'), deleteInvoice);
+// QS / PM / Admin can create and edit invoices
+router.post('/',   authorize('admin', 'qs', 'project_manager'), zodValidate(schemas.invoice), createInvoice);
+router.put('/:id', authorize('admin', 'qs', 'project_manager'), zodValidate(schemas.invoice), updateInvoice);
 
-router.post('/:id/payments',              authorize('admin', 'qs', 'project_manager'), addPayment);
+// Only admin/QS can delete invoices or remove payments
+router.delete('/:id',                   authorize('admin', 'qs'), deleteInvoice);
+router.post('/:id/payments',            authorize('admin', 'qs', 'project_manager'), addPayment);
 router.delete('/:id/payments/:paymentId', authorize('admin', 'qs'), deletePayment);
 
 module.exports = router;
