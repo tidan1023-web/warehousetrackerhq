@@ -88,7 +88,7 @@ export default function RegisterForm() {
         <div className="flex gap-0 mb-10 border-b" style={{ borderColor: "rgba(201,162,39,0.2)" }}>
           <button
             onClick={() => setTab("attend")}
-            className="px-6 py-3 text-xs tracking-widest uppercase font-bold transition-all"
+            className="px-4 sm:px-6 py-3 text-xs tracking-widest uppercase font-bold transition-all flex-1 sm:flex-none"
             style={{
               letterSpacing: "0.15em",
               color: tab === "attend" ? "var(--gold)" : "#6b7280",
@@ -102,7 +102,7 @@ export default function RegisterForm() {
           </button>
           <button
             onClick={() => setTab("partner")}
-            className="px-6 py-3 text-xs tracking-widest uppercase font-bold transition-all"
+            className="px-4 sm:px-6 py-3 text-xs tracking-widest uppercase font-bold transition-all flex-1 sm:flex-none"
             style={{
               letterSpacing: "0.15em",
               color: tab === "partner" ? "var(--gold)" : "#6b7280",
@@ -118,7 +118,7 @@ export default function RegisterForm() {
 
         {/* ── ATTEND FORM ── */}
         {tab === "attend" && (
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
             <div>
               <h3 className="text-xl font-bold text-white mb-4">Reserve Your Place</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
@@ -228,7 +228,7 @@ export default function RegisterForm() {
 
         {/* ── PARTNER FORM ── */}
         {tab === "partner" && (
-          <div className="grid md:grid-cols-2 gap-12 items-start">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
             <div>
               <h3 className="text-xl font-bold text-white mb-4">We Are Looking for Partners</h3>
               <p className="text-gray-400 text-sm leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
@@ -312,7 +312,7 @@ export default function RegisterForm() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs uppercase tracking-widest mb-2 text-gray-400" style={{ letterSpacing: "0.12em" }}>
                       City / Venue *

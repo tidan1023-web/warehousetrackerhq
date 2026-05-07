@@ -37,23 +37,23 @@ export default function Home() {
           <Image src="/images/exhibition-crowd.jpeg" alt="" fill className="object-cover object-center" sizes="160px" quality={100} />
         </div>
 
-        <p className="relative z-10 text-xs tracking-widest uppercase mb-8 opacity-80" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>
+        <p className="relative z-10 text-xs tracking-widest uppercase mb-6 sm:mb-8 opacity-80 px-4 text-center" style={{ color: "var(--gold)", letterSpacing: "0.2em" }}>
           FOTWRLD × Basketball for Peace — A Travelling Exhibition
         </p>
 
-        <div className="relative z-10 mb-6">
-          <p className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white" style={{ lineHeight: 1 }}>THE</p>
-          <p className="text-5xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black leading-none" style={{ color: "var(--gold)", letterSpacing: "-0.02em", lineHeight: 0.85 }}>COLLECTORS</p>
-          <p className="text-5xl sm:text-8xl md:text-9xl lg:text-[10rem] font-black leading-none text-white" style={{ letterSpacing: "-0.02em", lineHeight: 0.85 }}>GAME</p>
+        <div className="relative z-10 mb-4 sm:mb-6 px-2 w-full">
+          <p className="text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white text-center" style={{ lineHeight: 1 }}>THE</p>
+          <p className="text-[13vw] sm:text-8xl md:text-9xl lg:text-[10rem] font-black leading-none text-center" style={{ color: "var(--gold)", letterSpacing: "-0.02em", lineHeight: 0.85 }}>COLLECTORS</p>
+          <p className="text-[13vw] sm:text-8xl md:text-9xl lg:text-[10rem] font-black leading-none text-white text-center" style={{ letterSpacing: "-0.02em", lineHeight: 0.85 }}>GAME</p>
         </div>
 
-        <p className="relative z-10 italic text-base sm:text-xl text-gray-300 mt-6 max-w-xl px-4" style={{ fontFamily: "Georgia, serif" }}>
+        <p className="relative z-10 italic text-sm sm:text-xl text-gray-300 mt-4 sm:mt-6 max-w-xl px-4 text-center" style={{ fontFamily: "Georgia, serif" }}>
           Art, Basketball, and the Private Life of a Public Man
         </p>
 
-        <div className="relative z-10 my-6 w-16 h-px" style={{ background: "var(--gold)" }} />
+        <div className="relative z-10 my-5 sm:my-6 w-16 h-px" style={{ background: "var(--gold)" }} />
 
-        <p className="relative z-10 italic text-sm text-gray-400 max-w-lg leading-relaxed px-4" style={{ fontFamily: "Georgia, serif" }}>
+        <p className="relative z-10 italic text-xs sm:text-sm text-gray-400 max-w-md sm:max-w-lg leading-relaxed px-4 text-center" style={{ fontFamily: "Georgia, serif" }}>
           &ldquo;The question is not whether this exhibition merits support.
           The question is what you want to say about Nigerian culture in 2026.&rdquo;
         </p>
