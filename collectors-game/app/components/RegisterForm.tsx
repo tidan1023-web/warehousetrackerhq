@@ -145,7 +145,6 @@ export default function RegisterForm() {
               <form
                 name="register-attend"
                 method="POST"
-                data-netlify="true"
                 onSubmit={handleAttend}
                 className="space-y-4"
               >
@@ -264,7 +263,6 @@ export default function RegisterForm() {
               <form
                 name="partner-interest"
                 method="POST"
-                data-netlify="true"
                 onSubmit={handlePartner}
                 className="space-y-4"
               >
