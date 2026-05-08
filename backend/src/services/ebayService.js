@@ -96,7 +96,7 @@ function buildListingPayload(product, { price, quantity = 1, condition, category
       `Category: ${product.category}`,
     ].join('\n'),
     price: parseFloat(price),
-    currency: 'USD',
+    currency: process.env.EBAY_CURRENCY || 'GBP',
     quantity: Math.max(1, parseInt(quantity, 10)),
     condition: condition || 'USED_EXCELLENT',
     imageUrls: product.images.map((img) => img.s3Url).slice(0, 12),
