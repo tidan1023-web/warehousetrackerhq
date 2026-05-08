@@ -5,6 +5,7 @@ const { Product } = require('../models/Product');
 const {
   exchangeCodeForTokens,
   refreshAccessToken,
+  ensureMerchantLocation,
   createOrUpdateInventoryItem,
   createOffer,
   publishOffer,
@@ -125,6 +126,7 @@ async function createListing(productId, options, user, req) {
   }
 
   const accessToken = await getValidToken(user._id.toString());
+  await ensureMerchantLocation(accessToken);
   const payload = buildListingPayload(product, options);
 
   const result = await withRetry(async () => {
@@ -189,6 +191,7 @@ async function relistListing(listingId, user, req) {
   if (!product) throw createError('Original product no longer exists', 404);
 
   const accessToken = await getValidToken(user._id.toString());
+  await ensureMerchantLocation(accessToken);
   const payload = buildListingPayload(product, {
     price: listing.price,
     quantity: listing.quantity,

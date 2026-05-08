@@ -240,6 +240,47 @@ async function endOffer(accessToken, offerId) {
   logger.info('eBay offer ended', { offerId });
 }
 
+// ---- Merchant Location API ----
+
+// In-memory flag — no need to re-check on every listing within the same process
+let _locationEnsured = false;
+
+async function ensureMerchantLocation(accessToken) {
+  if (_locationEnsured) return;
+
+  const client = createEbayClient(accessToken);
+
+  try {
+    await client.get(`/sell/inventory/v1/location/${MERCHANT_LOCATION_KEY}`);
+    _locationEnsured = true;
+    logger.info('eBay merchant location already exists', { key: MERCHANT_LOCATION_KEY });
+    return;
+  } catch (err) {
+    if (err.response?.status !== 404) throw parseEbayError(err);
+  }
+
+  // Location doesn't exist — create it from env vars
+  const address = {
+    addressLine1: process.env.WAREHOUSE_ADDRESS_LINE1 || '1 Warehouse Way',
+    city: process.env.WAREHOUSE_CITY || 'New York',
+    stateOrProvince: process.env.WAREHOUSE_STATE || 'NY',
+    postalCode: process.env.WAREHOUSE_ZIP || '10001',
+    country: process.env.WAREHOUSE_COUNTRY || 'US',
+  };
+
+  await withRetry(() =>
+    client.post(`/sell/inventory/v1/location/${MERCHANT_LOCATION_KEY}`, {
+      location: { address },
+      locationTypes: ['WAREHOUSE'],
+      name: process.env.WAREHOUSE_NAME || 'Main Warehouse',
+      merchantLocationStatus: 'ENABLED',
+    })
+  );
+
+  _locationEnsured = true;
+  logger.info('eBay merchant location created', { key: MERCHANT_LOCATION_KEY, address });
+}
+
 // ---- Fulfillment API (for sold status) ----
 
 async function getOrders(accessToken, { limit = 50, offset = 0 } = {}) {
@@ -254,6 +295,7 @@ module.exports = {
   getAuthorizationUrl,
   exchangeCodeForTokens,
   refreshAccessToken,
+  ensureMerchantLocation,
   createOrUpdateInventoryItem,
   createOffer,
   publishOffer,
