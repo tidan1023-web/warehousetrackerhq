@@ -21,7 +21,7 @@ const ebayListingSchema = new Schema(
       index: true,
     },
     price: { type: Number, required: true, min: 0.01 },
-    currency: { type: String, default: 'GBP', maxlength: 3 },
+    currency: { type: String, default: 'USD', maxlength: 3 },
     quantity: { type: Number, default: 1, min: 1 },
     quantitySold: { type: Number, default: 0, min: 0 },
     condition: {
