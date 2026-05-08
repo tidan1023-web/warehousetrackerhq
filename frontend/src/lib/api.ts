@@ -128,6 +128,27 @@ export const dashboardApi = {
 export const ebayApi = {
   getStatus: () => apiClient.get('/ebay/status').then((r) => r.data),
   getAuthUrl: () => apiClient.get('/ebay/auth-url').then((r) => r.data),
+  // Legacy sync (kept for backward compat)
   syncProduct: (id: string, data: unknown) =>
     apiClient.post(`/ebay/products/${id}/sync`, data).then((r) => r.data),
+  // Primary listing creation
+  listItem: (productId: string, data: unknown) =>
+    apiClient.post(`/ebay/list-item/${productId}`, data).then((r) => r.data),
+  // Listing library
+  getListings: (params?: Record<string, unknown>) =>
+    apiClient.get('/ebay/listings', { params }).then((r) => r.data),
+  getListing: (id: string) => apiClient.get(`/ebay/listings/${id}`).then((r) => r.data),
+  relistListing: (id: string) =>
+    apiClient.post(`/ebay/listings/${id}/relist`).then((r) => r.data),
+  // Bulk listing
+  bulkList: (data: {
+    itemIds: string[];
+    price: number;
+    quantity?: number;
+    condition?: string;
+    categoryId?: string;
+    autoRelistAfterDays?: number;
+  }) => apiClient.post('/ebay/bulk-list', data).then((r) => r.data),
+  // Manual sync trigger
+  triggerSync: () => apiClient.post('/ebay/sync').then((r) => r.data),
 };

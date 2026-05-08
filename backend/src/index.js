@@ -13,6 +13,10 @@ const { apiLimiter } = require('./middleware/rateLimiter');
 const { mongoSanitize } = require('./middleware/sanitize');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const { User } = require('./models/User');
+// Register eBay models so Mongoose knows about them before any query runs
+require('./models/EbayToken');
+require('./models/EbayListing');
+const { startEbaySyncJob } = require('./jobs/ebaySync');
 const logger = require('./utils/logger');
 
 const authRoutes = require('./routes/auth');
@@ -123,6 +127,9 @@ app.use(errorHandler);
 async function bootstrap() {
   await connectDatabase();
   await seedAdminIfNeeded();
+
+  // Start background eBay status sync (runs 2 min after startup, then every 30 min)
+  startEbaySyncJob();
 
   const PORT = parseInt(process.env.PORT || '5000', 10);
   app.listen(PORT, '0.0.0.0', () => {
