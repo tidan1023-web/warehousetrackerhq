@@ -8,6 +8,8 @@ interface StatsCardProps {
   trend?: { value: number; label: string };
   variant?: 'default' | 'warning' | 'success' | 'danger' | 'info';
   className?: string;
+  onClick?: () => void;
+  active?: boolean;
 }
 
 const variantStyles = {
@@ -45,13 +47,22 @@ export function StatsCard({
   trend,
   variant = 'default',
   className,
+  onClick,
+  active,
 }: StatsCardProps) {
   const styles = variantStyles[variant];
+  const Tag = onClick ? 'button' : 'div';
+
   return (
-    <div
+    <Tag
+      {...(onClick ? { onClick, type: 'button' as const } : {})}
       className={clsx(
-        'bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm',
-        'p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4',
+        'bg-white dark:bg-slate-800 rounded-xl border shadow-sm',
+        'p-3.5 sm:p-5 flex items-start gap-3 sm:gap-4 w-full text-left',
+        active
+          ? 'border-brand-500 dark:border-brand-400 ring-2 ring-brand-500/20 dark:ring-brand-400/20'
+          : 'border-slate-200 dark:border-slate-700',
+        onClick && 'cursor-pointer hover:border-brand-400 dark:hover:border-brand-500 transition-colors',
         styles.card,
         className
       )}
@@ -76,6 +87,14 @@ export function StatsCard({
           </p>
         )}
       </div>
-    </div>
+      {onClick && (
+        <div className={clsx(
+          'text-xs font-medium shrink-0 mt-0.5',
+          active ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400 dark:text-slate-500'
+        )}>
+          {active ? 'Hide ▲' : 'View ▼'}
+        </div>
+      )}
+    </Tag>
   );
 }
