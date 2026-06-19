@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calculator, Database, FileText, TrendingUp, ChevronRight, Clock } from 'lucide-react';
+import { Calculator, Database, FileText, TrendingUp, ChevronRight, Clock, ShieldCheck } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+
+const ROLE_LABEL = {
+  admin:           'Administrator',
+  qs:              'Quantity Surveyor',
+  project_manager: 'Project Manager',
+  client:          'Client',
+};
+
+const ROLE_COLOR = {
+  admin:           'bg-blue-500/20 text-blue-200 border-blue-400/30',
+  qs:              'bg-purple-500/20 text-purple-200 border-purple-400/30',
+  project_manager: 'bg-green-500/20 text-green-200 border-green-400/30',
+  client:          'bg-orange-500/20 text-orange-200 border-orange-400/30',
+};
 
 const STATUS_COLORS = {
   draft:    'bg-gray-100 text-gray-600',
@@ -50,11 +64,20 @@ export default function Dashboard() {
     <div className="space-y-6 max-w-4xl">
       {/* Welcome banner */}
       <div className="bg-primary-900 text-white rounded-2xl p-6">
-        <p className="text-blue-300 text-sm">Good day,</p>
-        <h1 className="text-2xl font-bold mt-1">{user?.name}</h1>
-        <p className="text-blue-200 text-sm mt-1">
-          {projectCount} historical project{projectCount !== 1 ? 's' : ''} · {estimates.length} estimate{estimates.length !== 1 ? 's' : ''} generated
-        </p>
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <p className="text-blue-300 text-sm">Good day,</p>
+            <h1 className="text-2xl font-bold mt-1">{user?.name}</h1>
+            <p className="text-blue-200 text-sm mt-1">
+              {projectCount} historical project{projectCount !== 1 ? 's' : ''} · {estimates.length} estimate{estimates.length !== 1 ? 's' : ''} generated
+            </p>
+          </div>
+          {/* Role badge */}
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold shrink-0 ${ROLE_COLOR[user?.role] ?? 'bg-white/10 text-white border-white/20'}`}>
+            <ShieldCheck size={13} />
+            {ROLE_LABEL[user?.role] ?? user?.role}
+          </div>
+        </div>
         <button onClick={() => navigate('/app/estimator')}
           className="mt-4 flex items-center gap-2 bg-white text-primary-900 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-colors">
           <Calculator size={16} /> Run New Estimate

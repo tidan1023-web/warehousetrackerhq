@@ -3,18 +3,53 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import {
-  LayoutDashboard, Calculator, Clock, Database,
-  ClipboardList, Settings, LogOut, Building2, Moon, Sun, Sliders, FileText,
+  LayoutDashboard, FolderOpen, Users,
+  BookOpen, GitCompare, HardHat, Package, Zap,
+  FileSpreadsheet, FileText,
+  TrendingUp, GitPullRequest, ClipboardList, BarChart2,
+  Settings, LogOut, Building2, Moon, Sun, ShieldCheck,
 } from 'lucide-react';
 
-const NAV = [
-  { to: '/app/dashboard',           icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/app/estimator',           icon: Calculator,      label: 'New Estimate' },
-  { to: '/app/simulator',           icon: Sliders,         label: 'Simulator' },
-  { to: '/app/estimates',           icon: Clock,           label: 'Estimate History' },
-  { to: '/app/invoices',            icon: FileText,        label: 'Invoices' },
-  { to: '/app/historical-projects', icon: Database,        label: 'Historical Projects' },
-  { to: '/app/site-reports',        icon: ClipboardList,   label: 'Site Reports' },
+const NAV_GROUPS = [
+  {
+    items: [
+      { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/app/projects',  icon: FolderOpen,      label: 'Projects' },
+      { to: '/app/contacts',  icon: Users,           label: 'Contacts' },
+    ],
+  },
+  {
+    heading: 'Pricing Libraries',
+    items: [
+      { to: '/app/qs-prices',          icon: BookOpen,       label: 'QS Prices' },
+      { to: '/app/qs-comparison',      icon: GitCompare,     label: 'QS Comparison' },
+      { to: '/app/artisan-prices',     icon: HardHat,        label: 'Artisan Rates' },
+      { to: '/app/materials',          icon: Package,        label: 'Materials' },
+      { to: '/app/price-intelligence', icon: Zap,            label: 'Price Intelligence' },
+    ],
+  },
+  {
+    heading: 'BOQ & Invoices',
+    items: [
+      { to: '/app/boq',      icon: FileSpreadsheet, label: 'BOQ Builder' },
+      { to: '/app/invoices', icon: FileText,        label: 'Invoices' },
+    ],
+  },
+  {
+    heading: 'Execution',
+    items: [
+      { to: '/app/progress',       icon: TrendingUp,     label: 'Progress Tracker' },
+      { to: '/app/change-orders',  icon: GitPullRequest, label: 'Change Orders' },
+      { to: '/app/site-reports',   icon: ClipboardList,  label: 'Site Reports' },
+      { to: '/app/analytics',      icon: BarChart2,      label: 'Analytics' },
+    ],
+  },
+  {
+    heading: 'Admin',
+    items: [
+      { to: '/app/settings', icon: Settings, label: 'Company Settings' },
+    ],
+  },
 ];
 
 const ROLE_LABEL = {
@@ -24,10 +59,22 @@ const ROLE_LABEL = {
   client:          'Client',
 };
 
+const ROLE_COLOR = {
+  admin:           'bg-blue-500',
+  qs:              'bg-purple-500',
+  project_manager: 'bg-green-500',
+  client:          'bg-orange-500',
+};
+
+const linkCls = (isActive) =>
+  `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+    isActive ? 'bg-blue-600 text-white' : 'text-blue-200 hover:bg-primary-800 hover:text-white'
+  }`;
+
 export default function Sidebar({ onClose }) {
-  const { user, logout }        = useAuth();
+  const { user, logout }             = useAuth();
   const { dark, toggle: toggleDark } = useTheme();
-  const navigate                = useNavigate();
+  const navigate                     = useNavigate();
 
   const handleLogout = () => { logout(); navigate('/login'); onClose?.(); };
 
@@ -47,38 +94,43 @@ export default function Sidebar({ onClose }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto min-h-0">
-        {NAV.map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} onClick={onClose}
-            className={({ isActive }) =>
-              `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive ? 'bg-blue-600 text-white' : 'text-blue-200 hover:bg-primary-800 hover:text-white'
-              }`
-            }>
-            <Icon size={16} className="shrink-0" />
-            {label}
-          </NavLink>
+      <nav className="flex-1 px-2 py-3 overflow-y-auto min-h-0 space-y-4">
+        {NAV_GROUPS.map((group, gi) => (
+          <div key={gi}>
+            {group.heading && (
+              <p className="px-2.5 mb-1 text-[10px] font-semibold uppercase tracking-wider text-blue-400 select-none">
+                {group.heading}
+              </p>
+            )}
+            <div className="space-y-0.5">
+              {group.items.map(({ to, icon: Icon, label }) => (
+                <NavLink key={to} to={to} onClick={onClose}
+                  className={({ isActive }) => linkCls(isActive)}>
+                  <Icon size={15} className="shrink-0" />
+                  {label}
+                </NavLink>
+              ))}
+            </div>
+          </div>
         ))}
-
-        <div className="pt-3 mt-3 border-t border-primary-800">
-          <NavLink to="/app/settings" onClick={onClose}
-            className={({ isActive }) =>
-              `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive ? 'bg-blue-600 text-white' : 'text-blue-200 hover:bg-primary-800 hover:text-white'
-              }`
-            }>
-            <Settings size={16} className="shrink-0" />
-            Company Settings
-          </NavLink>
-        </div>
       </nav>
 
       {/* Footer */}
       <div className="px-2 py-3 border-t border-primary-800 shrink-0">
-        <div className="px-2 py-1 mb-1.5">
-          <p className="text-sm font-semibold truncate">{user?.name}</p>
-          <p className="text-xs text-blue-300 truncate">{ROLE_LABEL[user?.role] ?? user?.role}</p>
+        {/* Role badge */}
+        <div className="px-2 py-2 mb-1.5 flex items-center gap-2.5">
+          <div className={`w-8 h-8 rounded-full ${ROLE_COLOR[user?.role] ?? 'bg-gray-500'} flex items-center justify-center shrink-0 text-white font-bold text-sm`}>
+            {user?.name?.charAt(0)?.toUpperCase()}
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold truncate">{user?.name}</p>
+            <div className="flex items-center gap-1">
+              <ShieldCheck size={10} className="text-blue-400 shrink-0" />
+              <p className="text-xs text-blue-300 truncate">{ROLE_LABEL[user?.role] ?? user?.role}</p>
+            </div>
+          </div>
         </div>
+
         <button onClick={toggleDark}
           className="flex items-center gap-2.5 w-full px-2.5 py-1.5 rounded-lg text-sm text-blue-200 hover:bg-primary-800 hover:text-white transition-colors mb-0.5">
           {dark ? <Sun size={15} /> : <Moon size={15} />}

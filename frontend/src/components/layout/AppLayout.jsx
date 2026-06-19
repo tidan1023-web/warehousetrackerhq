@@ -5,12 +5,23 @@ import Header from './Header';
 
 const TITLES = {
   '/app/dashboard':           'Dashboard',
+  '/app/projects':            'Projects',
+  '/app/contacts':            'Contacts',
+  '/app/qs-prices':           'QS Prices',
+  '/app/qs-comparison':       'QS Comparison',
+  '/app/artisan-prices':      'Artisan Rates',
+  '/app/materials':           'Materials',
+  '/app/price-intelligence':  'Price Intelligence',
+  '/app/boq':                 'BOQ Builder',
+  '/app/invoices':            'Invoices',
+  '/app/progress':            'Progress Tracker',
+  '/app/change-orders':       'Change Orders',
+  '/app/site-reports':        'Site Reports',
+  '/app/analytics':           'Analytics',
   '/app/estimator':           'New Estimate',
   '/app/simulator':           'Scenario Simulator',
   '/app/estimates':           'Estimate History',
-  '/app/invoices':            'Invoices',
   '/app/historical-projects': 'Historical Projects',
-  '/app/site-reports':        'Site Reports',
   '/app/settings':            'Company Settings',
 };
 
