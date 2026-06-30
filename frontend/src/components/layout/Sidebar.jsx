@@ -2,52 +2,53 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAccess } from '../../hooks/useAccess';
 import {
   LayoutDashboard, FolderOpen, Users,
   BookOpen, GitCompare, HardHat, Package, Zap,
   FileSpreadsheet, FileText,
   TrendingUp, GitPullRequest, ClipboardList, BarChart2,
-  Settings, LogOut, Building2, Moon, Sun, ShieldCheck,
+  Settings, LogOut, Building2, Moon, Sun, ShieldCheck, Lock,
 } from 'lucide-react';
 
 const NAV_GROUPS = [
   {
     items: [
       { to: '/app/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-      { to: '/app/projects',  icon: FolderOpen,      label: 'Projects' },
-      { to: '/app/contacts',  icon: Users,           label: 'Contacts' },
+      { to: '/app/projects',  icon: FolderOpen,      label: 'Projects',  premium: true },
+      { to: '/app/contacts',  icon: Users,           label: 'Contacts',  premium: true },
     ],
   },
   {
     heading: 'Pricing Libraries',
     items: [
-      { to: '/app/qs-prices',          icon: BookOpen,       label: 'QS Prices' },
-      { to: '/app/qs-comparison',      icon: GitCompare,     label: 'QS Comparison' },
-      { to: '/app/artisan-prices',     icon: HardHat,        label: 'Artisan Rates' },
-      { to: '/app/materials',          icon: Package,        label: 'Materials' },
-      { to: '/app/price-intelligence', icon: Zap,            label: 'Price Intelligence' },
+      { to: '/app/qs-prices',          icon: BookOpen,       label: 'QS Prices',          premium: true },
+      { to: '/app/qs-comparison',      icon: GitCompare,     label: 'QS Comparison',      premium: true },
+      { to: '/app/artisan-prices',     icon: HardHat,        label: 'Artisan Rates',      premium: true },
+      { to: '/app/materials',          icon: Package,        label: 'Materials',           premium: true },
+      { to: '/app/price-intelligence', icon: Zap,            label: 'Price Intelligence',  premium: true },
     ],
   },
   {
     heading: 'BOQ & Invoices',
     items: [
-      { to: '/app/boq',      icon: FileSpreadsheet, label: 'BOQ Builder' },
-      { to: '/app/invoices', icon: FileText,        label: 'Invoices' },
+      { to: '/app/boq',      icon: FileSpreadsheet, label: 'BOQ Builder', premium: true },
+      { to: '/app/invoices', icon: FileText,        label: 'Invoices',    premium: true },
     ],
   },
   {
     heading: 'Execution',
     items: [
-      { to: '/app/progress',       icon: TrendingUp,     label: 'Progress Tracker' },
-      { to: '/app/change-orders',  icon: GitPullRequest, label: 'Change Orders' },
-      { to: '/app/site-reports',   icon: ClipboardList,  label: 'Site Reports' },
-      { to: '/app/analytics',      icon: BarChart2,      label: 'Analytics' },
+      { to: '/app/progress',       icon: TrendingUp,     label: 'Progress Tracker', premium: true },
+      { to: '/app/change-orders',  icon: GitPullRequest, label: 'Change Orders',    premium: true },
+      { to: '/app/site-reports',   icon: ClipboardList,  label: 'Site Reports',     premium: true },
+      { to: '/app/analytics',      icon: BarChart2,      label: 'Analytics',        premium: true },
     ],
   },
   {
     heading: 'Admin',
     items: [
-      { to: '/app/settings', icon: Settings, label: 'Company Settings' },
+      { to: '/app/settings', icon: Settings, label: 'Company Settings', premium: true },
     ],
   },
 ];
@@ -66,14 +67,19 @@ const ROLE_COLOR = {
   client:          'bg-orange-500',
 };
 
-const linkCls = (isActive) =>
+const linkCls = (isActive, locked) =>
   `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-    isActive ? 'bg-blue-600 text-white' : 'text-blue-200 hover:bg-primary-800 hover:text-white'
+    locked
+      ? 'text-blue-400/50 cursor-pointer hover:bg-primary-800/50'
+      : isActive
+        ? 'bg-blue-600 text-white'
+        : 'text-blue-200 hover:bg-primary-800 hover:text-white'
   }`;
 
 export default function Sidebar({ onClose }) {
   const { user, logout }             = useAuth();
   const { dark, toggle: toggleDark } = useTheme();
+  const { isPremium }                = useAccess();
   const navigate                     = useNavigate();
 
   const handleLogout = () => { logout(); navigate('/login'); onClose?.(); };
@@ -103,13 +109,17 @@ export default function Sidebar({ onClose }) {
               </p>
             )}
             <div className="space-y-0.5">
-              {group.items.map(({ to, icon: Icon, label }) => (
-                <NavLink key={to} to={to} onClick={onClose}
-                  className={({ isActive }) => linkCls(isActive)}>
-                  <Icon size={15} className="shrink-0" />
-                  {label}
-                </NavLink>
-              ))}
+              {group.items.map(({ to, icon: Icon, label, premium }) => {
+                const locked = premium && !isPremium;
+                return (
+                  <NavLink key={to} to={to} onClick={onClose}
+                    className={({ isActive }) => linkCls(isActive, locked)}>
+                    <Icon size={15} className="shrink-0" />
+                    <span className="flex-1">{label}</span>
+                    {locked && <Lock size={11} className="shrink-0 text-blue-400/50" />}
+                  </NavLink>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -117,7 +127,6 @@ export default function Sidebar({ onClose }) {
 
       {/* Footer */}
       <div className="px-2 py-3 border-t border-primary-800 shrink-0">
-        {/* Role badge */}
         <div className="px-2 py-2 mb-1.5 flex items-center gap-2.5">
           <div className={`w-8 h-8 rounded-full ${ROLE_COLOR[user?.role] ?? 'bg-gray-500'} flex items-center justify-center shrink-0 text-white font-bold text-sm`}>
             {user?.name?.charAt(0)?.toUpperCase()}

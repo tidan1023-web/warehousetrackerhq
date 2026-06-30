@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import AppLayout from './components/layout/AppLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import PaywallGuard from './components/PaywallGuard';
 
 // Auth
 import Landing            from './pages/Landing';
@@ -64,37 +65,37 @@ export default function App() {
             {/* Dashboard */}
             <Route path="dashboard"              element={<Dashboard />} />
 
-            {/* Projects & Contacts */}
-            <Route path="projects"               element={<Projects />} />
-            <Route path="contacts"               element={<Contacts />} />
+            {/* Projects & Contacts — premium */}
+            <Route path="projects"               element={<PaywallGuard feature="Projects"><Projects /></PaywallGuard>} />
+            <Route path="contacts"               element={<PaywallGuard feature="Contacts"><Contacts /></PaywallGuard>} />
 
-            {/* Pricing Libraries */}
-            <Route path="qs-prices"              element={<QsPricing />} />
-            <Route path="qs-comparison"          element={<QsComparison />} />
-            <Route path="artisan-prices"         element={<ArtisanPricing />} />
-            <Route path="materials"              element={<MaterialPricing />} />
-            <Route path="price-intelligence"     element={<PricingIntelligence />} />
+            {/* Pricing Libraries — premium */}
+            <Route path="qs-prices"              element={<PaywallGuard feature="QS Prices"><QsPricing /></PaywallGuard>} />
+            <Route path="qs-comparison"          element={<PaywallGuard feature="QS Comparison"><QsComparison /></PaywallGuard>} />
+            <Route path="artisan-prices"         element={<PaywallGuard feature="Artisan Rates"><ArtisanPricing /></PaywallGuard>} />
+            <Route path="materials"              element={<PaywallGuard feature="Materials"><MaterialPricing /></PaywallGuard>} />
+            <Route path="price-intelligence"     element={<PaywallGuard feature="Price Intelligence"><PricingIntelligence /></PaywallGuard>} />
 
-            {/* BOQ & Invoices */}
-            <Route path="boq"                    element={<BoqBuilder />} />
-            <Route path="invoices"               element={<Invoices />} />
-            <Route path="invoices/:id"           element={<InvoiceDetail />} />
+            {/* BOQ & Invoices — premium */}
+            <Route path="boq"                    element={<PaywallGuard feature="BOQ Builder"><BoqBuilder /></PaywallGuard>} />
+            <Route path="invoices"               element={<PaywallGuard feature="Invoices"><Invoices /></PaywallGuard>} />
+            <Route path="invoices/:id"           element={<PaywallGuard feature="Invoices"><InvoiceDetail /></PaywallGuard>} />
 
-            {/* Execution */}
-            <Route path="progress"               element={<ProgressTracker />} />
-            <Route path="change-orders"          element={<ChangeOrders />} />
-            <Route path="site-reports"           element={<SiteReports />} />
-            <Route path="analytics"              element={<Analytics />} />
+            {/* Execution — premium */}
+            <Route path="progress"               element={<PaywallGuard feature="Progress Tracker"><ProgressTracker /></PaywallGuard>} />
+            <Route path="change-orders"          element={<PaywallGuard feature="Change Orders"><ChangeOrders /></PaywallGuard>} />
+            <Route path="site-reports"           element={<PaywallGuard feature="Site Reports"><SiteReports /></PaywallGuard>} />
+            <Route path="analytics"              element={<PaywallGuard feature="Analytics"><Analytics /></PaywallGuard>} />
 
-            {/* Estimator (kept for backward compat) */}
+            {/* Estimator — free for everyone */}
             <Route path="estimator"              element={<Estimator />} />
             <Route path="estimates"              element={<EstimateHistory />} />
             <Route path="estimates/:id"          element={<EstimateDetail />} />
             <Route path="historical-projects"    element={<HistoricalProjects />} />
-            <Route path="simulator"              element={<Simulator />} />
+            <Route path="simulator"              element={<PaywallGuard feature="Scenario Simulator"><Simulator /></PaywallGuard>} />
 
-            {/* Admin */}
-            <Route path="settings"               element={<CompanySettings />} />
+            {/* Admin — premium */}
+            <Route path="settings"               element={<PaywallGuard feature="Company Settings"><CompanySettings /></PaywallGuard>} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
