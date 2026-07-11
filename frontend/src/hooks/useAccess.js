@@ -1,6 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 
-const FULL_ACCESS_EMAILS = [];
+const FULL_ACCESS_EMAILS = ['sadiajahleel@gmail.com'];
 const TRIAL_DAYS = 7;
 
 export function useAccess() {
