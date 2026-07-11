@@ -111,21 +111,6 @@ app.get('/api/health', (_req, res) => res.json({ status: 'ok', timestamp: new Da
   app.use(`${prefix}/notifications`,       notificationRoutes);
 });
 
-// ── Temporary owner password reset (remove after use) ────────────────────────
-app.post('/api/owner-reset', async (req, res) => {
-  const { secret, email, newPassword } = req.body;
-  if (secret !== process.env.OWNER_RESET_SECRET || !process.env.OWNER_RESET_SECRET) {
-    return res.status(403).json({ message: 'Forbidden' });
-  }
-  const bcrypt = require('bcryptjs');
-  const User   = require('./models/User');
-  const user   = await User.findOne({ email: email.toLowerCase() });
-  if (!user) return res.status(404).json({ message: 'User not found' });
-  user.password = await bcrypt.hash(newPassword, 12);
-  await user.save();
-  res.json({ message: 'Password updated' });
-});
-
 // ── 404 + error handler ───────────────────────────────────────────────────────
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
 app.use(errorHandler);
