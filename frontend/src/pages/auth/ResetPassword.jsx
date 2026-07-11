@@ -18,6 +18,18 @@ export default function ResetPassword() {
       setError('Passwords do not match.');
       return;
     }
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters.');
+      return;
+    }
+    if (!/[A-Z]/.test(form.password)) {
+      setError('Password must contain at least one uppercase letter.');
+      return;
+    }
+    if (!/[0-9]/.test(form.password)) {
+      setError('Password must contain at least one number.');
+      return;
+    }
     setLoading(true);
     try {
       await api.post(`/auth/reset-password/${token}`, { password: form.password });
@@ -72,7 +84,7 @@ export default function ResetPassword() {
                     value={form.password}
                     onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
-                    placeholder="Minimum 6 characters"
+                    placeholder="Min 8 chars, one uppercase, one number"
                   />
                 </div>
                 <div>

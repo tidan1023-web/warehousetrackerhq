@@ -122,8 +122,12 @@ const forgotPassword = async (req, res) => {
   user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
   await user.save();
 
-  const resetUrl = `${process.env.FRONTEND_URL || 'https://pico-bello-boq.onrender.com'}/reset-password/${token}`;
-  await sendPasswordReset(user, resetUrl);
+  const frontendUrl = process.env.FRONTEND_URL || 'https://picobelloprojekte-boq.onrender.com';
+  const resetUrl = `${frontendUrl}/reset-password/${token}`;
+
+  sendPasswordReset(user, resetUrl).catch((e) =>
+    logger.warn('Password reset email failed — check EMAIL_* env vars', { error: e.message, userId: user._id })
+  );
 
   logger.info('Password reset requested', { userId: user._id, ip: getIp(req) });
   res.json({ message: 'If that email is registered, a reset link has been sent.' });
