@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const logger = require('./logger');
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
@@ -10,14 +11,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const FROM = process.env.EMAIL_FROM || 'Pico Bello Projekte <noreply@picobello.com>';
+const FROM = process.env.EMAIL_FROM || `Pico Bello Projekte <${process.env.EMAIL_USER}>`;
 
 const sendEmail = async ({ to, subject, html }) => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn('Email not configured — skipping send to', to);
+    logger.warn('Email not configured — EMAIL_USER or EMAIL_PASS missing, skipping send', { to });
     return;
   }
+  logger.info('Sending email', { to, subject });
   await transporter.sendMail({ from: FROM, to, subject, html });
+  logger.info('Email sent successfully', { to, subject });
 };
 
 const sendWelcome = (user) =>
