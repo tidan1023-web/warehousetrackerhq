@@ -2,13 +2,12 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
-import { useAccess } from '../../hooks/useAccess';
 import {
   LayoutDashboard, FolderOpen, Users,
   BookOpen, GitCompare, HardHat, Package, Zap,
   FileSpreadsheet, FileText,
   TrendingUp, GitPullRequest, ClipboardList, BarChart2,
-  Settings, LogOut, Building2, Moon, Sun, ShieldCheck, Lock,
+  Settings, LogOut, Building2, Moon, Sun, ShieldCheck,
 } from 'lucide-react';
 
 const NAV_GROUPS = [
@@ -67,19 +66,14 @@ const ROLE_COLOR = {
   client:          'bg-orange-500',
 };
 
-const linkCls = (isActive, locked) =>
+const linkCls = (isActive) =>
   `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-    locked
-      ? 'text-blue-400/50 cursor-pointer hover:bg-primary-800/50'
-      : isActive
-        ? 'bg-blue-600 text-white'
-        : 'text-blue-200 hover:bg-primary-800 hover:text-white'
+    isActive ? 'bg-blue-600 text-white' : 'text-blue-200 hover:bg-primary-800 hover:text-white'
   }`;
 
 export default function Sidebar({ onClose }) {
   const { user, logout }             = useAuth();
   const { dark, toggle: toggleDark } = useTheme();
-  const { isPremium }                = useAccess();
   const navigate                     = useNavigate();
 
   const handleLogout = () => { logout(); navigate('/login'); onClose?.(); };
@@ -109,17 +103,13 @@ export default function Sidebar({ onClose }) {
               </p>
             )}
             <div className="space-y-0.5">
-              {group.items.map(({ to, icon: Icon, label, premium }) => {
-                const locked = premium && !isPremium;
-                return (
-                  <NavLink key={to} to={to} onClick={onClose}
-                    className={({ isActive }) => linkCls(isActive, locked)}>
-                    <Icon size={15} className="shrink-0" />
-                    <span className="flex-1">{label}</span>
-                    {locked && <Lock size={11} className="shrink-0 text-blue-400/50" />}
-                  </NavLink>
-                );
-              })}
+              {group.items.map(({ to, icon: Icon, label }) => (
+                <NavLink key={to} to={to} onClick={onClose}
+                  className={({ isActive }) => linkCls(isActive)}>
+                  <Icon size={15} className="shrink-0" />
+                  {label}
+                </NavLink>
+              ))}
             </div>
           </div>
         ))}
